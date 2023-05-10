@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    CryptoID Chainz client
-#    © 2018-2019 July - 1200 Web Development <http://1200wd.com/>
+#    © 2018-2019 July - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,15 +15,15 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import logging
 import struct
 from datetime import datetime
-from bitcoinlib.main import MAX_TRANSACTIONS
-from bitcoinlib.services.baseclient import BaseClient, ClientError
-from bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.main import MAX_TRANSACTIONS
+from lib.bitcoinlib.services.baseclient import BaseClient, ClientError
+from lib.bitcoinlib.transactions import Transaction
 
 
 _logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class CryptoID(BaseClient):
         super(self.__class__, self).__init__(network, PROVIDERNAME, base_url, denominator, *args)
 
     def compose_request(self, func=None, path_type='api', variables=None, method='get'):
-        # API path: http://chainz.cryptoid.info/ltc/api.dws
+        # API path: https://chainz.cryptoid.info/ltc/api.dws
         # Explorer path for raw tx: https://chainz.cryptoid.info/explorer/tx.raw.dws
         if variables is None:
             variables = {}

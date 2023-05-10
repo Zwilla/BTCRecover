@@ -10,10 +10,10 @@ import sys
 # site
 # pkg
 from passlib import hash, registry, exc
-from passlib.registry import register_crypt_handler, register_crypt_handler_path, \
+from lib.passlib.registry import register_crypt_handler, register_crypt_handler_path, \
     get_crypt_handler, list_crypt_handlers, _unload_handler_name as unload_handler_name
-import lib.passlib.utils.handlers as uh
-from passlib.tests.utils import TestCase
+import passlib.utils.handlers as uh
+from lib.passlib.tests.utils import TestCase
 # module
 log = getLogger(__name__)
 
@@ -130,7 +130,7 @@ class RegistryTest(TestCase):
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", "xxxxxxxxxx", DeprecationWarning)
             h = get_crypt_handler("dummy_bad")
-        from passlib.tests import _test_bad_register as tbr
+        from lib.passlib.tests import _test_bad_register as tbr
         self.assertIs(h, tbr.alt_dummy_bad)
 
     def test_register_crypt_handler(self):
@@ -189,27 +189,26 @@ class RegistryTest(TestCase):
             self.assertIs(get_crypt_handler("DUMMY-0"), dummy_0)
 
         # check system & private names aren't returned
-        import lib.passlib.hash # ensure module imported, so py3.3 sets __package__
-        passlib.hash.__dict__["_fake"] = "dummy" # so behavior seen under py2x also
+        from passlib import hash
+        hash.__dict__["_fake"] = "dummy"
         for name in ["_fake", "__package__"]:
             self.assertRaises(KeyError, get_crypt_handler, name)
             self.assertIs(get_crypt_handler(name, None), None)
 
     def test_list_crypt_handlers(self):
         """test list_crypt_handlers()"""
-        from passlib.registry import list_crypt_handlers
+        from lib.passlib.registry import list_crypt_handlers
 
         # check system & private names aren't returned
-        import lib.passlib.hash # ensure module imported, so py3.3 sets __package__
-        passlib.hash.__dict__["_fake"] = "dummy" # so behavior seen under py2x also
+        hash.__dict__["_fake"] = "dummy"
         for name in list_crypt_handlers():
             self.assertFalse(name.startswith("_"), "%r: " % name)
         unload_handler_name("_fake")
 
     def test_handlers(self):
         """verify we have tests for all builtin handlers"""
-        from passlib.registry import list_crypt_handlers
-        from passlib.tests.test_handlers import get_handler_case, conditionally_available_hashes
+        from lib.passlib.registry import list_crypt_handlers
+        from lib.passlib.tests.test_handlers import get_handler_case, conditionally_available_hashes
         for name in list_crypt_handlers():
             # skip some wrappers that don't need independant testing
             if name.startswith("ldap_") and name[5:] in list_crypt_handlers():

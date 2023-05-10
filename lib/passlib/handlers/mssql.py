@@ -27,9 +27,9 @@ Known formats
 refs
 ----------
 https://blogs.msdn.com/b/lcris/archive/2007/04/30/sql-server-2005-about-login-password-hashes.aspx?Redirected=true
-http://us.generation-nt.com/securing-passwords-hash-help-35429432.html
-http://forum.md5decrypter.co.uk/topic230-mysql-and-mssql-get-password-hashes.aspx
-http://www.theregister.co.uk/2002/07/08/cracking_ms_sql_server_passwords/
+https://us.generation-nt.com/securing-passwords-hash-help-35429432.html
+https://forum.md5decrypter.co.uk/topic230-mysql-and-mssql-get-password-hashes.aspx
+https://www.theregister.co.uk/2002/07/08/cracking_ms_sql_server_passwords/
 """
 #=============================================================================
 # imports
@@ -44,7 +44,7 @@ from warnings import warn
 # pkg
 from lib.passlib.utils import consteq
 from lib.passlib.utils.compat import bascii_to_str, unicode, u
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "mssql2000",

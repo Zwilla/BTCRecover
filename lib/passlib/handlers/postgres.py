@@ -9,7 +9,7 @@ import logging; log = logging.getLogger(__name__)
 # pkg
 from lib.passlib.utils import to_bytes
 from lib.passlib.utils.compat import str_to_uascii, unicode, u
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "postgres_md5",

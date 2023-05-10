@@ -4,10 +4,10 @@
 #
 #    EXAMPLES - Network class
 #
-#    © 2017 - 2019 February - 1200 Web Development <http://1200wd.com/>
+#    © 2017 - 2019 February - 1200 Web Development <https://1200wd.com/>
 #
 
-from bitcoinlib.networks import *
+from lib.bitcoinlib.networks import *
 
 #
 # Network examples

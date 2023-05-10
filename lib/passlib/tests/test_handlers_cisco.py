@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 # site
 # pkg
 from passlib import hash, exc
-from passlib.utils.compat import u
+from lib.passlib.utils.compat import u
 from .utils import UserHandlerMixin, HandlerCase, repeat_string
 from .test_handlers import UPASS_TABLE
 # module
@@ -35,12 +35,12 @@ class _PixAsaSharedTest(UserHandlerMixin, HandlerCase):
     #: (i.e. combined secret + user < 17 bytes)
     pix_asa_shared_hashes = [
         #
-        # http://www.perlmonks.org/index.pl?node_id=797623
+        # https://www.perlmonks.org/index.pl?node_id=797623
         #
         (("cisco", ""), "2KFQnbNIdI.2KYOU"),  # confirmed ASA 9.6
 
         #
-        # http://www.hsc.fr/ressources/breves/pix_crack.html.en
+        # https://www.hsc.fr/ressources/breves/pix_crack.html.en
         #
         (("hsc", ""), "YtT8/k6Np8F1yz2c"),  # confirmed ASA 9.6
 
@@ -52,7 +52,7 @@ class _PixAsaSharedTest(UserHandlerMixin, HandlerCase):
         (("cisco", "jack"), "7DrfeZ7cyOj/PslD"),
 
         #
-        # http://comments.gmane.org/gmane.comp.security.openwall.john.user/2529
+        # https://comments.gmane.org/gmane.comp.security.openwall.john.user/2529
         #
         (("ripper", "alex"), "h3mJrcH0901pqX/m"),
         (("cisco", "cisco"), "3USUcOPFUiMCO4Jk"),
@@ -62,12 +62,12 @@ class _PixAsaSharedTest(UserHandlerMixin, HandlerCase):
         (("cangetin", "rramsey"), "jgBZqYtsWfGcUKDi"),
 
         #
-        # http://openwall.info/wiki/john/sample-hashes
+        # https://openwall.info/wiki/john/sample-hashes
         #
         (("phonehome", "rharris"), "zyIIMSYjiPm0L7a6"),
 
         #
-        # http://www.openwall.com/lists/john-users/2010/08/08/3
+        # https://www.openwall.com/lists/john-users/2010/08/08/3
         #
         (("cangetin", ""), "TynyB./ftknE77QP"),
         (("cangetin", "rramsey"), "jgBZqYtsWfGcUKDi"),
@@ -83,7 +83,7 @@ class _PixAsaSharedTest(UserHandlerMixin, HandlerCase):
         ("0123456789abcdef", ".7nfVBEIEu4KbF/1"),
 
         #
-        # http://www.cisco.com/en/US/docs/security/pix/pix50/configuration/guide/commands.html#wp5472
+        # https://www.cisco.com/en/US/docs/security/pix/pix50/configuration/guide/commands.html#wp5472
         #
         (("1234567890123456", ""), "feCkwUGktTCAgIbD"),  # canonical source
         (("watag00s1am", ""), "jMorNbK0514fadBh"),  # canonical source
@@ -374,28 +374,28 @@ class cisco_type7_test(HandlerCase):
 
     known_correct_hashes = [
         #
-        # http://mccltd.net/blog/?p=1034
+        # https://mccltd.net/blog/?p=1034
         #
         ("secure ", "04480E051A33490E"),
 
         #
-        # http://insecure.org/sploits/cisco.passwords.html
+        # https://insecure.org/sploits/cisco.passwords.html
         #
         ("Its time to go to lunch!",
          "153B1F1F443E22292D73212D5300194315591954465A0D0B59"),
 
         #
-        # http://blog.ioshints.info/2007/11/type-7-decryption-in-cisco-ios.html
+        # https://blog.ioshints.info/2007/11/type-7-decryption-in-cisco-ios.html
         #
         ("t35t:pa55w0rd", "08351F1B1D431516475E1B54382F"),
 
         #
-        # http://www.m00nie.com/2011/09/cisco-type-7-password-decryption-and-encryption-with-perl/
+        # https://www.m00nie.com/2011/09/cisco-type-7-password-decryption-and-encryption-with-perl/
         #
         ("hiImTesting:)", "020E0D7206320A325847071E5F5E"),
 
         #
-        # http://packetlife.net/forums/thread/54/
+        # https://packetlife.net/forums/thread/54/
         #
         ("cisco123", "060506324F41584B56"),
         ("cisco123", "1511021F07257A767B"),
@@ -424,7 +424,7 @@ class cisco_type7_test(HandlerCase):
 
     def test_90_decode(self):
         """test cisco_type7.decode()"""
-        from passlib.utils import to_unicode, to_bytes
+        from lib.passlib.utils import to_unicode, to_bytes
 
         handler = self.handler
         for secret, hash in self.known_correct_hashes:

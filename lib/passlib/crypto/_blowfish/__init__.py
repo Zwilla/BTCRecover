@@ -2,7 +2,7 @@
 
 This is a pure-python implementation of the EKS-Blowfish algorithm described by
 Provos and Mazieres in `A Future-Adaptable Password Scheme
-<http://www.openbsd.org/papers/bcrypt-paper.ps>`_.
+<https://www.openbsd.org/papers/bcrypt-paper.ps>`_.
 
 This package contains two submodules:
 
@@ -29,7 +29,7 @@ under PyPy (10x too slow).
 History
 -------
 While subsequently modified considerly for Passlib, this code was originally
-based on `jBcrypt 0.2 <http://www.mindrot.org/projects/jBCrypt/>`_, which was
+based on `jBcrypt 0.2 <https://www.mindrot.org/projects/jBCrypt/>`_, which was
 released under the BSD license::
 
     Copyright (c) 2006 Damien Miller <djm@mindrot.org>
@@ -57,12 +57,14 @@ import struct
 from lib.passlib.utils import getrandbytes, rng
 from lib.passlib.utils.binary import bcrypt64
 from lib.passlib.utils.compat import BytesIO, unicode, u, native_string_types
-from lib.passlib.crypto._blowfish.unrolled import BlowfishEngine
+
 # local
 __all__ = [
     'BlowfishEngine',
     'raw_bcrypt',
 ]
+
+from lib.passlib.crypto._blowfish.base import BlowfishEngine
 
 #=============================================================================
 # bcrypt constants
@@ -134,7 +136,7 @@ def raw_bcrypt(password, ident, salt, log_rounds):
     #
     # This uses the "enhanced key schedule" step described by
     # Provos and Mazieres in "A Future-Adaptable Password Scheme"
-    # http://www.openbsd.org/papers/bcrypt-paper.ps
+    # https://www.openbsd.org/papers/bcrypt-paper.ps
     #
     #===================================================================
 

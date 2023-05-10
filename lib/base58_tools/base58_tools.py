@@ -1,8 +1,8 @@
-'''Base58 encoding
+"""Base58 encoding
 
 Implementations of Base58 and Base58Check encodings that are compatible
 with the bitcoin network.
-'''
+"""
 
 # This module is based upon base58 snippets found scattered over many bitcoin
 # tools written in python. From what I gather the original source is from a

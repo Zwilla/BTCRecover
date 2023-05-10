@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Base Client
-#    © 2016 November - 1200 Web Development <http://1200wd.com/>
+#    © 2016 November - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,7 +15,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import requests
@@ -24,9 +24,9 @@ try:
 except ImportError:
     from urllib import urlencode
 import json
-from bitcoinlib.main import *
-from bitcoinlib.networks import Network
-from bitcoinlib.keys import Address
+from lib.bitcoinlib.main import *
+from lib.bitcoinlib.networks import Network
+from lib.bitcoinlib.keys import Address
 
 _logger = logging.getLogger(__name__)
 

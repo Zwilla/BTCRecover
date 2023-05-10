@@ -1,4 +1,6 @@
-__all__ = 'AESCipher','expandKey','Mode','CBCMode','CBCMode','CFBMode','OFBMode'
+__all__ = 'AESCipher', 'expandKey', 'Mode', 'CBCMode', 'CBCMode', 'CFBMode', 'OFBMode'
+
+
 class Mode:
     __slots__ = "_iv", "_block_cipher"
 
@@ -9,6 +11,8 @@ class Mode:
     def set_iv(self, iv):
         if len(iv) == len(self._iv):
             self._iv = iv
+
+
 from .aes_cipher import AESCipher
 from .key_expander import expandKey
 from .cbc_mode import CBCMode

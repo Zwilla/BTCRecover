@@ -81,7 +81,7 @@ def get_prf(name):
 
     Usage example::
 
-        >>> from passlib.utils.pbkdf2 import get_prf
+        >>> from lib.passlib.utils.pbkdf2 import get_prf
         >>> hmac_sha256, dsize = get_prf("hmac-sha256")
         >>> hmac_sha256
         <function hmac_sha256 at 0x1e37c80>

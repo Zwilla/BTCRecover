@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Unit Tests for Transaction Class
-#    © 2019 November - 1200 Web Development <http://1200wd.com/>
+#    © 2019 November - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,12 +15,12 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import unittest
-from bitcoinlib.transactions import *
-from bitcoinlib.keys import HDKey, BKeyError
+from lib.bitcoinlib.transactions import *
+from lib.bitcoinlib.keys import HDKey, BKeyError
 from tests.test_custom import CustomAssertions
 
 
@@ -1177,7 +1177,7 @@ class TestTransactionsScripts(unittest.TestCase, CustomAssertions):
 
 class TestTransactionsMultisigSoroush(unittest.TestCase):
     # Source: Example from
-    #   http://www.soroushjp.com/2014/12/20/bitcoin-multisig-the-hard-way-understanding-raw-multisignature-bitcoin-transactions/
+    #   https://www.soroushjp.com/2014/12/20/bitcoin-multisig-the-hard-way-understanding-raw-multisignature-bitcoin-transactions/
 
     def setUp(self):
         key1 = '5JruagvxNLXTnkksyLMfgFgf3CagJ3Ekxu5oGxpTm5mPfTAPez3'

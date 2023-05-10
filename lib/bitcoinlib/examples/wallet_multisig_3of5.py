@@ -4,12 +4,12 @@
 #
 #    Create Multisig 3-of-5 wallet
 #
-#    © 2017 November - 1200 Web Development <http://1200wd.com/>
+#    © 2017 November - 1200 Web Development <https://1200wd.com/>
 #
 
 from pprint import pprint
-from bitcoinlib.wallets import wallet_exists, HDWallet, wallet_delete_if_exists
-from bitcoinlib.keys import HDKey
+from lib.bitcoinlib.wallets import wallet_exists, HDWallet, wallet_delete_if_exists
+from lib.bitcoinlib.keys import HDKey
 
 WALLET_NAME = "Multisig_3of5"
 NETWORK = 'testnet'

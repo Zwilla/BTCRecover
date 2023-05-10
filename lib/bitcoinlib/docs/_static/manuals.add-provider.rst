@@ -39,7 +39,7 @@ Example:
 
 .. code-block:: python
 
-    from bitcoinlib.services.baseclient import BaseClient
+    from lib.bitcoinlib.services.baseclient import BaseClient
 
     PROVIDERNAME = 'bitgo'
 

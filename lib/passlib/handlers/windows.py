@@ -12,7 +12,7 @@ from lib.passlib.utils import to_unicode, right_pad_string
 from lib.passlib.utils.compat import unicode
 from lib.passlib.crypto.digest import lookup_hash
 md4 = lookup_hash("md4").const
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "lmhash",
@@ -113,8 +113,8 @@ class lmhash(uh.TruncateMixin, uh.HasEncodingContext, uh.StaticHandler):
         if not encoding:
             encoding = cls.default_encoding
         # some nice empircal data re: different encodings is at...
-        # http://www.openwall.com/lists/john-dev/2011/08/01/2
-        # http://www.freerainbowtables.com/phpBB3/viewtopic.php?t=387&p=12163
+        # https://www.openwall.com/lists/john-dev/2011/08/01/2
+        # https://www.freerainbowtables.com/phpBB3/viewtopic.php?t=387&p=12163
         from lib.passlib.crypto.des import des_encrypt_block
         MAGIC = cls._magic
         if isinstance(secret, unicode):

@@ -16,15 +16,21 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 
-import sys, os.path, base64, json, zlib, struct
+import sys
+import os.path
+import base64
+import json
+import zlib
+import struct
+
+from lib.ccl_chrome_indexeddb import ccl_leveldb
 
 prog = os.path.basename(sys.argv[0])
-
 sys.path.append('../')
-from lib.ccl_chrome_indexeddb import ccl_leveldb
+
 
 if len(sys.argv) != 2 or sys.argv[1].startswith("-"):
     print("usage:", prog, "METAMASK_EXTENSION_FOLDER", file=sys.stderr)
@@ -36,8 +42,8 @@ leveldb_records = ccl_leveldb.RawLevelDb(wallet_folder)
 
 walletdata_list = []
 for record in leveldb_records.iterate_records_raw():
-    #print(record)
-    #For LDB files and Ronin wallet log files
+    # print(record)
+    # For LDB files and Ronin wallet log files
     if b"vault" in record.key or b"encryptedVault" in record.key:
         data = record.value.decode("utf-8", "ignore").replace("\\", "")
         if "salt" in data:
@@ -45,7 +51,6 @@ for record in leveldb_records.iterate_records_raw():
                 continue
 
             walletdata_list.append(data[1:-1])
-
 
     if b"data" in record.key:
         data = record.value.decode("utf-8", "ignore").replace("\\", "")
@@ -68,14 +73,9 @@ for record in leveldb_records.iterate_records_raw():
             walletdata_list.append(wallet_data)
 
 for data in walletdata_list:
-    if walletdata_list.index(data) == (len(walletdata_list)-1):
+    if walletdata_list.index(data) == (len(walletdata_list) - 1):
         print("===== Current Vault Data =====\n")
     else:
         print("===== (Likely) Old Vault Data =====\n")
     print(data)
     print()
-
-
-
-
-

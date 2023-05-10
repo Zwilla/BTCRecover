@@ -18,7 +18,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 
 import warnings, os, unittest, pickle, tempfile, shutil, multiprocessing, time, gc, filecmp, sys, hashlib
@@ -1054,7 +1054,7 @@ def init_worker(wallet, char_mode, force_purepython, force_kdf_purepython):
     if force_kdf_purepython: btcrpass.load_pbkdf2_library(force_purepython=True)
 
 
-opencl_device_count = None
+opencl_device_count = 0
 def has_any_opencl_devices():
     global opencl_device_count
     global opencl_devices_list

@@ -4,11 +4,11 @@
 #
 #    EXAMPLES - Key and HDKey Class
 #
-#    © 2017 September - 1200 Web Development <http://1200wd.com/>
+#    © 2017 September - 1200 Web Development <https://1200wd.com/>
 #
 
 from pprint import pprint
-from bitcoinlib.keys import *
+from lib.bitcoinlib.keys import *
 
 
 # Key Class Examples

@@ -247,7 +247,7 @@ class ScryptEngineTest(TestCase):
 
     def test_salsa(self):
         """salsa20()"""
-        from passlib.crypto.scrypt._builtin import salsa20
+        from lib.passlib.crypto.scrypt._builtin import salsa20
 
         # NOTE: salsa2() currently operates on lists of 16 uint32 elements,
         #       which is what unpack_uint32_list(hb(() is for...
@@ -323,7 +323,7 @@ class _CommonScryptTest(TestCase):
 
         #------------------------------------------------------------------------
         # test vectors from scrypt whitepaper --
-        # http://www.tarsnap.com/scrypt/scrypt.pdf, appendix b
+        # https://www.tarsnap.com/scrypt/scrypt.pdf, appendix b
         #
         # also present in (expired) scrypt rfc draft --
         # https://tools.ietf.org/html/draft-josefsson-scrypt-kdf-01, section 11
@@ -550,7 +550,7 @@ class _CommonScryptTest(TestCase):
         self.assertEqual(run_scrypt(1), 'da')
 
         # pick random value
-        ksize = rng.randint(0, 1 << 10)
+        ksize = rng.randint(1, 1 << 10)
         self.assertEqual(len(run_scrypt(ksize)), 2*ksize) # 2 hex chars per output
 
         # one more than upper bound

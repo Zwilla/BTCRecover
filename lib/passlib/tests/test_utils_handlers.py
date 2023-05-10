@@ -10,13 +10,13 @@ from logging import getLogger
 import warnings
 # site
 # pkg
-from passlib.hash import ldap_md5, sha256_crypt
-from passlib.exc import MissingBackendError, PasslibHashWarning
-from passlib.utils.compat import str_to_uascii, \
+from lib.passlib.hash import ldap_md5, sha256_crypt
+from lib.passlib.exc import MissingBackendError, PasslibHashWarning
+from lib.passlib.utils.compat import str_to_uascii, \
                                  uascii_to_str, unicode
-import lib.passlib.utils.handlers as uh
-from passlib.tests.utils import HandlerCase, TestCase
-from passlib.utils.compat import u
+import passlib.utils.handlers as uh
+from lib.passlib.tests.utils import HandlerCase, TestCase
+from lib.passlib.utils.compat import u
 # module
 log = getLogger(__name__)
 

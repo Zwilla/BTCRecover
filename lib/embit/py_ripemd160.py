@@ -1,6 +1,6 @@
 # Copyright (c) 2021 Pieter Wuille
 # Distributed under the MIT software license, see the accompanying
-# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+# file COPYING or https://www.opensource.org/licenses/mit-license.php.
 """Pure Python RIPEMD160 implementation."""
 
 # Message schedule indexes for the left path.

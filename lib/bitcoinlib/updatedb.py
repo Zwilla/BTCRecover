@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Update database
-#    © 2017 November - 1200 Web Development <http://1200wd.com/>
+#    © 2017 November - 1200 Web Development <https://1200wd.com/>
 #
 #    This script creates a database with latest structure and copies only wallets and keys from old database
 #    Transactions, UTXO's and values are not copied, but can be recreated with utxos_update and transaction_update
@@ -17,8 +17,8 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from shutil import move
-from bitcoinlib.main import DEFAULT_DATABASE, BCL_DATABASE_DIR, BITCOINLIB_VERSION
-from bitcoinlib.db import Base, DbWallet, DbKey, DbKeyMultisigChildren, DbConfig
+from lib.bitcoinlib.main import DEFAULT_DATABASE, BCL_DATABASE_DIR, BITCOINLIB_VERSION
+from lib.bitcoinlib.db import Base, DbWallet, DbKey, DbKeyMultisigChildren, DbConfig
 try:
     input = raw_input
 except NameError:

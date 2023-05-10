@@ -12,7 +12,7 @@ from lib.passlib.utils import safe_crypt, test_crypt, to_unicode
 from lib.passlib.utils.binary import h64, h64big
 from lib.passlib.utils.compat import byte_elem_value, u, uascii_to_str, unicode, suppress_cause
 from lib.passlib.crypto.des import des_encrypt_int_block
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "des_crypt",
@@ -217,13 +217,13 @@ class des_crypt(uh.TruncateMixin, uh.HasManyBackends, uh.HasSalt, uh.GenericHand
         # NOTE: we let safe_crypt() encode unicode secret -> utf8;
         #       no official policy since des-crypt predates unicode
         hash = safe_crypt(secret, self.salt)
-        if hash:
-            assert hash.startswith(self.salt) and len(hash) == 13
-            return hash[2:]
-        else:
+        if hash is None:
             # py3's crypt.crypt() can't handle non-utf8 bytes.
             # fallback to builtin alg, which is always available.
             return self._calc_checksum_builtin(secret)
+        if not hash.startswith(self.salt) or len(hash) != 13:
+            raise uh.exc.CryptBackendError(self, self.salt, hash)
+        return hash[2:]
 
     #---------------------------------------------------------------
     # builtin backend
@@ -380,13 +380,13 @@ class bsdi_crypt(uh.HasManyBackends, uh.HasRounds, uh.HasSalt, uh.GenericHandler
     def _calc_checksum_os_crypt(self, secret):
         config = self.to_string()
         hash = safe_crypt(secret, config)
-        if hash:
-            assert hash.startswith(config[:9]) and len(hash) == 20
-            return hash[-11:]
-        else:
+        if hash is None:
             # py3's crypt.crypt() can't handle non-utf8 bytes.
             # fallback to builtin alg, which is always available.
             return self._calc_checksum_builtin(secret)
+        if not hash.startswith(config[:9]) or len(hash) != 20:
+            raise uh.exc.CryptBackendError(self, config, hash)
+        return hash[-11:]
 
     #---------------------------------------------------------------
     # builtin backend

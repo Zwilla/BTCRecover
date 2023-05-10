@@ -10,7 +10,7 @@ import os
 from warnings import warn
 # site
 # pkg
-from lib.passlib import exc, registry
+from passlib import exc, registry
 from lib.passlib.context import CryptContext
 from lib.passlib.exc import ExpectedStringError
 from lib.passlib.hash import htdigest
@@ -80,7 +80,7 @@ class _CommonFile(object):
         :arg data:
             database to load, as single string.
 
-        :param \*\*kwds:
+        :param \\*\\*kwds:
             all other keywords are the same as in the class constructor
         """
         if 'path' in kwds:
@@ -97,7 +97,7 @@ class _CommonFile(object):
         :arg path:
             local filepath to load from
 
-        :param \*\*kwds:
+        :param \\*\\*kwds:
             all other keywords are the same as in the class constructor
         """
         self = cls(**kwds)
@@ -425,7 +425,7 @@ class _CommonFile(object):
 # to *verify* any scheme using that method, but can only generate "des_crypt" hashes.
 #
 # Apache 2.4 added builtin bcrypt support (even for platforms w/o native support).
-# c.f. http://httpd.apache.org/docs/2.4/programs/htpasswd.html vs the 2.2 docs.
+# c.f. https://httpd.apache.org/docs/2.4/programs/htpasswd.html vs the 2.2 docs.
 #=============================================================================
 
 #: set of default schemes that (if chosen) should be using bcrypt,

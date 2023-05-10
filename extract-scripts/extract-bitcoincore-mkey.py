@@ -16,9 +16,13 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, struct, base64, zlib
+import sys
+import os.path
+import struct
+import base64
+import zlib
 
 prog = os.path.basename(sys.argv[0])
 
@@ -41,7 +45,7 @@ with open(wallet_filename, "rb") as wallet_file:
         isSQLite = True
 
     if not isBDB and not isSQLite:
-        print(prog+": error: file is not a Bitcoin Core wallet", file=sys.stderr)
+        print(prog + ": error: file is not a Bitcoin Core wallet", file=sys.stderr)
         sys.exit(1)
 
 force_purepython = False
@@ -113,10 +117,11 @@ try:
 except AssertionError:
     pass
 
-#If we still haven't got a valid mkey, try it as SQLite
+# If we still haven't got a valid mkey, try it as SQLite
 if not mkey:
     # It may be a more modern wallet file
     import sqlite3
+
     wallet_conn = sqlite3.connect(wallet_filename)
     try:
         for key, value in wallet_conn.execute('SELECT * FROM main'):
@@ -130,7 +135,7 @@ if not mkey:
     wallet_conn.close()
 
 if not mkey:
-    raise ValueError("Encrypted master key #1 not found in the Bitcoin Core wallet file.\n"+
+    raise ValueError("Encrypted master key #1 not found in the Bitcoin Core wallet file.\n" +
                      "(is this wallet encrypted? is this a standard Bitcoin Core wallet?)")
 
 # This is a little fragile because it assumes the encrypted key and salt sizes are
@@ -138,12 +143,12 @@ if not mkey:
 # (it will loudly fail if this isn't the case; if smarter it could gracefully succeed):
 encrypted_master_key, salt, method, iter_count = struct.unpack_from("< 49p 9p I I", mkey)
 if method != 0:
-    print(prog+": warning: unexpected Bitcoin Core key derivation method", str(method), file=sys.stderr)
+    print(prog + ": warning: unexpected Bitcoin Core key derivation method", str(method), file=sys.stderr)
 
 print("Partial Bitcoin Core encrypted master key, salt, iter_count, and crc in base64:", file=sys.stderr)
 
 # Only include the last two AES blocks (last 32 bytes) of the 48-byte encrypted master key
-bytes = b"bc:" + encrypted_master_key[-32:] + salt + struct.pack("<I", iter_count)
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
+last32bytes = b"bc:" + encrypted_master_key[-32:] + salt + struct.pack("<I", iter_count)
+crc_bytes = struct.pack("<I", zlib.crc32(last32bytes) & 0xffffffff)
 
-print(base64.b64encode(bytes + crc_bytes).decode())
+print(base64.b64encode(last32bytes + crc_bytes).decode())

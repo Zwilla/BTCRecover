@@ -16,18 +16,24 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, sqlite3, base64, zlib, struct, binascii
+import sys
+import os.path
+import sqlite3
+import base64
+import zlib
+import struct
+import binascii
 
 prog = os.path.basename(sys.argv[0])
 
-if len(sys.argv) not in (2,3) or sys.argv[1].startswith("-"):
+if len(sys.argv) not in (2, 3) or sys.argv[1].startswith("-"):
     print("usage:", prog, "MSIGNA_VAULT_FILE [KEYCHAIN-NAME]", file=sys.stderr)
     sys.exit(2)
 
 vault_filename = sys.argv[1]
-keychain_name  = sys.argv[2] if len(sys.argv) >= 3 else None
+keychain_name = sys.argv[2] if len(sys.argv) >= 3 else None
 
 # Open the mSIGNA vault file (it's a SQLite 3 file)
 wallet_conn = sqlite3.connect(vault_filename)
@@ -59,14 +65,14 @@ wallet_conn.close()
 # contain 32 bytes of encrypted key data, followed by 16 bytes of encrypted padding
 privkey_ciphertext = keychain["privkey_ciphertext"]
 if len(privkey_ciphertext) == 32:
-    sys.exit("mSIGNA keychain '"+keychain["name"]+"' is not encrypted")
+    sys.exit("mSIGNA keychain '" + keychain["name"] + "' is not encrypted")
 if len(privkey_ciphertext) != 48:
-    sys.exit("mSIGNA keychain '"+keychain["name"]+"' has an unexpected privkey length")
+    sys.exit("mSIGNA keychain '" + keychain["name"] + "' has an unexpected privkey length")
 
 print("mSIGNA partial encrypted master private key, salt, and crc in base64:", file=sys.stderr)
 
 # We only need the last half of the encrypted master private key and the encrypted
 # padding (the last 32 bytes of the 48 bytes of ciphertext), plus the salt
-bytes = b"ms:" + privkey_ciphertext[16:48] + struct.pack("< q", keychain["privkey_salt"])
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
-print(base64.b64encode(bytes + crc_bytes).decode())
+l32bytes = b"ms:" + privkey_ciphertext[16:48] + struct.pack("< q", keychain["privkey_salt"])
+crc_bytes = struct.pack("<I", zlib.crc32(l32bytes) & 0xffffffff)
+print(base64.b64encode(l32bytes + crc_bytes).decode())

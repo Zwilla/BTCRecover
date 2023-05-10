@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Unit Tests Custom classes
-#    © 2018 February - 1200 Web Development <http://1200wd.com/>
+#    © 2018 February - 1200 Web Development <https://1200wd.com/>
 #
 
 

@@ -171,7 +171,7 @@ def main():
         # imports
         #=================================================================
         # pkg
-        from passlib.crypto._blowfish.base import BlowfishEngine as _BlowfishEngine
+        from lib.passlib.crypto._blowfish.base import BlowfishEngine as _BlowfishEngine
         # local
         __all__ = [
             "BlowfishEngine",

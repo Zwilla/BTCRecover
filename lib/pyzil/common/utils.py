@@ -16,7 +16,6 @@ import string
 import secrets
 from typing import Union, Optional
 
-
 TOKEN_NUM_BYTES = 32
 TOKEN_STR_LENGTH = TOKEN_NUM_BYTES * 2
 
@@ -32,12 +31,12 @@ def rand_string(n_len: int) -> str:
     return "".join(secrets.choice(alphabet) for _ in range(n_len))
 
 
-def rand_bytes(n_bytes: int=TOKEN_NUM_BYTES) -> bytes:
+def rand_bytes(n_bytes: int = TOKEN_NUM_BYTES) -> bytes:
     """Return a random binary containing n_bytes bytes."""
     return secrets.token_bytes(n_bytes)
 
 
-def rand_hex_str(n_len: int=TOKEN_STR_LENGTH, prefix: str="") -> str:
+def rand_hex_str(n_len: int = TOKEN_STR_LENGTH, prefix: str = "") -> str:
     """Return a random string containing n_len chars."""
     return prefix + (secrets.token_hex(n_len // 2 + 1)[:n_len])
 
@@ -57,7 +56,7 @@ def bytes_to_hex_str(bytes_hex: bytes, prefix="") -> str:
     return prefix + bytes_hex.hex()
 
 
-def int_to_bytes(i: int, n_bytes: Optional[int]=TOKEN_NUM_BYTES,
+def int_to_bytes(i: int, n_bytes: Optional[int] = TOKEN_NUM_BYTES,
                  byteorder="big") -> bytes:
     """Convert int to bytes."""
     if n_bytes is None:
@@ -70,7 +69,7 @@ def bytes_to_int(bytes_hex: bytes, byteorder="big") -> int:
     return int.from_bytes(bytes_hex, byteorder=byteorder)
 
 
-def int_to_hex_str(i: int, n_bytes: Optional[int]=TOKEN_NUM_BYTES,
+def int_to_hex_str(i: int, n_bytes: Optional[int] = TOKEN_NUM_BYTES,
                    prefix="", byteorder="big") -> str:
     """Convert int to hex string."""
     return bytes_to_hex_str(int_to_bytes(i, n_bytes, byteorder), prefix=prefix)

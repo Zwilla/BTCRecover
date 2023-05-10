@@ -19,8 +19,8 @@ import warnings
 # site
 # pkg
 # module
-from passlib.utils.compat import u, JYTHON
-from passlib.tests.utils import TestCase, hb
+from lib.passlib.utils.compat import u, JYTHON
+from lib.passlib.tests.utils import TestCase, hb
 
 #=============================================================================
 # test assorted crypto helpers
@@ -35,9 +35,10 @@ class UtilsTest(TestCase):
         ("md5", "md5",          "SCRAM-MD5-PLUS", "MD-5"),
         ("sha1", "sha-1",       "SCRAM-SHA-1", "SHA1"),
         ("sha256", "sha-256",   "SHA_256", "sha2-256"),
-        ("ripemd", "ripemd",    "SCRAM-RIPEMD", "RIPEMD"),
-        ("ripemd160", "ripemd-160",
-                                "SCRAM-RIPEMD-160", "RIPEmd160"),
+        ("ripemd160", "ripemd-160", "SCRAM-RIPEMD-160", "RIPEmd160",
+            # NOTE: there was an older "RIPEMD" & "RIPEMD-128", but python treates "RIPEMD"
+            #       as alias for "RIPEMD-160"
+            "ripemd", "SCRAM-RIPEMD"),
         ("test128", "test-128", "TEST128"),
         ("test2", "test2", "TEST-2"),
         ("test3_128", "test3-128", "TEST-3-128"),
@@ -50,8 +51,8 @@ class UtilsTest(TestCase):
     def test_norm_hash_name(self):
         """norm_hash_name()"""
         from itertools import chain
-        from passlib.utils.pbkdf2 import norm_hash_name
-        from passlib.crypto.digest import _known_hash_names
+        from lib.passlib.utils.pbkdf2 import norm_hash_name
+        from lib.passlib.crypto.digest import _known_hash_names
 
         # test formats
         for format in self.ndn_formats:
@@ -87,7 +88,7 @@ class Pbkdf1_Test(TestCase):
         # (password, salt, rounds, keylen, hash, result)
 
         #
-        # from http://www.di-mgt.com.au/cryptoKDFs.html
+        # from https://www.di-mgt.com.au/cryptoKDFs.html
         #
         (b'password', hb('78578E5A5D63CB06'), 1000, 16, 'sha1', hb('dc19847e05c64d2faf10ebfb4a3d2a20')),
 
@@ -112,14 +113,14 @@ class Pbkdf1_Test(TestCase):
 
     def test_known(self):
         """test reference vectors"""
-        from passlib.utils.pbkdf2 import pbkdf1
+        from lib.passlib.utils.pbkdf2 import pbkdf1
         for secret, salt, rounds, keylen, digest, correct in self.pbkdf1_tests:
             result = pbkdf1(secret, salt, rounds, keylen, digest)
             self.assertEqual(result, correct)
 
     def test_border(self):
         """test border cases"""
-        from passlib.utils.pbkdf2 import pbkdf1
+        from lib.passlib.utils.pbkdf2 import pbkdf1
         def helper(secret=b'secret', salt=b'salt', rounds=1, keylen=1, hash='md5'):
             return pbkdf1(secret, salt, rounds, keylen, hash)
         helper()
@@ -234,7 +235,7 @@ class Pbkdf2_Test(TestCase):
             ),
 
         #
-        # from example in http://grub.enbug.org/Authentication
+        # from example in https://grub.enbug.org/Authentication
         #
             (
                hb("887CFF169EA8335235D8004242AA7D6187A41E3187DF0CE14E256D85ED"
@@ -267,7 +268,7 @@ class Pbkdf2_Test(TestCase):
 
     def test_known(self):
         """test reference vectors"""
-        from passlib.utils.pbkdf2 import pbkdf2
+        from lib.passlib.utils.pbkdf2 import pbkdf2
         for row in self.pbkdf2_test_vectors:
             correct, secret, salt, rounds, keylen = row[:5]
             prf = row[5] if len(row) == 6 else "hmac-sha1"
@@ -276,7 +277,7 @@ class Pbkdf2_Test(TestCase):
 
     def test_border(self):
         """test border cases"""
-        from passlib.utils.pbkdf2 import pbkdf2
+        from lib.passlib.utils.pbkdf2 import pbkdf2
         def helper(secret=b'password', salt=b'salt', rounds=1, keylen=None, prf="hmac-sha1"):
             return pbkdf2(secret, salt, rounds, keylen, prf)
         helper()
@@ -304,7 +305,7 @@ class Pbkdf2_Test(TestCase):
 
     def test_default_keylen(self):
         """test keylen==None"""
-        from passlib.utils.pbkdf2 import pbkdf2
+        from lib.passlib.utils.pbkdf2 import pbkdf2
         def helper(secret=b'password', salt=b'salt', rounds=1, keylen=None, prf="hmac-sha1"):
             return pbkdf2(secret, salt, rounds, keylen, prf)
         self.assertEqual(len(helper(prf='hmac-sha1')), 20)
@@ -312,7 +313,7 @@ class Pbkdf2_Test(TestCase):
 
     def test_custom_prf(self):
         """test custom prf function"""
-        from passlib.utils.pbkdf2 import pbkdf2
+        from lib.passlib.utils.pbkdf2 import pbkdf2
         def prf(key, msg):
             return hashlib.md5(key+msg+b'fooey').digest()
         self.assertRaises(NotImplementedError, pbkdf2, b'secret', b'salt', 1000, 20, prf)

@@ -4,12 +4,12 @@
 #
 #    EXAMPLES - Mnemonic Wallets
 #
-#    © 2018 February - 1200 Web Development <http://1200wd.com/>
+#    © 2018 February - 1200 Web Development <https://1200wd.com/>
 #
 
 import os
-from bitcoinlib.wallets import HDWallet, BCL_DATABASE_DIR
-from bitcoinlib.mnemonic import Mnemonic
+from lib.bitcoinlib.wallets import HDWallet, BCL_DATABASE_DIR
+from lib.bitcoinlib.mnemonic import Mnemonic
 try:
     input = raw_input
 except NameError:

@@ -15,7 +15,7 @@ from lib.passlib.utils import right_pad_string, to_unicode, repeat_string, to_by
 from lib.passlib.utils.binary import h64
 from lib.passlib.utils.compat import unicode, u, join_byte_values, \
              join_byte_elems, iter_byte_values, uascii_to_str
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "cisco_pix",
@@ -119,7 +119,7 @@ class cisco_pix(uh.HasUserContext, uh.StaticHandler):
         # encode secret
         #
         # per ASA 8.4 documentation,
-        # http://www.cisco.com/c/en/us/td/docs/security/asa/asa84/configuration/guide/asa_84_cli_config/ref_cli.html#Supported_Character_Sets,
+        # https://www.cisco.com/c/en/us/td/docs/security/asa/asa84/configuration/guide/asa_84_cli_config/ref_cli.html#Supported_Character_Sets,
         # it supposedly uses UTF-8 -- though some double-encoding issues have
         # been observed when trying to actually *set* a non-ascii password
         # via ASDM, and access via SSH seems to strip 8-bit chars.
@@ -131,7 +131,7 @@ class cisco_pix(uh.HasUserContext, uh.StaticHandler):
         # check if password too large
         #
         # Per ASA 9.6 changes listed in
-        # http://www.cisco.com/c/en/us/td/docs/security/asa/roadmap/asa_new_features.html,
+        # https://www.cisco.com/c/en/us/td/docs/security/asa/roadmap/asa_new_features.html,
         # prior releases had a maximum limit of 32 characters.
         # Testing with an ASA 9.6 system bears this out --
         # setting 32-char password for a user account,
@@ -140,7 +140,7 @@ class cisco_pix(uh.HasUserContext, uh.StaticHandler):
         #  which supports larger passwords).
         #
         # Per PIX documentation
-        # http://www.cisco.com/en/US/docs/security/pix/pix50/configuration/guide/commands.html,
+        # https://www.cisco.com/en/US/docs/security/pix/pix50/configuration/guide/commands.html,
         # it would not allow passwords > 16 chars.
         #
         # Thus, we unconditionally throw a password size error here,

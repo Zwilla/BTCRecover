@@ -4,10 +4,10 @@
 #
 #    EXAMPLES - Encoding helper methods
 #
-#    © 2017 September - 1200 Web Development <http://1200wd.com/>
+#    © 2017 September - 1200 Web Development <https://1200wd.com/>
 #
 
-from bitcoinlib.encoding import *
+from lib.bitcoinlib.encoding import *
 
 #
 # Change Base conversion examples

@@ -17,9 +17,13 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, base64, zlib, struct
+import sys
+import os.path
+import base64
+import zlib
+import struct
 
 prog = os.path.basename(sys.argv[0])
 
@@ -38,7 +42,8 @@ with open(privkey_filename, "rb") as privkey_file:
         from btcrecover import coinomi_pb2
     except ModuleNotFoundError:
         exit(
-            "\nERROR: Cannot load protobuf module... Be sure to install all requirements with the command 'pip3 install -r requirements.txt', see https://btcrecover.readthedocs.io/en/latest/INSTALL/")
+            "\nERROR: Cannot load protobuf module... Be sure to install all requirements with the command\n"
+            "'pip3 install -r requirements.txt', see https://btcrecover.readthedocs.io/en/latest/INSTALL/")
 
     pb_wallet = coinomi_pb2.Wallet()
     pb_wallet.ParseFromString(filedata)
@@ -58,7 +63,7 @@ with open(privkey_filename, "rb") as privkey_file:
     scrypt_p = pb_wallet.encryption_parameters.p
 
 print("Coinomi partial first encrypted private key, salt, n, r, p and crc in base64:", file=sys.stderr)
-bytes = b"cn:" + struct.pack("< 32s 8s I H H", encrypted_masterkey_part, scrypt_salt, scrypt_n, scrypt_r, scrypt_p)
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
+l32bytes = b"cn:" + struct.pack("< 32s 8s I H H", encrypted_masterkey_part, scrypt_salt, scrypt_n, scrypt_r, scrypt_p)
+crc_bytes = struct.pack("<I", zlib.crc32(l32bytes) & 0xffffffff)
 
-print(base64.b64encode(bytes + crc_bytes).decode())
+print(base64.b64encode(l32bytes + crc_bytes).decode())

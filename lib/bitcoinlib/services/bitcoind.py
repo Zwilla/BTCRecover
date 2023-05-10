@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Client for bitcoind deamon
-#    © 2017 June - 1200 Web Development <http://1200wd.com/>
+#    © 2017 June - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,16 +15,16 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 from datetime import datetime
-from bitcoinlib.main import *
-from bitcoinlib.services.authproxy import AuthServiceProxy
-from bitcoinlib.services.baseclient import BaseClient, ClientError
-from bitcoinlib.transactions import Transaction
-from bitcoinlib.encoding import to_hexstring
-from bitcoinlib.networks import Network
+from lib.bitcoinlib.main import *
+from lib.bitcoinlib.services.authproxy import AuthServiceProxy
+from lib.bitcoinlib.services.baseclient import BaseClient, ClientError
+from lib.bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.encoding import to_hexstring
+from lib.bitcoinlib.networks import Network
 
 
 PROVIDERNAME = 'bitcoind'
@@ -117,7 +117,7 @@ class BitcoindClient(BaseClient):
         server = _read_from_config(config, 'rpc', 'bind', server)
         server = _read_from_config(config, 'rpc', 'externalip', server)
 
-        url = "http://%s:%s@%s:%s" % (config.get('rpc', 'rpcuser'), config.get('rpc', 'rpcpassword'), server, port)
+        url = "https://%s:%s@%s:%s" % (config.get('rpc', 'rpcuser'), config.get('rpc', 'rpcpassword'), server, port)
         return BitcoindClient(network, url)
 
     def __init__(self, network='bitcoin', base_url='', denominator=100000000, *args):
@@ -241,7 +241,7 @@ if __name__ == '__main__':
     from pprint import pprint
 
     # 1. Connect by specifying connection URL
-    # base_url = 'http://bitcoinrpc:passwd@host:8332'
+    # base_url = 'https://bitcoinrpc:passwd@host:8332'
     # bdc = BitcoindClient(base_url=base_url)
 
     # 2. Or connect using default settings or settings from config file

@@ -7,7 +7,7 @@ import re
 import logging; log = logging.getLogger(__name__)
 from warnings import warn
 # pkg
-from lib.passlib import exc
+from passlib import exc
 from lib.passlib.exc import ExpectedTypeError, PasslibWarning
 from lib.passlib.ifc import PasswordHash
 from lib.passlib.utils import (
@@ -125,6 +125,8 @@ _locations = dict(
     ldap_hex_sha1 = "passlib.handlers.roundup",
     ldap_salted_md5 = "passlib.handlers.ldap_digests",
     ldap_salted_sha1 = "passlib.handlers.ldap_digests",
+    ldap_salted_sha256 = "passlib.handlers.ldap_digests",
+    ldap_salted_sha512 = "passlib.handlers.ldap_digests",
     ldap_des_crypt = "passlib.handlers.ldap_digests",
     ldap_bsdi_crypt = "passlib.handlers.ldap_digests",
     ldap_md5_crypt = "passlib.handlers.ldap_digests",
@@ -215,13 +217,13 @@ def register_crypt_handler_path(name, path):
     for example, the following would cause ``get_handler("myhash")`` to look
     for a class named ``myhash`` within the ``myapp.helpers`` module::
 
-        >>> from passlib.registry import registry_crypt_handler_path
+        >>> from lib.passlib.registry import registry_crypt_handler_path
         >>> registry_crypt_handler_path("myhash", "myapp.helpers")
 
     ...while this form would cause ``get_handler("myhash")`` to look
     for a class name ``MyHash`` within the ``myapp.helpers`` module::
 
-        >>> from passlib.registry import registry_crypt_handler_path
+        >>> from lib.passlib.registry import registry_crypt_handler_path
         >>> registry_crypt_handler_path("myhash", "myapp.helpers:MyHash")
     """
     # validate name
@@ -518,8 +520,11 @@ def get_supported_os_crypt_schemes():
                   if get_crypt_handler(name).has_backend(OS_CRYPT))
     if not cache:  # pragma: no cover -- sanity check
         # no idea what OS this could happen on...
+        import platform
         warn("crypt.crypt() function is present, but doesn't support any "
-             "formats known to passlib!", exc.PasslibRuntimeWarning)
+             "formats known to passlib! (system=%r release=%r)" %
+             (platform.system(), platform.release()),
+             exc.PasslibRuntimeWarning)
     return cache
 
 

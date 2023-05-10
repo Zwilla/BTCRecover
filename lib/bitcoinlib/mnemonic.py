@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    MNEMONIC class for BIP0039 Mnemonic Key management
-#    © 2016 - 2019 November - 1200 Web Development <http://1200wd.com/>
+#    © 2016 - 2019 November - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,7 +15,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import hashlib
@@ -71,7 +71,7 @@ class Mnemonic(object):
         
         First use 'sanitize_mnemonic' to determine language and validate and check words
 
-        >>> from bitcoinlib.encoding import to_hexstring
+        >>> from lib.bitcoinlib.encoding import to_hexstring
         >>> to_hexstring(Mnemonic().to_seed('chunk gun celery million wood kite tackle twenty story episode raccoon dutch'))
         '6969ed4666db67fc74fae7869e2acf3c766b5ef95f5e31eb2fcebd93d76069c6de971225f700042b0b513f0ad6c8562277fc4b5ee1344b720f1686dc2dccc220'
 
@@ -162,7 +162,7 @@ class Mnemonic(object):
         """
         Convert Mnemonic words back to key data entropy
 
-        >>> from bitcoinlib.encoding import to_hexstring
+        >>> from lib.bitcoinlib.encoding import to_hexstring
         >>> to_hexstring(Mnemonic().to_entropy('chunk gun celery million wood kite tackle twenty story episode raccoon dutch'))
         '28acfc94465fd2f6774759d6897ec122'
 

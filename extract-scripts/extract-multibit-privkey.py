@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import binascii
 # extract-multibit-privkey.py -- MultiBit private key extractor
 # Copyright (C) 2014, 2015 Christopher Gurnee
 #
@@ -16,9 +16,13 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, base64, zlib, struct
+import sys
+import os.path
+import base64
+import zlib
+import struct
 
 prog = os.path.basename(sys.argv[0])
 
@@ -29,26 +33,26 @@ if len(sys.argv) != 2 or sys.argv[1].startswith("-"):
 privkey_filename = sys.argv[1]
 
 with open(privkey_filename, "rb") as privkey_file:
-
     # Multibit privkey files contain base64 text split into multiple lines;
     # we need the first 32 bytes after decoding, which translates to 44 before.
     base64_encoded = b"".join(privkey_file.read(50).split())  # join multiple lines into one
     if len(base64_encoded) < 44:
-        print(prog+": error: file is not a MultiBit private key file (too short)", file=sys.stderr)
+        print(prog + ": error: file is not a MultiBit private key file (too short)", file=sys.stderr)
         sys.exit(1)
-    try: salt_privkey = base64.b64decode(base64_encoded[:44])
-    except:
-        print(prog+": error: file is not a MultiBit private key file (not base64 encoded)", file=sys.stderr)
+    try:
+        salt_privkey = base64.b64decode(base64_encoded[:44])
+    except binascii.Error:
+        print(prog + ": error: file is not a MultiBit private key file (not base64 encoded)", file=sys.stderr)
         sys.exit(1)
     if not salt_privkey.startswith(b"Salted__"):
-        print(prog+": error: file is not a MultiBit private key file", file=sys.stderr)
+        print(prog + ": error: file is not a MultiBit private key file", file=sys.stderr)
         sys.exit(1)
     if len(salt_privkey) < 32:
-        print(prog+": error: file is not a MultiBit private key file (too short)", file=sys.stderr)
+        print(prog + ": error: file is not a MultiBit private key file (too short)", file=sys.stderr)
         sys.exit(1)
 
 print("\nWARNING: please read the important warning in the Usage for MultiBit\n"
-        "         Classic section of Extract_Scripts.md before proceeding.\n")
+      "         Classic section of Extract_Scripts.md before proceeding.\n")
 
 print("MultiBit partial first encrypted private key, salt, and crc in base64:", file=sys.stderr)
 
@@ -56,7 +60,6 @@ print("MultiBit partial first encrypted private key, salt, and crc in base64:", 
 #   8 bytes of salt, followed by
 #   1 16-byte encrypted aes block containing the first 16 base58 chars of a 52-char encoded private key
 
-bytes = b"mb:" + salt_privkey[8:32]
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
-
-print(base64.b64encode(bytes + crc_bytes).decode())
+l32bytes = b"mb:" + salt_privkey[8:32]
+crc_bytes = struct.pack("<I", zlib.crc32(l32bytes) & 0xffffffff)
+print(base64.b64encode(l32bytes + crc_bytes).decode())

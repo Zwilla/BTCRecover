@@ -8,7 +8,9 @@
 
     This file was originally part of Blockstack (https://github.com/stacks-network/stacks-blockchain/tree/v20.0.8.8)
     It is an implementation of Crockford base-32 encoding library with 4-byte checksum.
-    Note: This has been updated for Python3, but only those functions used in BTCRecover and for the implementation/testing of STX support have been fully tested. (Though any broken functions should only require trivial fixes)
+    Note: This has been updated for Python3, but only those functions used in BTCRecover and for the
+    implementation/testing of STX support have been fully tested.
+    (Though any broken functions should only require trivial fixes)
 
     Blockstack is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,12 +22,13 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with Blockstack. If not, see <http://www.gnu.org/licenses/>.
+    along with Blockstack. If not, see <https://www.gnu.org/licenses/>.
 """
 
 import re
 import hashlib
-from lib.cashaddress import base58 #If you want to use this file standalone, just use the base58 off pypy and change this line
+from lib.cashaddress import \
+    base58  # If you want to use this file standalone, just use the base58 off pypy and change this line
 import binascii
 
 C32 = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
@@ -33,12 +36,12 @@ HEX = '0123456789abcdef'
 
 C32_versions = {
     'mainnet': {
-        'p2pkh': 22,    # 'P'
-        'p2sh': 20      # 'M'
-     },
+        'p2pkh': 22,  # 'P'
+        'p2sh': 20  # 'M'
+    },
     'testnet': {
-        'p2pkh': 26,    # 'T'
-        'p2sh': 21      # 'N'
+        'p2pkh': 26,  # 'T'
+        'p2sh': 21  # 'N'
     }
 }
 
@@ -48,7 +51,7 @@ ADDR_BITCOIN_TO_STACKS = {
     111: C32_versions['testnet']['p2pkh'],
     196: C32_versions['testnet']['p2sh']
 }
-    
+
 ADDR_STACKS_TO_BITCOIN = {
     C32_versions['mainnet']['p2pkh']: 0,
     C32_versions['mainnet']['p2sh']: 5,
@@ -103,22 +106,21 @@ def c32encode(input_hex, min_length=None):
     if len(input_hex) == 0:
         return ''
 
-
     if len(input_hex) % 2 != 0:
         input_hex = '0{}'.format(input_hex)
 
     binascii.unhexlify(input_hex)
 
     input_hex = input_hex.lower()
-    
+
     res = []
     carry = 0
     for i in range(len(input_hex) - 1, -1, -1):
-        if (carry < 4):
+        if carry < 4:
             current_code = HEX.index(input_hex[i]) >> carry
             next_code = 0
             if i != 0:
-                next_code = HEX.index(input_hex[i-1])
+                next_code = HEX.index(input_hex[i - 1])
 
             # carry = 0, next_bits is 1, carry = 1, next_bits = 2
             next_bits = 1 + carry
@@ -254,7 +256,7 @@ def c32decode(c32input, min_length=0):
 
     if min_length and min_length > 0:
         count = min_length * 2 - len(hexstr)
-        hexstr = '00' * (count / 2) + hexstr
+        hexstr = '00' + str((count / 2)) + hexstr
 
     return hexstr
 
@@ -263,7 +265,7 @@ def c32checksum(data_hex):
     tmphash = hashlib.sha256(binascii.unhexlify(data_hex)).digest()
     data_hash = hashlib.sha256(tmphash).digest()
     checksum = binascii.hexlify(data_hash[0:4]).decode()
-    return checksum 
+    return checksum
 
 
 def c32checkEncode(version, data):
@@ -318,7 +320,7 @@ def c32checkEncode(version, data):
     '2G000003FNKA3P'
     """
     if version < 0 or version >= len(C32):
-        raise ValueError('Invalid version -- must be between 0 and {}'.format(len(C32)-1))
+        raise ValueError('Invalid version -- must be between 0 and {}'.format(len(C32) - 1))
 
     binascii.unhexlify(data)
 
@@ -395,10 +397,10 @@ def c32checkDecode(c32data):
     version_hex = '{:02x}'.format(version)
     checksum = data_hex[-8:]
 
-    if c32checksum('{}{}'.format(version_hex, data_hex[0:len(data_hex)-8])) != checksum:
+    if c32checksum('{}{}'.format(version_hex, data_hex[0:len(data_hex) - 8])) != checksum:
         raise ValueError('Invalid c32check string: checksum mismatch')
 
-    return (version, data_hex[0:len(data_hex)-8])
+    return version, data_hex[0:len(data_hex) - 8]
 
 
 def c32address(version, hash160hex):
@@ -434,7 +436,7 @@ def c32addressDecode(c32addr):
     >>> c32addressDecode('ST80000000000000000000000000000002YBNPV3')
     (26, '1000000000000000000000000000000000000000')
     """
-    if (len(c32addr) <= 5):
+    if len(c32addr) <= 5:
         raise ValueError('Invalid c32 address: invalid length')
 
     return c32checkDecode(c32addr[1:])

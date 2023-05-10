@@ -1,10 +1,9 @@
-from lib.ecpy.curves import Curve,Point
+from lib.ecpy.curves import Curve, Point
 
 import hmac
 import hashlib
 import binascii
 import unicodedata
-
 
 """
  OS CALL:
@@ -47,51 +46,62 @@ OS/Python Equivalence:
 
 """
 
+TRACE = False
+INDENT = 0
 
-TRACE=False
-INDENT=0
+
 def trace(x):
     global TRACE
-    if (TRACE):
-        print("%s%s"%(" "*INDENT,x))
-
-def ENTER(x) :
-  global INDENT
-  trace("Enter %s"%x)
-  INDENT = INDENT+4
-
-def LEAVE(x) :
-  global INDENT
-  INDENT = INDENT-4
-  trace("Leave %s"%x)
+    if TRACE:
+        print("%s%s" % (" " * INDENT, x))
 
 
+def ENTER(x):
+    global INDENT
+    trace("Enter %s" % x)
+    INDENT = INDENT + 4
 
-ed25519_n = 2**252 + 27742317777372353535851937790883648493
+
+def LEAVE(x):
+    global INDENT
+    INDENT = INDENT - 4
+    trace("Leave %s" % x)
+
+
+ed25519_n = 2 ** 252 + 27742317777372353535851937790883648493
+
 
 def _NFKDbytes(str):
-    return  unicodedata.normalize('NFKD', str).encode()
+    return unicodedata.normalize('NFKD', str).encode()
+
 
 def _h512(m):
     return hashlib.sha512(m).digest()
 
+
 def _h256(m):
     return hashlib.sha256(m).digest()
+
 
 def _Fk(message, secret):
     return hmac.new(secret, message, hashlib.sha512).digest()
 
+
 def _Fk256(message, secret):
     return hmac.new(secret, message, hashlib.sha256).digest()
+
 
 def _get_bit(character, pattern):
     return character & pattern
 
+
 def _set_bit(character, pattern):
     return character | pattern
 
+
 def _clear_bit(character, pattern):
     return character & ~pattern
+
 
 class BIP32Ed25519:
 
@@ -121,35 +131,35 @@ class BIP32Ed25519:
           6. return (kL,kR), c
         """
         ENTER("root_key_slip10")
-        key=b'ed25519 seed'
+        key = b'ed25519 seed'
         # root chain code
-        c = bytearray(_Fk256(b'\x01'+master_secret, key))
-        #KL:KR
+        c = bytearray(_Fk256(b'\x01' + master_secret, key))
+        # KL:KR
         I = bytearray(_Fk(master_secret, key))
         kL, kR = I[:32], I[32:]
-        while  _get_bit(kL[31], 0b00100000) != 0:
+        while _get_bit(kL[31], 0b00100000) != 0:
             master_secret = I
             I = bytearray(_Fk(master_secret, key))
             kL, kR = I[:32], I[32:]
         # the lowest 3 bits of the first byte of kL of are cleared
-        kL[0]  = _clear_bit( kL[0], 0b00000111)
+        kL[0] = _clear_bit(kL[0], 0b00000111)
         # the highest bit of the last byte is cleared
         kL[31] = _clear_bit(kL[31], 0b10000000)
         # the second highest bit of the last byte is set
-        kL[31] =   _set_bit(kL[31], 0b01000000)
+        kL[31] = _set_bit(kL[31], 0b01000000)
 
         # root public key
-        #A = _crypto_scalarmult_curve25519_base(bytes(kL))
+        # A = _crypto_scalarmult_curve25519_base(bytes(kL))
         cv25519 = Curve.get_curve("Ed25519")
         k_scalar = int.from_bytes(bytes(kL), 'little')
-        P = k_scalar*cv25519.generator
-        A =  cv25519.encode_point(P)
+        P = k_scalar * cv25519.generator
+        A = cv25519.encode_point(P)
 
         trace("root key: ")
-        trace("kL %s"%binascii.hexlify(kL))
-        trace("kR %s"%binascii.hexlify(kR))
-        trace("A  %s"%binascii.hexlify(A))
-        trace("c  %s"%binascii.hexlify(c))
+        trace("kL %s" % binascii.hexlify(kL))
+        trace("kR %s" % binascii.hexlify(kR))
+        trace("A  %s" % binascii.hexlify(A))
+        trace("c  %s" % binascii.hexlify(c))
         LEAVE("root_key_slip10")
         return ((kL, kR), A, c)
 
@@ -200,74 +210,71 @@ class BIP32Ed25519:
             return None
         # unpack argument
         ((kLP, kRP), AP, cP) = node
-        assert 0 <= i < 2**32
+        assert 0 <= i < 2 ** 32
 
         i_bytes = i.to_bytes(4, 'little')
-        trace("private_child_key/kLP     : %s"%binascii.hexlify(kLP))
-        trace("private_child_key/kRP     : %s"%binascii.hexlify(kRP))
-        trace("private_child_key/AP      : %s"%binascii.hexlify(AP))
-        trace("private_child_key/cP      : %s"%binascii.hexlify(cP))
-        trace("private_child_key/i       : %.04x"%i)
+        trace("private_child_key/kLP     : %s" % binascii.hexlify(kLP))
+        trace("private_child_key/kRP     : %s" % binascii.hexlify(kRP))
+        trace("private_child_key/AP      : %s" % binascii.hexlify(AP))
+        trace("private_child_key/cP      : %s" % binascii.hexlify(cP))
+        trace("private_child_key/i       : %.04x" % i)
 
-        #compute Z,c
-        if i < 2**31:
+        # compute Z,c
+        if i < 2 ** 31:
             # regular child
-            trace("regular Z input           : %s"%binascii.hexlify(b'\x02' + AP + i_bytes))
+            trace("regular Z input           : %s" % binascii.hexlify(b'\x02' + AP + i_bytes))
             Z = _Fk(b'\x02' + AP + i_bytes, cP)
-            trace("regular c input           : %s"%binascii.hexlify(b'\x03' + AP + i_bytes))
+            trace("regular c input           : %s" % binascii.hexlify(b'\x03' + AP + i_bytes))
             c = _Fk(b'\x03' + AP + i_bytes, cP)[32:]
         else:
             # harderned child
-            trace("harderned Z input     : %s"%binascii.hexlify(b'\x00' + (kLP + kRP) + i_bytes))
+            trace("harderned Z input     : %s" % binascii.hexlify(b'\x00' + (kLP + kRP) + i_bytes))
             Z = _Fk(b'\x00' + (kLP + kRP) + i_bytes, cP)
-            trace("harderned c input     : %s"%binascii.hexlify(b'\x01' + (kLP + kRP) + i_bytes))
+            trace("harderned c input     : %s" % binascii.hexlify(b'\x01' + (kLP + kRP) + i_bytes))
             c = _Fk(b'\x01' + (kLP + kRP) + i_bytes, cP)[32:]
-        trace("private_child_key/Z       : %s"%binascii.hexlify(Z))
-        trace("private_child_key/c       : %s"%binascii.hexlify(c))
+        trace("private_child_key/Z       : %s" % binascii.hexlify(Z))
+        trace("private_child_key/c       : %s" % binascii.hexlify(c))
 
         ZL, ZR = Z[:28], Z[32:]
-        trace("private_child_key/ZL      : %s"%binascii.hexlify(ZL))
-        trace("private_child_key/ZR      : %s"%binascii.hexlify(ZR))
+        trace("private_child_key/ZL      : %s" % binascii.hexlify(ZL))
+        trace("private_child_key/ZR      : %s" % binascii.hexlify(ZR))
 
-        #compute KLi
-        trace("private_child_key/ZLint   : %x"%int.from_bytes(ZL, 'little'))
-        trace("private_child_key/kLPint  : %x"%int.from_bytes(kLP, 'little'))
+        # compute KLi
+        trace("private_child_key/ZLint   : %x" % int.from_bytes(ZL, 'little'))
+        trace("private_child_key/kLPint  : %x" % int.from_bytes(kLP, 'little'))
         kLn = int.from_bytes(ZL, 'little') * 8 + int.from_bytes(kLP, 'little')
-        trace("private_child_key/kLn     : %x"%kLn)
+        trace("private_child_key/kLn     : %x" % kLn)
 
         if kLn % ed25519_n == 0:
             trace("kLn is 0")
             LEAVE("private_child_key")
             return None
 
-        #compute KRi
-        trace("private_child_key/ZRint   : %x"%int.from_bytes(ZR, 'little'))
-        trace("private_child_key/kRPint  : %x"%int.from_bytes(kRP, 'little'))
+        # compute KRi
+        trace("private_child_key/ZRint   : %x" % int.from_bytes(ZR, 'little'))
+        trace("private_child_key/kRPint  : %x" % int.from_bytes(kRP, 'little'))
         kRn = (
-            int.from_bytes(ZR, 'little') + int.from_bytes(kRP, 'little')
-        ) % 2**256
-        trace("private_child_key/kRn     : %x"%kRn)
+                      int.from_bytes(ZR, 'little') + int.from_bytes(kRP, 'little')
+              ) % 2 ** 256
+        trace("private_child_key/kRn     : %x" % kRn)
 
         kL = kLn.to_bytes(32, 'little')
         kR = kRn.to_bytes(32, 'little')
-        trace("private_child_key/kL      : %s"%binascii.hexlify(kL))
-        trace("private_child_key/kR      : %s"%binascii.hexlify(kR))
+        trace("private_child_key/kL      : %s" % binascii.hexlify(kL))
+        trace("private_child_key/kR      : %s" % binascii.hexlify(kR))
 
-        #compue Ai
-        #A =_crypto_scalarmult_curve25519_base(kL)
+        # compue Ai
+        # A =_crypto_scalarmult_curve25519_base(kL)
         cv25519 = Curve.get_curve("Ed25519")
         k_scalar = int.from_bytes(kL, 'little')
-        trace("scalar                    : %x"%k_scalar)
-        P = k_scalar*cv25519.generator
-        trace("Not encoded pubkey       : %s"%str(P))
-        A =  cv25519.encode_point(P)
-        trace("private_child_key/A       : %s"%binascii.hexlify(A))
+        trace("scalar                    : %x" % k_scalar)
+        P = k_scalar * cv25519.generator
+        trace("Not encoded pubkey       : %s" % str(P))
+        A = cv25519.encode_point(P)
+        trace("private_child_key/A       : %s" % binascii.hexlify(A))
 
         LEAVE("private_child_key")
         return ((kL, kR), A, c)
-
-
-
 
     def public_child_key(self, node, i):
         """
@@ -314,19 +321,19 @@ class BIP32Ed25519:
             return None
         # unpack argument
         (AP, cP) = node
-        assert 0 <= i < 2**32
+        assert 0 <= i < 2 ** 32
 
         i_bytes = i.to_bytes(4, 'little')
-        trace("public_child_key/AP      : %s"%binascii.hexlify(AP))
-        trace("public_child_key/cP      : %s"%binascii.hexlify(cP))
-        trace("public_child_key/i       : %.04x"%i)
+        trace("public_child_key/AP      : %s" % binascii.hexlify(AP))
+        trace("public_child_key/cP      : %s" % binascii.hexlify(cP))
+        trace("public_child_key/i       : %.04x" % i)
 
-        #compute Z,c
-        if i < 2**31:
+        # compute Z,c
+        if i < 2 ** 31:
             # regular child
-            trace("regular Z input           : %s"%binascii.hexlify(b'\x02' + AP + i_bytes))
+            trace("regular Z input           : %s" % binascii.hexlify(b'\x02' + AP + i_bytes))
             Z = _Fk(b'\x02' + AP + i_bytes, cP)
-            trace("regular c input           : %s"%binascii.hexlify(b'\x03' + AP + i_bytes))
+            trace("regular c input           : %s" % binascii.hexlify(b'\x03' + AP + i_bytes))
             c = _Fk(b'\x03' + AP + i_bytes, cP)[32:]
         else:
             # harderned child
@@ -334,38 +341,34 @@ class BIP32Ed25519:
             LEAVE("public_child_key ")
             return None
 
-        trace("public_child_key/Z       : %s"%binascii.hexlify(Z))
-        trace("public_child_key/c       : %s"%binascii.hexlify(c))
+        trace("public_child_key/Z       : %s" % binascii.hexlify(Z))
+        trace("public_child_key/c       : %s" % binascii.hexlify(c))
 
         ZL, ZR = Z[:28], Z[32:]
-        trace("public_child_key/ZL      : %s"%binascii.hexlify(ZL))
-        trace("public_child_key/ZR      : %s"%binascii.hexlify(ZR))
+        trace("public_child_key/ZL      : %s" % binascii.hexlify(ZL))
+        trace("public_child_key/ZR      : %s" % binascii.hexlify(ZR))
 
-        #compute ZLi
-        trace("public_child_key/ZLint   : %x"%int.from_bytes(ZL, 'little'))
+        # compute ZLi
+        trace("public_child_key/ZLint   : %x" % int.from_bytes(ZL, 'little'))
         ZLint = int.from_bytes(ZL, 'little')
 
-        trace("public_child_key/8*ZLint : %x"%(8*ZLint))
-        ZLint_x_8 = 8*ZLint
+        trace("public_child_key/8*ZLint : %x" % (8 * ZLint))
+        ZLint_x_8 = 8 * ZLint
 
-
-        #compue Ai
-        #A = AP + _crypto_scalarmult_curve25519_base(ZLint_x_8)
+        # compue Ai
+        # A = AP + _crypto_scalarmult_curve25519_base(ZLint_x_8)
         cv25519 = Curve.get_curve("Ed25519")
-        P = ZLint_x_8*cv25519.generator
-        trace("not encoded 8*ZL*G       : %s"%str(P))
+        P = ZLint_x_8 * cv25519.generator
+        trace("not encoded 8*ZL*G       : %s" % str(P))
         Q = cv25519.decode_point(AP)
-        trace("decoded AP               : %s"%str(Q))
-        PQ = P+Q
-        trace("not encoded AP+8*ZL*G    : %s"%str(PQ))
+        trace("decoded AP               : %s" % str(Q))
+        PQ = P + Q
+        trace("not encoded AP+8*ZL*G    : %s" % str(PQ))
         A = cv25519.encode_point(PQ)
-        trace("public_child_key/A       : %s"%binascii.hexlify(A))
+        trace("public_child_key/A       : %s" % binascii.hexlify(A))
 
         LEAVE("public_child_key")
         return (A, c)
-
-
-
 
     def mnemonic_to_seed(self, mnemonic, passphrase='', prefix=u'mnemonic'):
         """
@@ -389,10 +392,9 @@ class BIP32Ed25519:
         """
 
         ENTER("mnemonic_to_seed")
-        seed = hashlib.pbkdf2_hmac('sha512', _NFKDbytes(mnemonic), _NFKDbytes(prefix+passphrase), 2048)
+        seed = hashlib.pbkdf2_hmac('sha512', _NFKDbytes(mnemonic), _NFKDbytes(prefix + passphrase), 2048)
         LEAVE("mnemonic_to_seed")
         return seed
-
 
     def derive_seed(self, path, seed, private):
         """
@@ -406,34 +408,34 @@ class BIP32Ed25519:
         """
         ENTER("derive_seed")
 
-        trace("Compute path  %s"%path)
-        trace("Compute master %s"%seed)
+        trace("Compute path  %s" % path)
+        trace("Compute master %s" % seed)
         root = self.root_key_slip10(seed)
         if private:
-          node = root
-        else :
-          ((kLP, kRP), AP, cP) = root
-          node = (AP,cP)
+            node = root
+        else:
+            ((kLP, kRP), AP, cP) = root
+            node = (AP, cP)
         for i in path.split('/'):
             if i.endswith("'"):
-                i = int(i[:-1]) + 2**31
+                i = int(i[:-1]) + 2 ** 31
             else:
                 i = int(i)
 
             if private:
-              node = self.private_child_key(node, i)
-              ((kLP, kRP), AP, cP) = node
-              trace("Node %d"%i)
-              trace("  kLP:%s" % binascii.hexlify(kLP))
-              trace("  kRP:%s" % binascii.hexlify(kRP))
-              trace("   AP:%s" % binascii.hexlify(AP))
-              trace("   cP:%s" % binascii.hexlify(cP))
+                node = self.private_child_key(node, i)
+                ((kLP, kRP), AP, cP) = node
+                trace("Node %d" % i)
+                trace("  kLP:%s" % binascii.hexlify(kLP))
+                trace("  kRP:%s" % binascii.hexlify(kRP))
+                trace("   AP:%s" % binascii.hexlify(AP))
+                trace("   cP:%s" % binascii.hexlify(cP))
             else:
-              node = self.public_child_key(node, i)
-              (AP, cP) = node
-              trace("Node %d"%i)
-              trace("   AP:%s" % binascii.hexlify(AP))
-              trace("   cP:%s" % binascii.hexlify(cP))
+                node = self.public_child_key(node, i)
+                (AP, cP) = node
+                trace("Node %d" % i)
+                trace("   AP:%s" % binascii.hexlify(AP))
+                trace("   cP:%s" % binascii.hexlify(cP))
         LEAVE("derive_seed")
 
         return node
@@ -460,37 +462,39 @@ if __name__ == "__main__":
 
     o = BIP32Ed25519()
     if False:
-      for path in ("42'/1/2", "42'/3'/5"):
-          print("*************************************")
-          print("CHAIN: %s"%path)
-          print()
-          node = o.derive_mnemonic(True, path, u'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about')
-          ((kL, kR), A, c) = node
-          print("  kL:%s" % binascii.hexlify(kL))
-          print("  kR:%s" % binascii.hexlify(kR))
-          print("   c:%s" % binascii.hexlify(c))
-          print("   A:%s" % binascii.hexlify(A))
-          print()
-          print()
+        for path in ("42'/1/2", "42'/3'/5"):
+            print("*************************************")
+            print("CHAIN: %s" % path)
+            print()
+            node = o.derive_mnemonic(True, path,
+                                     u'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about')
+            ((kL, kR), A, c) = node
+            print("  kL:%s" % binascii.hexlify(kL))
+            print("  kR:%s" % binascii.hexlify(kR))
+            print("   c:%s" % binascii.hexlify(c))
+            print("   A:%s" % binascii.hexlify(A))
+            print()
+            print()
 
     if True:
-      for path in ("42/1",): #
-          print("*************************************")
-          print("CHAIN: %s"%path)
-          print("private derivation")
-          node = o.derive_mnemonic(True, path, u'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about')
-          ((kL, kR), A, c) = node
-          print("  kL:%s" % binascii.hexlify(kL))
-          print("  kR:%s" % binascii.hexlify(kR))
-          print("   c:%s" % binascii.hexlify(c))
-          print("   A:%s" % binascii.hexlify(A))
-          print()
+        for path in ("42/1",):  #
+            print("*************************************")
+            print("CHAIN: %s" % path)
+            print("private derivation")
+            node = o.derive_mnemonic(True, path,
+                                     u'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about')
+            ((kL, kR), A, c) = node
+            print("  kL:%s" % binascii.hexlify(kL))
+            print("  kR:%s" % binascii.hexlify(kR))
+            print("   c:%s" % binascii.hexlify(c))
+            print("   A:%s" % binascii.hexlify(A))
+            print()
 
-          print("=== public derivation")
-          node = o.derive_mnemonic(False, path, u'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about')
-          (A, c) = node
-          print("   c:%s" % binascii.hexlify(c))
-          print("   A:%s" % binascii.hexlify(A))
-          print()
-          print()
-
+            print("=== public derivation")
+            node = o.derive_mnemonic(False, path,
+                                     u'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about')
+            (A, c) = node
+            print("   c:%s" % binascii.hexlify(c))
+            print("   A:%s" % binascii.hexlify(A))
+            print()
+            print()

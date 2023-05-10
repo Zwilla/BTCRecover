@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #    BitcoinLib - Python Cryptocurrency Library
 #    WALLETS - HD wallet Class for Key and Transaction management
-#    © 2016 - 2020 February - 1200 Web Development <http://1200wd.com/>
+#    © 2016 - 2020 February - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -14,7 +14,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import json
@@ -25,13 +25,13 @@ from itertools import groupby
 from operator import itemgetter
 import struct
 
-from bitcoinlib.db import *
-from bitcoinlib.encoding import EncodingError, to_bytes, to_hexstring
-from bitcoinlib.keys import Address, BKeyError, HDKey, check_network_and_key, path_expand
-from bitcoinlib.mnemonic import Mnemonic
-from bitcoinlib.networks import Network
-from bitcoinlib.services.services import Service
-from bitcoinlib.transactions import (Input, Output, Transaction, get_unlocking_script_type,
+from lib.bitcoinlib.db import *
+from lib.bitcoinlib.encoding import EncodingError, to_bytes, to_hexstring
+from lib.bitcoinlib.keys import Address, BKeyError, HDKey, check_network_and_key, path_expand
+from lib.bitcoinlib.mnemonic import Mnemonic
+from lib.bitcoinlib.networks import Network
+from lib.bitcoinlib.services.services import Service
+from lib.bitcoinlib.transactions import (Input, Output, Transaction, get_unlocking_script_type,
                                      serialize_multisig_redeemscript)
 from sqlalchemy import func, or_
 

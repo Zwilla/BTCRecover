@@ -5,7 +5,7 @@ Helper implementing insecure and obsolete md4 algorithm.
 used for NTHASH format, which is also insecure and broken,
 since it's just md4(password).
 
-Implementated based on rfc at http://www.faqs.org/rfcs/rfc1320.html
+Implementated based on rfc at https://www.faqs.org/rfcs/rfc1320.html
 
 .. note::
 

@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    BitAps client
-#    © 2019 August - 1200 Web Development <http://1200wd.com/>
+#    © 2019 August - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,17 +15,17 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import math
 import logging
 from datetime import datetime
-from bitcoinlib.main import MAX_TRANSACTIONS
-from bitcoinlib.services.baseclient import BaseClient, ClientError
-from bitcoinlib.transactions import Transaction
-from bitcoinlib.keys import deserialize_address
-from bitcoinlib.encoding import EncodingError, varstr, to_bytes
+from lib.bitcoinlib.main import MAX_TRANSACTIONS
+from lib.bitcoinlib.services.baseclient import BaseClient, ClientError
+from lib.bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.keys import deserialize_address
+from lib.bitcoinlib.encoding import EncodingError, varstr, to_bytes
 
 _logger = logging.getLogger(__name__)
 

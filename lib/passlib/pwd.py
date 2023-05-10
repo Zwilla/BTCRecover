@@ -17,7 +17,7 @@ import pkg_resources
 import os
 # site
 # pkg
-from lib.passlib import exc
+from passlib import exc
 from lib.passlib.utils.compat import PY2, irange, itervalues, int_types
 from lib.passlib.utils import rng, getrandstr, to_unicode
 from lib.passlib.utils.decor import memoized_property
@@ -357,7 +357,7 @@ class WordGenerator(SequenceGenerator):
     :param charset:
         predefined charset to draw from.
 
-    :param \*\*kwds:
+    :param \\*\\*kwds:
         all other keywords passed to the :class:`SequenceGenerator` parent class.
 
     Attributes
@@ -614,7 +614,7 @@ class PhraseGenerator(SequenceGenerator):
         name of preset wordlist to use instead of ``wordset``.
     :param spaces:
         whether to insert spaces between words in output (defaults to ``True``).
-    :param \*\*kwds:
+    :param \\*\\*kwds:
         all other keywords passed to the :class:`SequenceGenerator` parent class.
 
     .. autoattribute:: wordset

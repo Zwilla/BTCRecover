@@ -4,7 +4,7 @@
 #
 #    EXAMPLES - Segregated Witness Wallets
 #
-#    © 2018 October - 1200 Web Development <http://1200wd.com/>
+#    © 2018 October - 1200 Web Development <https://1200wd.com/>
 #
 #
 # Create 4 different Segregated Witness wallets of which 2 Native segwit wallets and 2 wallets with P2SH embeded
@@ -20,8 +20,8 @@
 # kind of segwit wallet
 #
 
-from bitcoinlib.wallets import *
-from bitcoinlib.keys import HDKey
+from lib.bitcoinlib.wallets import *
+from lib.bitcoinlib.keys import HDKey
 from time import sleep
 
 

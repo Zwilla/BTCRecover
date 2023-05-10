@@ -7,7 +7,7 @@ import itertools
 import logging; log = logging.getLogger(__name__)
 # site
 # pkg
-from passlib.tests.utils import TestCase
+from lib.passlib.tests.utils import TestCase
 # local
 __all__ = [
     "UtilsTest",
@@ -24,7 +24,7 @@ class UtilsTest(TestCase):
 
     def test_self_info_rate(self):
         """_self_info_rate()"""
-        from passlib.pwd import _self_info_rate
+        from lib.passlib.pwd import _self_info_rate
 
         self.assertEqual(_self_info_rate(""), 0)
 
@@ -39,7 +39,7 @@ class UtilsTest(TestCase):
 
     # def test_total_self_info(self):
     #     """_total_self_info()"""
-    #     from passlib.pwd import _total_self_info
+    #     from lib.passlib.pwd import _total_self_info
     #
     #     self.assertEqual(_total_self_info(""), 0)
     #
@@ -57,7 +57,7 @@ class UtilsTest(TestCase):
 #=============================================================================
 
 # import subject
-from passlib.pwd import genword, default_charsets
+from lib.passlib.pwd import genword, default_charsets
 ascii_62 = default_charsets['ascii_62']
 hex = default_charsets['hex']
 
@@ -69,7 +69,7 @@ class WordGeneratorTest(TestCase):
         super(WordGeneratorTest, self).setUp()
 
         # patch some RNG references so they're reproducible.
-        from passlib.pwd import SequenceGenerator
+        from lib.passlib.pwd import SequenceGenerator
         self.patchAttr(SequenceGenerator, "rng",
                        self.getRandom("pwd generator"))
 
@@ -127,7 +127,7 @@ class WordGeneratorTest(TestCase):
 #=============================================================================
 
 # import subject
-from passlib.pwd import genphrase
+from lib.passlib.pwd import genphrase
 simple_words = ["alpha", "beta", "gamma"]
 
 class PhraseGeneratorTest(TestCase):

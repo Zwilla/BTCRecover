@@ -16,7 +16,7 @@ from lib.passlib.utils.compat import u
 class UtilTest(TestCase):
     """test util funcs in passlib.win32"""
 
-    ##test hashes from http://msdn.microsoft.com/en-us/library/cc245828(v=prot.10).aspx
+    ##test hashes from https://msdn.microsoft.com/en-us/library/cc245828(v=prot.10).aspx
     ## among other places
 
     def setUp(self):

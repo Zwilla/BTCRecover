@@ -51,7 +51,7 @@ Example: Create wallet and generate new address (key) to receive bitcoins
 
 .. code-block:: pycon
 
-   >>> from bitcoinlib.wallets import HDWallet
+   >>> from lib.bitcoinlib.wallets import HDWallet
    >>> w = HDWallet.create('Wallet1')
    >>> key1 = w.get_key()
    >>> key1.address
@@ -82,8 +82,8 @@ The complete wallet can be recovered from the passphrase which is the masterkey.
 
 .. code-block:: python
 
-    from bitcoinlib.wallets import HDWallet, wallet_delete
-    from bitcoinlib.mnemonic import Mnemonic
+    from lib.bitcoinlib.wallets import HDWallet, wallet_delete
+    from lib.bitcoinlib.mnemonic import Mnemonic
 
     passphrase = Mnemonic().generate()
     print(passphrase)
@@ -103,8 +103,8 @@ Create a Multisig wallet with 2 cosigner which both need to sign a transaction.
 
 .. code-block:: python
 
-    from bitcoinlib.wallets import HDWallet
-    from bitcoinlib.keys import HDKey
+    from lib.bitcoinlib.wallets import HDWallet
+    from lib.bitcoinlib.keys import HDKey
 
     NETWORK = 'testnet'
     k1 = HDKey('tprv8ZgxMBicQKsPd1Q44tfDiZC98iYouKRC2CzjT3HGt1yYw2zuX2awTotzGAZQEAU9bi2M5MCj8iedP9MREPjUgpDEBwBgGi2C8eK'
@@ -146,7 +146,7 @@ Create a native single key P2WPKH wallet:
 
 .. code-block:: pycon
 
-    >>> from bitcoinlib.wallets import HDWallet
+    >>> from lib.bitcoinlib.wallets import HDWallet
     >>> w = HDWallet.create('wallet_segwit_p2wpkh', witness_type='segwit')
     >>> w.get_key().address
     bc1q84y2quplejutvu0h4gw9hy59fppu3thg0u2xz3
@@ -155,7 +155,7 @@ Or create a P2SH nested single key P2SH_P2WPKH wallet:
 
 .. code-block:: pycon
 
-    >>> from bitcoinlib.wallets import HDWallet
+    >>> from lib.bitcoinlib.wallets import HDWallet
     >>> w = HDWallet.create('wallet_segwit_p2sh_p2wpkh', witness_type='p2sh-segwit')
     >>> w.get_key().address
     36ESSWgR4WxXJSc4ysDSJvecyY6FJkhUbp
@@ -201,8 +201,8 @@ Example: Generate a list of words passphrase and derive a private key seed
 
 .. code-block:: pycon
 
-   >>> from bitcoinlib.mnemonic import Mnemonic
-   >>> from bitcoinlib.encoding import to_hexstring
+   >>> from lib.bitcoinlib.mnemonic import Mnemonic
+   >>> from lib.bitcoinlib.encoding import to_hexstring
    >>> words = Mnemonic().generate()
    >>> words
    unique aisle iron extend earn cigar trust source next depart yard bind
@@ -223,7 +223,7 @@ Example: Get estimated transaction fee in sathosis per Kb for confirmation withi
 
 .. code-block:: pycon
 
-   >>> from bitcoinlib.services.services import Service
+   >>> from lib.bitcoinlib.services.services import Service
    >>> Service().estimatefee(5)
    138964
 

@@ -109,7 +109,7 @@ def scrypt_mcf(password, salt=None, N=SCRYPT_N, r=SCRYPT_r, p=SCRYPT_p,
 
     If no salt is given, a random salt of 128+ bits is used. (Recommended.)
     """
-    if (prefix != SCRYPT_MCF_PREFIX_s1 and prefix != SCRYPT_MCF_PREFIX_ANY):
+    if prefix != SCRYPT_MCF_PREFIX_s1 and prefix != SCRYPT_MCF_PREFIX_ANY:
         return mcf_mod.scrypt_mcf(scrypt, password, salt, N, r, p, prefix)
     if isinstance(password, unicode):
         password = password.encode('utf8')
@@ -165,4 +165,3 @@ if __name__ == "__main__":
     import sys
     from . import tests
     tests.run_scrypt_suite(sys.modules[__name__])
-

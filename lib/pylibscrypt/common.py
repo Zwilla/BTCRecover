@@ -15,14 +15,16 @@
 """Common constants and functions used by scrypt implementations"""
 
 import numbers
-
+import sys
+if sys.version_info > (3,):
+    xrange = range
 
 SCRYPT_MCF_PREFIX_7 = b'$7$'
 SCRYPT_MCF_PREFIX_s1 = b'$s1$'
 SCRYPT_MCF_PREFIX_DEFAULT = b'$s1$'
 SCRYPT_MCF_PREFIX_ANY = None
 
-SCRYPT_N = 1<<14
+SCRYPT_N = 1 << 14
 SCRYPT_r = 8
 SCRYPT_p = 1
 
@@ -55,7 +57,7 @@ def check_args(password, salt, N, r, p, olen=64):
         raise TypeError('p must be an integer')
     if not isinstance(olen, numbers.Integral):
         raise TypeError('length must be an integer')
-    if N > 2**63:
+    if N > 2 ** 63:
         raise ValueError('N cannot be larger than 2**63')
     if (N & (N - 1)) or N < 2:
         raise ValueError('N must be a power of two larger than 1')
@@ -63,8 +65,7 @@ def check_args(password, salt, N, r, p, olen=64):
         raise ValueError('r must be positive')
     if p <= 0:
         raise ValueError('p must be positive')
-    if r * p >= 2**30:
+    if r * p >= 2 ** 30:
         raise ValueError('r * p must be less than 2 ** 30')
     if olen <= 0:
         raise ValueError('length must be positive')
-

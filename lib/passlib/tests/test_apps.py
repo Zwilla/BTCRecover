@@ -8,7 +8,7 @@ import logging; log = logging.getLogger(__name__)
 # site
 # pkg
 from passlib import apps, hash as hashmod
-from passlib.tests.utils import TestCase
+from lib.passlib.tests.utils import TestCase
 # module
 
 #=============================================================================

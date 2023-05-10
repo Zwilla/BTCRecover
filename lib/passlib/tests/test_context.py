@@ -4,7 +4,7 @@
 #=============================================================================
 # core
 from __future__ import with_statement
-from passlib.utils.compat import PY3
+from lib.passlib.utils.compat import PY3
 if PY3:
     from configparser import NoSectionError
 else:
@@ -17,14 +17,14 @@ import warnings
 # site
 # pkg
 from passlib import hash
-from passlib.context import CryptContext, LazyCryptContext
-from passlib.exc import PasslibConfigWarning, PasslibHashWarning
-from passlib.utils import tick, to_unicode
-from passlib.utils.compat import irange, u, unicode, str_to_uascii, PY2, PY26
-import lib.passlib.utils.handlers as uh
-from passlib.tests.utils import (TestCase, set_file, TICK_RESOLUTION,
+from lib.passlib.context import CryptContext, LazyCryptContext
+from lib.passlib.exc import PasslibConfigWarning, PasslibHashWarning
+from lib.passlib.utils import tick, to_unicode
+from lib.passlib.utils.compat import irange, u, unicode, str_to_uascii, PY2, PY26
+import passlib.utils.handlers as uh
+from lib.passlib.tests.utils import (TestCase, set_file, TICK_RESOLUTION,
                                  quicksleep, time_call, handler_derived_from)
-from passlib.registry import (register_crypt_handler_path,
+from lib.passlib.registry import (register_crypt_handler_path,
                         _has_crypt_handler as has_crypt_handler,
                         _unload_handler_name as unload_handler_name,
                         get_crypt_handler,
@@ -862,7 +862,7 @@ sha512_crypt__min_rounds = 45000
         self.assertEqual(other, dump.replace("[passlib]","[password-security]"))
 
         # test unmanaged handler warning
-        from passlib.tests.test_utils_handlers import UnsaltedHash
+        from lib.passlib.tests.test_utils_handlers import UnsaltedHash
         ctx3 = CryptContext([UnsaltedHash, "md5_crypt"])
         dump = ctx3.to_string()
         self.assertRegex(dump, r"# NOTE: the 'unsalted_test_hash' handler\(s\)"
@@ -1278,7 +1278,7 @@ sha512_crypt__min_rounds = 45000
 
         # setup test case
         # NOTE: postgres_md5 hash supports 'user' context kwd, which is used for this test.
-        from passlib.hash import des_crypt, md5_crypt, postgres_md5
+        from lib.passlib.hash import des_crypt, md5_crypt, postgres_md5
         des_hash = des_crypt.hash("stub")
         pg_root_hash = postgres_md5.hash("stub", user="root")
         pg_admin_hash = postgres_md5.hash("stub", user="admin")
@@ -1647,7 +1647,8 @@ sha512_crypt__min_rounds = 45000
         #
         # init ref info
         #
-        from passlib.hash import md5_crypt, unix_disabled
+        from lib.passlib.exc import UnknownHashError
+        from lib.passlib.hash import md5_crypt, unix_disabled
 
         ctx = CryptContext(["des_crypt"])
         ctx2 = CryptContext(["des_crypt", "unix_disabled"])
@@ -1684,18 +1685,13 @@ sha512_crypt__min_rounds = 45000
 
         # test w/o disabled hash support
         self.assertTrue(ctx.is_enabled(h_ref))
-        HASH_NOT_IDENTIFIED = "hash could not be identified"
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.is_enabled, h_other)
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.is_enabled, h_dis)
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.is_enabled, h_dis_ref)
+        self.assertRaises(UnknownHashError, ctx.is_enabled, h_other)
+        self.assertRaises(UnknownHashError, ctx.is_enabled, h_dis)
+        self.assertRaises(UnknownHashError, ctx.is_enabled, h_dis_ref)
 
         # test w/ disabled hash support
         self.assertTrue(ctx2.is_enabled(h_ref))
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.is_enabled, h_other)
+        self.assertRaises(UnknownHashError, ctx.is_enabled, h_other)
         self.assertFalse(ctx2.is_enabled(h_dis))
         self.assertFalse(ctx2.is_enabled(h_dis_ref))
 
@@ -1704,24 +1700,18 @@ sha512_crypt__min_rounds = 45000
         #
 
         # test w/o disabled hash support
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.enable, "")
+        self.assertRaises(UnknownHashError, ctx.enable, "")
         self.assertRaises(TypeError, ctx.enable, None)
         self.assertEqual(ctx.enable(h_ref), h_ref)
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.enable, h_other)
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.enable, h_dis)
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.enable, h_dis_ref)
+        self.assertRaises(UnknownHashError, ctx.enable, h_other)
+        self.assertRaises(UnknownHashError, ctx.enable, h_dis)
+        self.assertRaises(UnknownHashError, ctx.enable, h_dis_ref)
 
         # test w/ disabled hash support
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx.enable, "")
+        self.assertRaises(UnknownHashError, ctx.enable, "")
         self.assertRaises(TypeError, ctx2.enable, None)
         self.assertEqual(ctx2.enable(h_ref), h_ref)
-        self.assertRaisesRegex(ValueError, HASH_NOT_IDENTIFIED,
-                               ctx2.enable, h_other)
+        self.assertRaises(UnknownHashError, ctx2.enable, h_other)
         self.assertRaisesRegex(ValueError, "cannot restore original hash",
                                ctx2.enable, h_dis)
         self.assertEqual(ctx2.enable(h_dis_ref), h_ref)

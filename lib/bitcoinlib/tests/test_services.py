@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Unit Tests for Service Class
-#    © 2018-2019 November - 1200 Web Development <http://1200wd.com/>
+#    © 2018-2019 November - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,13 +15,16 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import unittest
 import datetime
-from bitcoinlib.services.services import *
-from tests.test_custom import CustomAssertions
+import os
+from lib.bitcoinlib.services.services import *
+from lib.bitcoinlib.tests.test_custom import CustomAssertions
+from lib.bitcoinlib.networks import Network
+from lib.bitcoinlib.db import BCL_DATABASE_DIR
 
 MAXIMUM_ESTIMATED_FEE_DIFFERENCE = 3.00  # Maximum difference from average estimated fee before test_estimatefee fails.
 # Use value above >0, and 1 for 100%
@@ -579,7 +582,7 @@ class TestService(unittest.TestCase, CustomAssertions):
                                     ['block_hash', 'block_height', 'spent', 'value', 'flag'])
 
     def test_service_gettransaction_nulldata(self):
-        nulldata_str = b'jK0\nfrom bitcoinlib.transactions import Output\nfrom bitcoinlib.wallets import'
+        nulldata_str = b'jK0\nfrom lib.bitcoinlib.transactions import Output\nfrom lib.bitcoinlib.wallets import'
         srv = Service(timeout=TIMEOUT_TEST)
         t = srv.gettransaction('c6960cd3a688db18550c06b08ed744382cfc9abce63cf6f97981e4b61bba81dc')
         self.assertEqual(t.outputs[0].lock_script, nulldata_str)
@@ -634,7 +637,7 @@ class TestService(unittest.TestCase, CustomAssertions):
 
     def test_service_max_providers(self):
         srv = Service(max_providers=1, timeout=TIMEOUT_TEST, cache_uri='')
-        srv._blockcount = None
+        srv._blockcount = 0
         srv.blockcount()
         self.assertEqual(srv.resultcount, 1)
 

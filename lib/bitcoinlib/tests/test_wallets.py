@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Unit Tests for Wallet Class
-#    © 2016 - 2019 November - 1200 Web Development <http://1200wd.com/>
+#    © 2016 - 2019 November - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,7 +15,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import unittest
@@ -29,10 +29,10 @@ try:
 except ImportError:
     pass  # Only necessary when mysql or postgres is used
 from sqlalchemy.orm import close_all_sessions
-from bitcoinlib.wallets import *
-from bitcoinlib.encoding import USE_FASTECDSA
-from bitcoinlib.mnemonic import Mnemonic
-from bitcoinlib.keys import HDKey, BKeyError
+from lib.bitcoinlib.wallets import *
+from lib.bitcoinlib.encoding import USE_FASTECDSA
+from lib.bitcoinlib.mnemonic import Mnemonic
+from lib.bitcoinlib.keys import HDKey, BKeyError
 from tests.test_custom import CustomAssertions
 
 

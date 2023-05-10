@@ -12,7 +12,7 @@ from lib.passlib.utils import to_unicode
 from lib.passlib.utils.binary import ab64_decode, ab64_encode
 from lib.passlib.utils.compat import str_to_bascii, u, uascii_to_str, unicode
 from lib.passlib.crypto.digest import pbkdf2_hmac
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "pbkdf2_sha1",

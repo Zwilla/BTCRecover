@@ -9,10 +9,10 @@ from __future__ import absolute_import, division, print_function
 import logging; log = logging.getLogger(__name__)
 # site
 # pkg
-from passlib.utils.compat import suppress_cause
-from passlib.ext.django.utils import DJANGO_VERSION, DjangoTranslator, _PasslibHasherWrapper
+from lib.passlib.utils.compat import suppress_cause
+from lib.passlib.ext.django.utils import DJANGO_VERSION, DjangoTranslator, _PasslibHasherWrapper
 # tests
-from passlib.tests.utils import TestCase, TEST_MODE
+from lib.passlib.tests.utils import TestCase, TEST_MODE
 from .test_ext_django import (
     has_min_django, stock_config, _ExtensionSupport,
 )
@@ -89,7 +89,7 @@ if test_hashers_mod:
     from django.core.signals import setting_changed
     from django.dispatch import receiver
     from django.utils.module_loading import import_string
-    from passlib.utils.compat import get_unbound_method_function
+    from lib.passlib.utils.compat import get_unbound_method_function
 
     class HashersTest(test_hashers_mod.TestUtilsHashPass, _ExtensionSupport):
         """
@@ -101,7 +101,7 @@ if test_hashers_mod:
         # helpers
         #==================================================================
 
-        # port patchAttr() helper method from passlib.tests.utils.TestCase
+        # port patchAttr() helper method from lib.passlib.tests.utils.TestCase
         patchAttr = get_unbound_method_function(TestCase.patchAttr)
 
         #==================================================================
@@ -112,7 +112,7 @@ if test_hashers_mod:
             # install passlib.ext.django adapter, and get context
             #---------------------------------------------------------
             self.load_extension(PASSLIB_CONTEXT=stock_config, check=False)
-            from passlib.ext.django.models import adapter
+            from lib.passlib.ext.django.models import adapter
             context = adapter.context
 
             #---------------------------------------------------------
@@ -130,7 +130,7 @@ if test_hashers_mod:
             #---------------------------------------------------------
             # django tests expect empty django_des_crypt salt field
             #---------------------------------------------------------
-            from passlib.hash import django_des_crypt
+            from lib.passlib.hash import django_des_crypt
             self.patchAttr(django_des_crypt, "use_duplicate_salt", False)
 
             #---------------------------------------------------------

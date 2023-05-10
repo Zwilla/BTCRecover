@@ -36,7 +36,7 @@
 try:
     import http.client as httplib
 except ImportError:
-    import httplib
+    import httplib2 as httplib
 import base64
 import decimal
 import json
@@ -45,7 +45,7 @@ import logging
 try:
     import urllib.parse as urlparse
 except ImportError:
-    import urlparse
+    import urlparser as urlparse
 
 USER_AGENT = "AuthServiceProxy/0.1"
 

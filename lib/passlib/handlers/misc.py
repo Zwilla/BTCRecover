@@ -11,7 +11,7 @@ from warnings import warn
 # pkg
 from lib.passlib.utils import to_native_str, str_consteq
 from lib.passlib.utils.compat import unicode, u, unicode_or_bytes_types
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "unix_disabled",

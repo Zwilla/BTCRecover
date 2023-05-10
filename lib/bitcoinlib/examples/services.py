@@ -4,11 +4,11 @@
 #
 #    EXAMPLES - Creating and Using Cryptocurrency Wallets
 #
-#    © 2017 November - 1200 Web Development <http://1200wd.com/>
+#    © 2017 November - 1200 Web Development <https://1200wd.com/>
 #
 
 from pprint import pprint
-from bitcoinlib.services.services import *
+from lib.bitcoinlib.services.services import *
 
 
 # Tests for specific provider

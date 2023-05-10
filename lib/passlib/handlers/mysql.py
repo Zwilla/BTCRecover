@@ -8,7 +8,7 @@ MySQL 3.2.3 / OLD_PASSWORD()
 
     This algorithm is known to be very insecure, and should only be used to verify existing password hashes.
 
-    http://djangosnippets.org/snippets/1508/
+    https://djangosnippets.org/snippets/1508/
 
 MySQL 4.1.1 / NEW PASSWORD
     This implements Mysql new PASSWORD algorithm, introduced in version 4.1.
@@ -17,7 +17,7 @@ MySQL 4.1.1 / NEW PASSWORD
     It should only be used when dealing with mysql passwords,
     for all other purposes, you should use a salted hash function.
 
-    Description taken from http://dev.mysql.com/doc/refman/6.0/en/password-hashing.html
+    Description taken from https://dev.mysql.com/doc/refman/6.0/en/password-hashing.html
 """
 #=============================================================================
 # imports
@@ -32,7 +32,7 @@ from warnings import warn
 from lib.passlib.utils import to_native_str
 from lib.passlib.utils.compat import bascii_to_str, unicode, u, \
                                  byte_elem_value, str_to_uascii
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     'mysql323',

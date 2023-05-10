@@ -10,7 +10,7 @@ import logging; log = logging.getLogger(__name__)
 from lib.passlib.utils import safe_crypt, test_crypt, repeat_string
 from lib.passlib.utils.binary import h64
 from lib.passlib.utils.compat import unicode, u
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "md5_crypt",
@@ -279,13 +279,13 @@ class md5_crypt(uh.HasManyBackends, _MD5_Common):
     def _calc_checksum_os_crypt(self, secret):
         config = self.ident + self.salt
         hash = safe_crypt(secret, config)
-        if hash:
-            assert hash.startswith(config) and len(hash) == len(config) + 23
-            return hash[-22:]
-        else:
+        if hash is None:
             # py3's crypt.crypt() can't handle non-utf8 bytes.
             # fallback to builtin alg, which is always available.
             return self._calc_checksum_builtin(secret)
+        if not hash.startswith(config) or len(hash) != len(config) + 23:
+            raise uh.exc.CryptBackendError(self, config, hash)
+        return hash[-22:]
 
     #---------------------------------------------------------------
     # builtin backend

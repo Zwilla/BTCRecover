@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    dashd deamon
-#    © 2018 June - 1200 Web Development <http://1200wd.com/>
+#    © 2018 June - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,7 +15,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 #
 # You can connect to a dash testnet deamon by adding the following provider to providers.json
@@ -23,18 +23,18 @@
 #   "provider": "dashd",
 #   "network": "dash_testnet",
 #   "client_class": "DashdClient",
-#   "url": "http://user:password@server_url:19998",
+#   "url": "https://user:password@server_url:19998",
 #   "api_key": "",
 #   "priority": 11,
 #   "denominator": 100000000
 # }
 
 from datetime import datetime
-from bitcoinlib.main import *
-from bitcoinlib.services.authproxy import AuthServiceProxy
-from bitcoinlib.services.baseclient import BaseClient
-from bitcoinlib.transactions import Transaction
-from bitcoinlib.encoding import to_hexstring
+from lib.bitcoinlib.main import *
+from lib.bitcoinlib.services.authproxy import AuthServiceProxy
+from lib.bitcoinlib.services.baseclient import BaseClient
+from lib.bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.encoding import to_hexstring
 
 
 PROVIDERNAME = 'dashd'
@@ -109,7 +109,7 @@ class DashdClient(BaseClient):
             server = config.get('rpc', 'bind')
         elif 'externalip' in config['rpc']:
             server = config.get('rpc', 'externalip')
-        url = "http://%s:%s@%s:%s" % (config.get('rpc', 'rpcuser'), config.get('rpc', 'rpcpassword'), server, port)
+        url = "https://%s:%s@%s:%s" % (config.get('rpc', 'rpcuser'), config.get('rpc', 'rpcpassword'), server, port)
         return DashdClient(network, url)
 
     def __init__(self, network='dash', base_url='', denominator=100000000, *args):
@@ -203,7 +203,7 @@ if __name__ == '__main__':
     from pprint import pprint
 
     # 1. Connect by specifying connection URL
-    # base_url = 'http://dashrpcuser:passwd@host:9998'
+    # base_url = 'https://dashrpcuser:passwd@host:9998'
     # bdc = DashdClient(base_url=base_url)
 
     # 2. Or connect using default settings or settings from config file

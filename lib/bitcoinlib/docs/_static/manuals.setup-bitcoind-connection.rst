@@ -45,7 +45,7 @@ instance.
 
 .. code-block:: python
 
-    from bitcoinlib.services.bitcoind import BitcoindClient
+    from lib.bitcoinlib.services.bitcoind import BitcoindClient
 
     bdc = BitcoindClient.from_config('/usr/local/src/.bitcoinlib/config/bitcoin.conf')
     txid = 'e0cee8955f516d5ed333d081a4e2f55b999debfff91a49e8123d20f7ed647ac5'
@@ -85,7 +85,7 @@ This provides more flexibility but also the responsibility to store user and pas
 
 .. code-block:: python
 
-    from bitcoinlib.services.bitcoind import BitcoindClient
+    from lib.bitcoinlib.services.bitcoind import BitcoindClient
 
     base_url = 'http://user:password@server_url:18332'
     bdc = BitcoindClient(base_url=base_url)

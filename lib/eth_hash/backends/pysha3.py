@@ -1,10 +1,8 @@
-from sha3 import (
-    keccak_256 as _keccak_256,
-)
+import hashlib
+from sha3 import keccak_256 as _keccak_256
 
-from lib.eth_hash.preimage import (
-    BasePreImage,
-)
+
+from lib.eth_hash.preimage import BasePreImage
 
 
 def keccak256(prehash: bytes) -> bytes:

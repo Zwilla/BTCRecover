@@ -9,9 +9,9 @@ import warnings
 # site
 # pkg
 from passlib import hash
-from passlib.utils.compat import u
-from passlib.tests.utils import TestCase, HandlerCase
-from passlib.tests.test_handlers import UPASS_WAV
+from lib.passlib.utils.compat import u
+from lib.passlib.tests.utils import TestCase, HandlerCase
+from lib.passlib.tests.test_handlers import UPASS_WAV
 # module
 
 #=============================================================================
@@ -417,7 +417,7 @@ class scram_test(HandlerCase):
     def test_95_context_algs(self):
         """test handling of 'algs' in context object"""
         handler = self.handler
-        from passlib.context import CryptContext
+        from lib.passlib.context import CryptContext
         c1 = CryptContext(["scram"], scram__algs="sha1,md5")
 
         h = c1.hash("dummy")

@@ -18,7 +18,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 
 import warnings, unittest, os, tempfile, shutil, filecmp, sys, hashlib, random, mmap, pickle
@@ -31,7 +31,6 @@ import btcrecover.opencl_helpers
 
 wallet_dir = os.path.join(os.path.dirname(__file__), "test-wallets")
 
-
 # def setUpModule():
 #     global orig_warnings
 #     orig_warnings = warnings.catch_warnings()
@@ -43,7 +42,9 @@ wallet_dir = os.path.join(os.path.dirname(__file__), "test-wallets")
 # def tearDownModule():
 #     orig_warnings.__exit__(None, None, None)  # restore the original warnings settings
 
-opencl_device_count = None
+opencl_device_count = 0
+
+
 def has_any_opencl_devices():
     global opencl_device_count
     if opencl_device_count is None:
@@ -56,6 +57,8 @@ def has_any_opencl_devices():
 
 
 is_groestlcoin_hash_loadable = None
+
+
 def can_load_groestlcoin_hash():
     global is_groestlcoin_hash_loadable
     if is_groestlcoin_hash_loadable is None:
@@ -68,7 +71,10 @@ def can_load_groestlcoin_hash():
 
     return is_groestlcoin_hash_loadable
 
+
 is_PyCryptoHDWallet_loadable = None
+
+
 def can_load_PyCryptoHDWallet():
     global is_PyCryptoHDWallet_loadable
     if is_PyCryptoHDWallet_loadable is None:
@@ -79,7 +85,10 @@ def can_load_PyCryptoHDWallet():
             is_PyCryptoHDWallet_loadable = False
     return is_PyCryptoHDWallet_loadable
 
+
 is_nacl_loadable = None
+
+
 def can_load_nacl():
     global is_nacl_loadable
     if is_nacl_loadable is None:
@@ -90,7 +99,10 @@ def can_load_nacl():
             is_nacl_loadable = False
     return is_nacl_loadable
 
+
 is_bitstring_loadable = None
+
+
 def can_load_bitstring():
     global is_bitstring_loadable
     if is_bitstring_loadable is None:
@@ -100,6 +112,7 @@ def can_load_bitstring():
         except:
             is_bitstring_loadable = False
     return is_bitstring_loadable
+
 
 # Similar to unittest.skipUnless, except the first arg is a function returning a bool instead
 # of just a bool. This function isn't called until just before the test is to be run. This
@@ -184,7 +197,8 @@ class TestRecoveryFromMPK(unittest.TestCase):
 
     def mpk_tester(self, wallet_type, the_mpk, correct_mnemonic, test_path=None, **kwds):
 
-        # Don't call the wallet create with a path parameter if we don't have to. (for the same of compatibility across wallet types)
+        # Don't call the wallet create with a path parameter if we don't have to.
+        # (for the same of compatibility across wallet types)
         if test_path == None:
             wallet = wallet_type.create_from_params(mpk=the_mpk)
         else:
@@ -231,19 +245,19 @@ class TestRecoveryFromMPK(unittest.TestCase):
         self.mpk_tester(btcrseed.WalletElectrum2,
                         self.TEST_ELECTRUM2_PASS_XPUB,
                         "eagle pair eager human cage forget pony fall robot vague later bright acid",
-                        expected_len=13, passphrases=[u"btcr test password 测试密码",])
+                        expected_len=13, passphrases=[u"btcr test password 测试密码", ])
 
     def test_electrum28_xpub_pass_legacy(self):
         self.mpk_tester(btcrseed.WalletElectrum2,
                         "xpub661MyMwAqRbcEa7eRrwnfAmhDAKBzFiuNxjcUKhwk18J3z1muMxnm1AKYjUo3VEUfYBDshhyxcUqpvqJEgacEMYyGRa7TUNXbieqrKibhCg",
                         "water wait table horse smooth birth identify food favorite depend brother hand",
-                        expected_len=12, passphrases=["btcr-test-password",])
+                        expected_len=12, passphrases=["btcr-test-password", ])
 
     def test_electrum28_xpub_pass_segwit(self):
         self.mpk_tester(btcrseed.WalletElectrum2,
                         "zpub6oCYZXxa8YvFyR51r12U7q5B2cbeY25MqRnWTdXYex1EPuTvbfmeJmCFoo88xbqkgHyitfK1UW2q5CTPUW8fWqpZtsDF3jVwk6PTdGTbX2w",
                         "quote voice evidence aspect warfare hire system black rate wing ask rug",
-                        expected_len=12, passphrases=["btcr-test-password",])
+                        expected_len=12, passphrases=["btcr-test-password", ])
 
     def test_electrum2_xpub_pass_normalize_legacy(self):
         p = u" btcr  TEST  ℙáⓢⓢᵂöṝⅆ  测试  密码 "
@@ -251,7 +265,7 @@ class TestRecoveryFromMPK(unittest.TestCase):
         self.mpk_tester(btcrseed.WalletElectrum2,
                         self.TEST_ELECTRUM2_PASS_XPUB,
                         "eagle pair eager human cage forget pony fall robot vague later bright acid",
-                        expected_len=13, passphrases=[p,])
+                        expected_len=13, passphrases=[p, ])
 
     def test_electrum2_xpub_pass_wide_legacy(self):
         p = u"𝔅tcr 𝔗est 𝔓assword 测试密码"
@@ -263,7 +277,7 @@ class TestRecoveryFromMPK(unittest.TestCase):
                         # for wide Unicode builds, there are no bugs:
                         self.TEST_ELECTRUM2_PASS_XPUB,
                         "eagle pair eager human cage forget pony fall robot vague later bright acid",
-                        expected_len=13, passphrases=[p,])
+                        expected_len=13, passphrases=[p, ])
 
     def test_bitcoinj_xpub_legacy(self):
         # an xpub at path m/0', as Bitcoin Wallet for Android/BlackBerry would export
@@ -308,14 +322,14 @@ class TestRecoveryFromMPK(unittest.TestCase):
         self.mpk_tester(btcrseed.WalletBIP39,
                         "xpub6D3uXJmdUg4xVnCUkNXJPCkk18gZAB8exGdQeb2rDwC5UJtraHHARSCc2Nz7rQ14godicjXiKxhUn39gbAw6Xb5eWb5srcbkhqPgAqoTMEY",
                         "certain come keen collect slab gauge photo inside mechanic deny leader drop",
-                        passphrases=[u"btcr-test-password",])
+                        passphrases=[u"btcr-test-password", ])
 
     def test_bip44_pass_unicode(self):
         # an xpub at path m/44'/0'/0', as Mycelium for Android would export
         self.mpk_tester(btcrseed.WalletBIP39,
                         "xpub6CZe1G1A1CaaSepbekLMSk1sBRNA9kHZzEQCedudHAQHHB21FW9fYpQWXBevrLVQfL8JFQVFWEw3aACdr6szksaGsLiHDKyRd1rPJ6ev5ig",
                         "certain come keen collect slab gauge photo inside mechanic deny leader drop",
-                        passphrases=[u"btcr-тест-пароль",])
+                        passphrases=[u"btcr-тест-пароль", ])
 
     @skipUnless(can_load_groestlcoin_hash, "requires groestlcoin_hash")
     def test_groestlcoinj_xpub_legacy(self):
@@ -367,7 +381,7 @@ def can_load_keccak():
 class TestRecoveryFromAddress(unittest.TestCase):
 
     def address_tester(self, wallet_type, the_address, the_address_limit, correct_mnemonic, test_path=None,
-                       pathlist_file=None, addr_start_index = 0, force_p2sh = False, checksinglexpubaddress = False, **kwds):
+                       pathlist_file=None, addr_start_index=0, force_p2sh=False, checksinglexpubaddress=False, **kwds):
 
         if pathlist_file:
             test_path = btcrseed.load_pathlist("./derivationpath-lists/" + pathlist_file)
@@ -455,24 +469,28 @@ class TestRecoveryFromAddress(unittest.TestCase):
             (correct_mnemonic_ids, 2))
 
     def test_cardano_icarus_baseaddress(self):
-        self.address_tester_cardano("addr1q9pv008mvhh22rney454j4z07nyyj9ygal57juv9xct4kayyk6y9htlyut67pks8j3s0jjs3f5z40rd9afd35ehwny4s4va2du",
-                                    "cave table seven there praise limit fat decorate middle gold ten battle trigger luggage demand")
+        self.address_tester_cardano(
+            "addr1q9pv008mvhh22rney454j4z07nyyj9ygal57juv9xct4kayyk6y9htlyut67pks8j3s0jjs3f5z40rd9afd35ehwny4s4va2du",
+            "cave table seven there praise limit fat decorate middle gold ten battle trigger luggage demand")
 
     def test_cardano_icarus_stakeaddress(self):
         self.address_tester_cardano("stake1uxztdzzm4ljw9a0qmgregc8efgg56p2h3kj75kc6vmhfj2cyg0jmy",
                                     "cave table seven there praise limit fat decorate middle gold ten battle trigger luggage demand")
 
     def test_cardano_ledger_baseaddress(self):
-        self.address_tester_cardano("addr1q9wwzskx6c3mc4zh4mud9wrcg6yhj6pv96apf9hed0ewjr7aeyz04x3n0hpuw4c9882chhndfc47gk77kyqml5f4s38qeqlxk7",
-                                    "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
+        self.address_tester_cardano(
+            "addr1q9wwzskx6c3mc4zh4mud9wrcg6yhj6pv96apf9hed0ewjr7aeyz04x3n0hpuw4c9882chhndfc47gk77kyqml5f4s38qeqlxk7",
+            "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
 
     def test_cardano_trezor_12word_baseaddress(self):
-        self.address_tester_cardano("addr1q8k0u70k6sxkcl6x539k84ntldh32de47ac8tn4us9q7hufv7g4xxwuezu9q6xqnx7mr3ejhg0jdlczkyv3fs6p477fqxwz930",
-                                    "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
+        self.address_tester_cardano(
+            "addr1q8k0u70k6sxkcl6x539k84ntldh32de47ac8tn4us9q7hufv7g4xxwuezu9q6xqnx7mr3ejhg0jdlczkyv3fs6p477fqxwz930",
+            "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
 
     def test_cardano_trezor_24word_baseaddress(self):
-        self.address_tester_cardano("addr1q97tp64cz7ec7gx09a7caucf0drglwtane9v23f8g0w5yxj727mx0j8stldrvcuh6zh6dfkj407enp3hc39s338982xq5c0yaq",
-                                    "wood blame garbage one federal jaguar slogan movie thunder seed apology trigger spoon depth basket fine culture boil render special enforce dish middle antique")
+        self.address_tester_cardano(
+            "addr1q97tp64cz7ec7gx09a7caucf0drglwtane9v23f8g0w5yxj727mx0j8stldrvcuh6zh6dfkj407enp3hc39s338982xq5c0yaq",
+            "wood blame garbage one federal jaguar slogan movie thunder seed apology trigger spoon depth basket fine culture boil render special enforce dish middle antique")
 
     # def test_cardano_icarus_15word_baseaddress_opencl(self):
     #     self.address_tester_cardano_opencl("addr1q9pv008mvhh22rney454j4z07nyyj9ygal57juv9xct4kayyk6y9htlyut67pks8j3s0jjs3f5z40rd9afd35ehwny4s4va2du",
@@ -484,13 +502,15 @@ class TestRecoveryFromAddress(unittest.TestCase):
 
     @skipUnless(has_any_opencl_devices, "requires OpenCL and a compatible device")
     def test_cardano_ledger_baseaddress_opencl(self):
-        self.address_tester_cardano_opencl("addr1q9wwzskx6c3mc4zh4mud9wrcg6yhj6pv96apf9hed0ewjr7aeyz04x3n0hpuw4c9882chhndfc47gk77kyqml5f4s38qeqlxk7",
-                                    "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
+        self.address_tester_cardano_opencl(
+            "addr1q9wwzskx6c3mc4zh4mud9wrcg6yhj6pv96apf9hed0ewjr7aeyz04x3n0hpuw4c9882chhndfc47gk77kyqml5f4s38qeqlxk7",
+            "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
 
     @skipUnless(has_any_opencl_devices, "requires OpenCL and a compatible device")
     def test_cardano_trezor_12word_baseaddress_opencl(self):
-        self.address_tester_cardano_opencl("addr1q8k0u70k6sxkcl6x539k84ntldh32de47ac8tn4us9q7hufv7g4xxwuezu9q6xqnx7mr3ejhg0jdlczkyv3fs6p477fqxwz930",
-                                    "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
+        self.address_tester_cardano_opencl(
+            "addr1q8k0u70k6sxkcl6x539k84ntldh32de47ac8tn4us9q7hufv7g4xxwuezu9q6xqnx7mr3ejhg0jdlczkyv3fs6p477fqxwz930",
+            "ocean hidden kidney famous rich season gloom husband spring convince attitude boy")
 
     # @skipUnless(has_any_opencl_devices, "requires OpenCL and a compatible device")
     # def test_cardano_trezor_24word_baseaddress_opencl(self):
@@ -499,8 +519,9 @@ class TestRecoveryFromAddress(unittest.TestCase):
 
     @skipUnless(has_any_opencl_devices, "requires OpenCL and a compatible device")
     def test_cardano_icarus_18word_baseaddress_opencl(self):
-        self.address_tester_cardano_opencl("addr1qypv06cpahxc0lv9az2wlexeupzztfdnnag5swgrjwp40eppwhmrsyru6y7auplxrautystcsav5e4hssr8pte2l6khsxeehlc",
-                                    "around lawn weird blanket sense near west depth speak boy tourist found chief easy cheese pulp stand coast")
+        self.address_tester_cardano_opencl(
+            "addr1qypv06cpahxc0lv9az2wlexeupzztfdnnag5swgrjwp40eppwhmrsyru6y7auplxrautystcsav5e4hssr8pte2l6khsxeehlc",
+            "around lawn weird blanket sense near west depth speak boy tourist found chief easy cheese pulp stand coast")
 
     # @skipUnless(has_any_opencl_devices, "requires OpenCL and a compatible device")
     # def test_cardano_icarus_21word_baseaddress_opencl(self):
@@ -509,8 +530,9 @@ class TestRecoveryFromAddress(unittest.TestCase):
 
     @skipUnless(has_any_opencl_devices, "requires OpenCL and a compatible device")
     def test_cardano_icarus_24word_baseaddress_opencl(self):
-        self.address_tester_cardano_opencl("addr1qx3f4r3qqvynsnvhxrkkycp83v93jg2fqkn7scxnvpe6t99f4evt0tdad8cvsdvenma8t68gfdkyvf3efjzslcn7r4ys72w3qh",
-                                    "wood blame garbage one federal jaguar slogan movie thunder seed apology trigger spoon depth basket fine culture boil render special enforce dish middle antique")
+        self.address_tester_cardano_opencl(
+            "addr1qx3f4r3qqvynsnvhxrkkycp83v93jg2fqkn7scxnvpe6t99f4evt0tdad8cvsdvenma8t68gfdkyvf3efjzslcn7r4ys72w3qh",
+            "wood blame garbage one federal jaguar slogan movie thunder seed apology trigger spoon depth basket fine culture boil render special enforce dish middle antique")
 
     def test_electrum1_addr_legacy_BTC(self):
         self.address_tester(btcrseed.WalletElectrum1, "12zAz6pAB6LhzGSZFCc6g9uBSWzwESEsPT", 3,
@@ -558,7 +580,8 @@ class TestRecoveryFromAddress(unittest.TestCase):
     def test_bip44_addr_BTC_passphraseList(self):
         testPassphrases = btcrseed.load_passphraselist("./btcrecover/test/test-listfiles/BIP39PassphraseListTest.txt")
         self.address_tester(btcrseed.WalletBIP39, "1FB1Zr39YefYVEQ8s3V9SWsaN8pxpLkboD", 2,
-                            "helmet quote motor network swear rude horse fault throw egg atom assault", passphrases = testPassphrases)
+                            "helmet quote motor network swear rude horse fault throw egg atom assault",
+                            passphrases=testPassphrases)
 
     def test_bip49_addr_BTC_defaultderivationpaths(self):
         self.address_tester(btcrseed.WalletBIP39, "3NiRFNztVLMZF21gx6eE1nL3Q57GMGuunG", 2,
@@ -573,7 +596,7 @@ class TestRecoveryFromAddress(unittest.TestCase):
     def test_bip49_addr_BTC_force_start_index(self):
         self.address_tester(btcrseed.WalletBIP39, "3MtDzhXzsSSkn49WdYCno7o5ZqAVxsFmqj", 2,
                             "element entire sniff tired miracle solve shadow scatter hello never tank side sight isolate "
-                            "sister uniform advice pen praise soap lizard festival connect baby", addr_start_index = 18)
+                            "sister uniform advice pen praise soap lizard festival connect baby", addr_start_index=18)
 
     def test_bip84_addr_BTC_defaultderivationpaths(self):
         self.address_tester(btcrseed.WalletBIP39, "bc1qv87qf7prhjf2ld8vgm7l0mj59jggm6ae5jdkx2", 2,
@@ -598,12 +621,12 @@ class TestRecoveryFromAddress(unittest.TestCase):
     def test_bip44_addr_BTC_multi_coin_derivationpaths(self):
         self.address_tester(btcrseed.WalletBIP39, "1AiAYaVJ7SCkDeNqgFz7UDecycgzb6LoT3", 2,
                             "certain come keen collect slab gauge photo inside mechanic deny leader drop",
-                            ["m/44'/4'/0'/0","m/44'/3'/0'/0","m/44'/2'/0'/0","m/44'/1'/0'/0","m/44'/0'/0'/0"])
+                            ["m/44'/4'/0'/0", "m/44'/3'/0'/0", "m/44'/2'/0'/0", "m/44'/1'/0'/0", "m/44'/0'/0'/0"])
 
     def test_bip44_addr_BTC_multi_account_derivationpaths(self):
         self.address_tester(btcrseed.WalletBIP39, "1Bi4fRZTPna1nbBJ8KLxaFfWV3BFDV9xj3", 2,
                             "certain come keen collect slab gauge photo inside mechanic deny leader drop",
-                            ["m/44'/0'/0'/0","m/44'/0'/1'/0","m/44'/0'/2'/0","m/44'/0'/3'/0","m/44'/0'/4'/0"])
+                            ["m/44'/0'/0'/0", "m/44'/0'/1'/0", "m/44'/0'/2'/0", "m/44'/0'/3'/0", "m/44'/0'/4'/0"])
 
     def test_bip49_addr_BTC(self):
         self.address_tester(btcrseed.WalletBIP39, "3NiRFNztVLMZF21gx6eE1nL3Q57GMGuunG", 2,
@@ -866,25 +889,25 @@ class TestRecoveryFromAddress(unittest.TestCase):
                             "certain come keen collect slab gauge photo inside mechanic deny leader drop")
 
     def test_singlexpubaddress_atomic_eth(self):
-        self.address_tester(wallet_type = btcrseed.WalletEthereum,
-                            the_address = "0xfa5E4Bb54b4f45841140b2EF03198EBA64ABa9DD",
-                            the_address_limit = 1,
-                            correct_mnemonic = "keen term crouch physical together vital oak predict royal quantum tomorrow chunk",
-                            checksinglexpubaddress = True)
+        self.address_tester(wallet_type=btcrseed.WalletEthereum,
+                            the_address="0xfa5E4Bb54b4f45841140b2EF03198EBA64ABa9DD",
+                            the_address_limit=1,
+                            correct_mnemonic="keen term crouch physical together vital oak predict royal quantum tomorrow chunk",
+                            checksinglexpubaddress=True)
 
     def test_singlexpubaddress_mybitcoinwallet_single_legacy(self):
-        self.address_tester(wallet_type = btcrseed.WalletBIP39,
-                            the_address = "1EaGSR7uWp2hok3jTtNypjUuV3G4YyMxgt",
-                            the_address_limit = 1,
-                            correct_mnemonic = "spatial stereo thrive reform shallow blouse minimum foster eagle game answer worth size stumble theme crater bounce stay extra duty man weather awesome search",
-                            checksinglexpubaddress = True)
+        self.address_tester(wallet_type=btcrseed.WalletBIP39,
+                            the_address="1EaGSR7uWp2hok3jTtNypjUuV3G4YyMxgt",
+                            the_address_limit=1,
+                            correct_mnemonic="spatial stereo thrive reform shallow blouse minimum foster eagle game answer worth size stumble theme crater bounce stay extra duty man weather awesome search",
+                            checksinglexpubaddress=True)
 
     def test_singlexpubaddress_mybitcoinwallet_single_bech32(self):
-        self.address_tester(wallet_type = btcrseed.WalletBIP39,
-                            the_address = "bc1qymj3j8qkyk8ukhczg80tm0jyfh4rzxyqnngsqh",
-                            the_address_limit = 1,
-                            correct_mnemonic = "spatial stereo thrive reform shallow blouse minimum foster eagle game answer worth size stumble theme crater bounce stay extra duty man weather awesome search",
-                            checksinglexpubaddress = True)
+        self.address_tester(wallet_type=btcrseed.WalletBIP39,
+                            the_address="bc1qymj3j8qkyk8ukhczg80tm0jyfh4rzxyqnngsqh",
+                            the_address_limit=1,
+                            correct_mnemonic="spatial stereo thrive reform shallow blouse minimum foster eagle game answer worth size stumble theme crater bounce stay extra duty man weather awesome search",
+                            checksinglexpubaddress=True)
 
     @skipUnless(can_load_PyCryptoHDWallet, "requires Py_Crypto_HD_Wallet module")
     def test_WalletPyCryptoHDWallet_Tron(self):
@@ -905,12 +928,11 @@ class TestRecoveryFromAddress(unittest.TestCase):
     def test_WalletPyCryptoHDWallet_SecretNetworkOld(self):
         self.address_tester(btcrseed.WalletSecretNetworkOld, "secret1t47f66q50ft66ypwn9x7laeectyvh23azueqxu", 1,
                             "doctor giant eternal huge improve suit service poem logic dynamic crane summer exhibit describe later suit dignity ahead unknown fall syrup mirror nurse season")
+
     @skipUnless(can_load_PyCryptoHDWallet, "requires Py_Crypto_HD_Wallet module")
     def test_WalletPyCryptoHDWallet_Tezos(self):
         self.address_tester(btcrseed.WalletTezos, "tz1UXZKEq7SsveAi1jpKBeigcdoFHmVopHKq", 1,
                             "cake return enhance slender swap butter code cram fashion warm uphold adapt swarm slight misery enhance almost ability artefact lava sugar regret example lake")
-
-
 
     @skipUnless(can_load_PyCryptoHDWallet, "requires Py_Crypto_HD_Wallet module")
     def test_WalletPyCryptoHDWallet_Avalanche(self):
@@ -1228,14 +1250,14 @@ class TestRecoveryFromAddress(unittest.TestCase):
 
         self.assertEqual(btcrseed.WalletEthereum._return_verified_password_or_false_opencl(wallet,
                                                                                            (
-                                                                                           wrong_mnemonic_iter.__next__(),
-                                                                                           wrong_mnemonic_iter.__next__())),
+                                                                                               wrong_mnemonic_iter.__next__(),
+                                                                                               wrong_mnemonic_iter.__next__())),
                          (False, 2))
         self.assertEqual(btcrseed.WalletEthereum._return_verified_password_or_false_opencl(wallet,
                                                                                            (
-                                                                                           wrong_mnemonic_iter.__next__(),
-                                                                                           correct_mnemonic_ids,
-                                                                                           wrong_mnemonic_iter.__next__())),
+                                                                                               wrong_mnemonic_iter.__next__(),
+                                                                                               correct_mnemonic_ids,
+                                                                                               wrong_mnemonic_iter.__next__())),
                          (correct_mnemonic_ids, 2))
 
         # Make sure the address_limit is respected (note the "the_address_limit-1" below)
@@ -1273,14 +1295,14 @@ class TestRecoveryFromAddress(unittest.TestCase):
 
         self.assertEqual(btcrseed.WalletElectrum2._return_verified_password_or_false_opencl(wallet,
                                                                                             (
-                                                                                            wrong_mnemonic_iter.__next__(),
-                                                                                            wrong_mnemonic_iter.__next__())),
+                                                                                                wrong_mnemonic_iter.__next__(),
+                                                                                                wrong_mnemonic_iter.__next__())),
                          (False, 2))
         self.assertEqual(btcrseed.WalletElectrum2._return_verified_password_or_false_opencl(wallet,
                                                                                             (
-                                                                                            wrong_mnemonic_iter.__next__(),
-                                                                                            correct_mnemonic_ids,
-                                                                                            wrong_mnemonic_iter.__next__())),
+                                                                                                wrong_mnemonic_iter.__next__(),
+                                                                                                correct_mnemonic_ids,
+                                                                                                wrong_mnemonic_iter.__next__())),
                          (correct_mnemonic_ids, 2))
 
         # Make sure the address_limit is respected (note the "the_address_limit-1" below)
@@ -1453,7 +1475,8 @@ class TestRecoveryFromAddressDB(unittest.TestCase):
             (correct_mnemonic_ids, 2))
 
         # Make sure the address_limit is respected (note the "the_address_limit-1" below)
-        wallet = wallet_type.create_from_params(hash160s=addressdb, address_limit=the_address_limit - 1, path=[test_path])
+        wallet = wallet_type.create_from_params(hash160s=addressdb, address_limit=the_address_limit - 1,
+                                                path=[test_path])
         wallet.config_mnemonic(correct_mnemonic, **kwds)
         self.assertEqual(wallet.return_verified_password_or_false(
             (correct_mnemonic_ids,)), (False, 1))
@@ -1470,7 +1493,7 @@ class TestRecoveryFromAddressDB(unittest.TestCase):
     def test_addressdb_bip44_bch_passphrase(self):
         self.addressdb_tester(btcrseed.WalletBIP39, 2,
                               "element entire sniff tired miracle solve shadow scatter hello never tank side sight isolate sister uniform advice pen praise soap lizard festival connect baby",
-                              "m/44'/145'/0'/0", "addresses-BCH-Test.db", passphrases=[u"youtube",])
+                              "m/44'/145'/0'/0", "addresses-BCH-Test.db", passphrases=[u"youtube", ])
 
     # BTC AddressDB Tests
     # m/44'/0'/1'/0/1	1Bi3vKepTDmrRYC59WjaGDVDrg8qPsrc31
@@ -1678,22 +1701,23 @@ class TestRecoverySeedListsGenerators(unittest.TestCase):
     def test_seedlist_allpositional_tokenblocks(self):
         self.tokenlist_tester("tokenlist-tokenblocks.txt",
                               [[['elbow', 'text', 'print', 'census', 'battle', 'push',
-                                                                'oyster', 'team', 'home', 'april', 'travel',
-                                                                'barrel']]],
-                              max_tokens = 3,
-                              min_tokens = 3)
+                                 'oyster', 'team', 'home', 'april', 'travel',
+                                 'barrel']]],
+                              max_tokens=3,
+                              min_tokens=3)
 
     def test_tokenlist(self):
         self.tokenlist_tester("SeedTokenListTest.txt")
 
-    def tokenlist_tester(self, tokenlistfile, correct_seedlist=None, max_tokens = 12, min_tokens = 12):
+    def tokenlist_tester(self, tokenlistfile, correct_seedlist=None, max_tokens=12, min_tokens=12):
         if correct_seedlist is None:
             correct_seedlist = self.expected_passwordlist
         # Check to see if the Token List file exists (and if not, skip)
         if not os.path.isfile("./btcrecover/test/test-listfiles/" + tokenlistfile):
             raise unittest.SkipTest("requires ./btcrecover/test/test-listfiles/" + tokenlistfile)
 
-        args = (" --listpass --seedgenerator --max-tokens " + str(max_tokens) + " --min-tokens " +  str(min_tokens)).split()
+        args = (" --listpass --seedgenerator --max-tokens " + str(max_tokens) + " --min-tokens " + str(
+            min_tokens)).split()
 
         btcrpass.parse_arguments(["--tokenlist"] + ["./btcrecover/test/test-listfiles/" + tokenlistfile] + args,
                                  disable_security_warning_param=True)

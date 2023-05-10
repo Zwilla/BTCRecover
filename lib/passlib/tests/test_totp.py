@@ -11,11 +11,11 @@ import time as _time
 # site
 # pkg
 from passlib import exc
-from passlib.utils.compat import unicode, u
-from passlib.tests.utils import TestCase, time_call
+from lib.passlib.utils.compat import unicode, u
+from lib.passlib.tests.utils import TestCase, time_call
 # subject
 from passlib import totp as totp_module
-from passlib.totp import TOTP, AppWallet, AES_SUPPORT
+from lib.passlib.totp import TOTP, AppWallet, AES_SUPPORT
 # local
 __all__ = [
     "EngineTest",
@@ -82,7 +82,7 @@ def _get_max_time_t():
         # Instead of throwing ValueError if year out of range for datetime,
         # Python 3.6 will do some weird behavior that masks high bits
         # e.g. (1<<40) -> year 36812, but (1<<41) -> year 6118.
-        # (Appears to be bug http://bugs.python.org/issue29100)
+        # (Appears to be bug https://bugs.python.org/issue29100)
         # This check stops at largest non-wrapping bit size.
         if next_year < year:
             break
@@ -372,6 +372,8 @@ class AppWalletTest(TestCase):
         wallet.encrypt_cost += 3
         delta2, _ = time_call(partial(wallet.encrypt_key, KEY1_RAW), maxtime=0)
 
+        # TODO: rework timing test here to inject mock pbkdf2_hmac() function instead;
+        #       and test that it's being invoked w/ proper options.
         self.assertAlmostEqual(delta2, delta*8, delta=(delta*8)*0.5)
 
     #=============================================================================
@@ -407,7 +409,7 @@ class TotpTest(TestCase):
         super(TotpTest, self).setUp()
 
         # clear norm_hash_name() cache so 'unknown hash' warnings get emitted each time
-        from passlib.crypto.digest import lookup_hash
+        from lib.passlib.crypto.digest import lookup_hash
         lookup_hash.clear_cache()
 
         # monkeypatch module's rng to be deterministic
@@ -502,7 +504,7 @@ class TotpTest(TestCase):
         ],
 
         #-------------------------------------------------------------------------
-        # reference vectors taken from http://tools.ietf.org/html/rfc6238, appendix B
+        # reference vectors taken from https://tools.ietf.org/html/rfc6238, appendix B
         # NOTE: while appendix B states same key used for all tests, the reference
         #       code in the appendix repeats the key up to the alg's block size,
         #       and uses *that* as the secret... so that's what we're doing here.
@@ -542,7 +544,7 @@ class TotpTest(TestCase):
         # other test vectors
         #-------------------------------------------------------------------------
 
-        # generated at http://blog.tinisles.com/2011/10/google-authenticator-one-time-password-algorithm-in-javascript
+        # generated at https://blog.tinisles.com/2011/10/google-authenticator-one-time-password-algorithm-in-javascript
         [dict(key="JBSWY3DPEHPK3PXP", digits=6), (1409192430, '727248'), (1419890990, '122419')],
         [dict(key="JBSWY3DPEHPK3PXP", digits=9, period=41), (1419891152, '662331049')],
 
@@ -558,7 +560,7 @@ class TotpTest(TestCase):
         helper to iterate over test vectors.
         yields ``(totp, time, token, expires, prefix)`` tuples.
         """
-        from passlib.totp import TOTP
+        from lib.passlib.totp import TOTP
         for row in self.vectors:
             kwds = self.vector_defaults.copy()
             kwds.update(row[0])
@@ -828,7 +830,7 @@ class TotpTest(TestCase):
     #=============================================================================
     def test_totp_token(self):
         """generate() -- TotpToken() class"""
-        from passlib.totp import TOTP, TotpToken
+        from lib.passlib.totp import TOTP, TotpToken
 
         # test known set of values
         otp = TOTP('s3jdvb7qd2r7jpxx')
@@ -871,7 +873,7 @@ class TotpTest(TestCase):
 
     def test_generate(self):
         """generate()"""
-        from passlib.totp import TOTP
+        from lib.passlib.totp import TOTP
 
         # generate token
         otp = TOTP(new=True)
@@ -916,7 +918,7 @@ class TotpTest(TestCase):
     #=============================================================================
 
     def assertTotpMatch(self, match, time, skipped=0, period=30, window=30, msg=''):
-        from passlib.totp import TotpMatch
+        from lib.passlib.totp import TotpMatch
 
         # test type
         self.assertIsInstance(match, TotpMatch)
@@ -958,7 +960,7 @@ class TotpTest(TestCase):
 
     def test_totp_match_w_older_token(self):
         """match() -- valid TotpMatch object with future token"""
-        from passlib.totp import TotpMatch
+        from lib.passlib.totp import TotpMatch
 
         time = 141230981
         token = '781501'
@@ -1165,7 +1167,7 @@ class TotpTest(TestCase):
         # NOTE: since this is thin wrapper around .from_source() and .match(),
         #       just testing basic behavior here.
 
-        from passlib.totp import TOTP
+        from lib.passlib.totp import TOTP
 
         time = 1412889861
         TotpFactory = TOTP.using(now=lambda: time)
@@ -1198,7 +1200,7 @@ class TotpTest(TestCase):
     #=============================================================================
     def test_from_source(self):
         """from_source()"""
-        from passlib.totp import TOTP
+        from lib.passlib.totp import TOTP
         from_source = TOTP.from_source
 
         # uri (unicode)
@@ -1245,7 +1247,7 @@ class TotpTest(TestCase):
     #=============================================================================
     def test_from_uri(self):
         """from_uri()"""
-        from passlib.totp import TOTP
+        from lib.passlib.totp import TOTP
         from_uri = TOTP.from_uri
 
         # URIs from https://code.google.com/p/google-authenticator/wiki/KeyUriFormat
@@ -1425,7 +1427,7 @@ class TotpTest(TestCase):
     #=============================================================================
     def test_from_dict(self):
         """from_dict()"""
-        from passlib.totp import TOTP
+        from lib.passlib.totp import TOTP
         from_dict = TOTP.from_dict
 
         #--------------------------------------------------------------------------------

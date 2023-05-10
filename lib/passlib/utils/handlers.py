@@ -11,7 +11,7 @@ import threading
 from warnings import warn
 # site
 # pkg
-import lib.passlib.exc as exc, passlib.ifc as ifc
+import passlib.exc as exc, passlib.ifc as ifc
 from lib.passlib.exc import MissingBackendError, PasslibConfigWarning, \
                         PasslibHashWarning
 from lib.passlib.ifc import PasswordHash
@@ -345,7 +345,6 @@ def mask_value(value, show=4, pct=0.125, char=u"*"):
     size = len(value)
     show = min(show, int(size * pct))
     return value[:show] + char * (size - show)
-
 
 #=============================================================================
 # parameter helpers
@@ -697,7 +696,7 @@ class GenericHandler(MinimalHandler):
         r"""
         return parsed instance from hash/configuration string
 
-        :param \*\*context:
+        :param \\*\\*context:
             context keywords to pass to constructor (if applicable).
 
         :raises ValueError: if hash is incorrectly formatted

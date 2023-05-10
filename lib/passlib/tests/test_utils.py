@@ -9,9 +9,9 @@ import warnings
 # site
 # pkg
 # module
-from passlib.utils import is_ascii_safe
-from passlib.utils.compat import irange, PY2, PY3, u, unicode, join_bytes, PYPY
-from passlib.tests.utils import TestCase, hb, run_with_fixed_seeds
+from lib.passlib.utils import is_ascii_safe, to_bytes
+from lib.passlib.utils.compat import irange, PY2, PY3, u, unicode, join_bytes, PYPY
+from lib.passlib.tests.utils import TestCase, hb, run_with_fixed_seeds
 
 #=============================================================================
 # byte funcs
@@ -23,7 +23,7 @@ class MiscTest(TestCase):
 
     def test_compat(self):
         """test compat's lazymodule"""
-        from passlib.utils import compat
+        from lib.passlib.utils import compat
         # "<module 'passlib.utils.compat' from 'passlib/utils/compat.pyc'>"
         self.assertRegex(repr(compat),
                          r"^<module 'passlib.utils.compat' from '.*?'>$")
@@ -34,7 +34,7 @@ class MiscTest(TestCase):
         self.assertTrue('irange' in dir(compat))
 
     def test_classproperty(self):
-        from passlib.utils.decor import classproperty
+        from lib.passlib.utils.decor import classproperty
 
         class test(object):
             xvar = 1
@@ -47,7 +47,7 @@ class MiscTest(TestCase):
         self.assertIs(prop.im_func, prop.__func__)
 
     def test_deprecated_function(self):
-        from passlib.utils.decor import deprecated_function
+        from lib.passlib.utils.decor import deprecated_function
         # NOTE: not comprehensive, just tests the basic behavior
 
         @deprecated_function(deprecated="1.6", removed="1.8")
@@ -65,7 +65,7 @@ class MiscTest(TestCase):
             self.assertEqual(test_func(1,2), (1,2))
 
     def test_memoized_property(self):
-        from passlib.utils.decor import memoized_property
+        from lib.passlib.utils.decor import memoized_property
 
         class dummy(object):
             counter = 0
@@ -87,7 +87,7 @@ class MiscTest(TestCase):
 
     def test_getrandbytes(self):
         """getrandbytes()"""
-        from passlib.utils import getrandbytes
+        from lib.passlib.utils import getrandbytes
         wrapper = partial(getrandbytes, self.getRandom())
         self.assertEqual(len(wrapper(0)), 0)
         a = wrapper(10)
@@ -100,7 +100,7 @@ class MiscTest(TestCase):
     @run_with_fixed_seeds(count=1024)
     def test_getrandstr(self, seed):
         """getrandstr()"""
-        from passlib.utils import getrandstr
+        from lib.passlib.utils import getrandstr
 
         wrapper = partial(getrandstr, self.getRandom(seed=seed))
 
@@ -140,14 +140,14 @@ class MiscTest(TestCase):
 
     def test_generate_password(self):
         """generate_password()"""
-        from passlib.utils import generate_password
+        from lib.passlib.utils import generate_password
         warnings.filterwarnings("ignore", "The function.*generate_password\(\) is deprecated")
         self.assertEqual(len(generate_password(15)), 15)
 
     def test_is_crypt_context(self):
         """test is_crypt_context()"""
-        from passlib.utils import is_crypt_context
-        from passlib.context import CryptContext
+        from lib.passlib.utils import is_crypt_context
+        from lib.passlib.context import CryptContext
         cc = CryptContext(["des_crypt"])
         self.assertTrue(is_crypt_context(cc))
         self.assertFalse(not is_crypt_context(cc))
@@ -155,7 +155,7 @@ class MiscTest(TestCase):
     def test_genseed(self):
         """test genseed()"""
         import random
-        from passlib.utils import genseed
+        from lib.passlib.utils import genseed
         rng = random.Random(genseed())
         a = rng.randint(0, 10**10)
 
@@ -168,58 +168,87 @@ class MiscTest(TestCase):
 
     def test_crypt(self):
         """test crypt.crypt() wrappers"""
-        from passlib.utils import has_crypt, safe_crypt, test_crypt
+        from lib.passlib.utils import has_crypt, safe_crypt, test_crypt
+        from lib.passlib.registry import get_supported_os_crypt_schemes, get_crypt_handler
 
         # test everything is disabled
+        supported = get_supported_os_crypt_schemes()
         if not has_crypt:
+            self.assertEqual(supported, ())
             self.assertEqual(safe_crypt("test", "aa"), None)
-            self.assertFalse(test_crypt("test", "aaqPiZY5xR5l."))
+            self.assertFalse(test_crypt("test", "aaqPiZY5xR5l."))  # des_crypt() hash of "test"
             raise self.skipTest("crypt.crypt() not available")
 
-        # XXX: this assumes *every* crypt() implementation supports des_crypt.
-        #      if this fails for some platform, this test will need modifying.
+        # expect there to be something supported, if crypt() is present
+        if not supported:
+            # NOTE: failures here should be investigated.  usually means one of:
+            # 1) at least one of passlib's os_crypt detection routines is giving false negative
+            # 2) crypt() ONLY supports some hash alg which passlib doesn't know about
+            # 3) crypt() is present but completely disabled (never encountered this yet)
+            raise self.fail("crypt() present, but no supported schemes found!")
 
-        # test return type
-        self.assertIsInstance(safe_crypt(u("test"), u("aa")), unicode)
+        # pick cheap alg if possible, with minimum rounds, to speed up this test.
+        # NOTE: trusting hasher class works properly (should have been verified using it's own UTs)
+        for scheme in ("md5_crypt", "sha256_crypt"):
+            if scheme in supported:
+                break
+        else:
+            scheme = supported[-1]
+        hasher = get_crypt_handler(scheme)
+        if getattr(hasher, "min_rounds", None):
+            hasher = hasher.using(rounds=hasher.min_rounds)
 
-        # test ascii password
-        h1 = u('aaqPiZY5xR5l.')
-        self.assertEqual(safe_crypt(u('test'), u('aa')), h1)
-        self.assertEqual(safe_crypt(b'test', b'aa'), h1)
+        # helpers to generate hashes & config strings to work with
+        def get_hash(secret):
+            assert isinstance(secret, unicode)
+            hash = hasher.hash(secret)
+            if isinstance(hash, bytes):  # py2
+                hash = hash.decode("utf-8")
+            assert isinstance(hash, unicode)
+            return hash
+
+        # test ascii password & return type
+        s1 = u("test")
+        h1 = get_hash(s1)
+        result = safe_crypt(s1, h1)
+        self.assertIsInstance(result, unicode)
+        self.assertEqual(result, h1)
+        self.assertEqual(safe_crypt(to_bytes(s1), to_bytes(h1)), h1)
+
+        # make sure crypt doesn't just blindly return h1 for whatever we pass in
+        h1x = h1[:-2] + 'xx'
+        self.assertEqual(safe_crypt(s1, h1x), h1)
 
         # test utf-8 / unicode password
-        h2 = u('aahWwbrUsKZk.')
-        self.assertEqual(safe_crypt(u('test\u1234'), 'aa'), h2)
-        self.assertEqual(safe_crypt(b'test\xe1\x88\xb4', 'aa'), h2)
-
-        # test latin-1 password
-        hash = safe_crypt(b'test\xff', 'aa')
-        if PY3: # py3 supports utf-8 bytes only.
-            self.assertEqual(hash, None)
-        else: # but py2 is fine.
-            self.assertEqual(hash, u('aaOx.5nbTU/.M'))
+        s2 = u('test\u1234')
+        h2 = get_hash(s2)
+        self.assertEqual(safe_crypt(s2, h2), h2)
+        self.assertEqual(safe_crypt(to_bytes(s2), to_bytes(h2)), h2)
 
         # test rejects null chars in password
-        self.assertRaises(ValueError, safe_crypt, '\x00', 'aa')
+        self.assertRaises(ValueError, safe_crypt, '\x00', h1)
 
         # check test_crypt()
-        h1x = h1[:-1] + 'x'
         self.assertTrue(test_crypt("test", h1))
         self.assertFalse(test_crypt("test", h1x))
 
         # check crypt returning variant error indicators
         # some platforms return None on errors, others empty string,
         # The BSDs in some cases return ":"
-        import lib.passlib.utils as mod
+        import passlib.utils as mod
         orig = mod._crypt
         try:
-            fake = None
-            mod._crypt = lambda secret, hash: fake
-            for fake in [None, "", ":", ":0", "*0"]:
-                self.assertEqual(safe_crypt("test", "aa"), None)
+            retval = None
+            mod._crypt = lambda secret, hash: retval
+
+            for retval in [None, "", ":", ":0", "*0"]:
+                self.assertEqual(safe_crypt("test", h1), None)
                 self.assertFalse(test_crypt("test", h1))
-            fake = 'xxx'
-            self.assertEqual(safe_crypt("test", "aa"), "xxx")
+
+            retval = 'xxx'
+            self.assertEqual(safe_crypt("test", h1), "xxx")
+            self.assertFalse(test_crypt("test", h1))
+
         finally:
             mod._crypt = orig
 
@@ -227,7 +256,7 @@ class MiscTest(TestCase):
         """test consteq()"""
         # NOTE: this test is kind of over the top, but that's only because
         # this is used for the critical task of comparing hashes for equality.
-        from passlib.utils import consteq, str_consteq
+        from lib.passlib.utils import consteq, str_consteq
 
         # ensure error raises for wrong types
         self.assertRaises(TypeError, consteq, u(''), b'')
@@ -328,7 +357,7 @@ class MiscTest(TestCase):
     def test_saslprep(self):
         """test saslprep() unicode normalizer"""
         self.require_stringprep()
-        from passlib.utils import saslprep as sp
+        from lib.passlib.utils import saslprep as sp
 
         # invalid types
         self.assertRaises(TypeError, sp, None)
@@ -405,13 +434,132 @@ class MiscTest(TestCase):
         self.assertEqual(sp(u("\u0627\u0031\u0628")), u("\u0627\u0031\u0628"))
 
     def test_splitcomma(self):
-        from passlib.utils import splitcomma
+        from lib.passlib.utils import splitcomma
         self.assertEqual(splitcomma(""), [])
         self.assertEqual(splitcomma(","), [])
         self.assertEqual(splitcomma("a"), ['a'])
         self.assertEqual(splitcomma(" a , "), ['a'])
         self.assertEqual(splitcomma(" a , b"), ['a', 'b'])
         self.assertEqual(splitcomma(" a, b, "), ['a', 'b'])
+
+    def test_utf8_truncate(self):
+        """
+        utf8_truncate()
+        """
+        from lib.passlib.utils import utf8_truncate
+
+        #
+        # run through a bunch of reference strings,
+        # and make sure they truncate properly across all possible indexes
+        #
+        for source in [
+            # empty string
+            b"",
+            # strings w/ only single-byte chars
+            b"1",
+            b"123",
+            b'\x1a',
+            b'\x1a' * 10,
+            b'\x7f',
+            b'\x7f' * 10,
+            # strings w/ properly formed UTF8 continuation sequences
+            b'a\xc2\xa0\xc3\xbe\xc3\xbe',
+            b'abcdefghjusdfaoiu\xc2\xa0\xc3\xbe\xc3\xbedsfioauweoiruer',
+        ]:
+            source.decode("utf-8") # sanity check - should always be valid UTF8
+
+            end = len(source)
+            for idx in range(end + 16):
+                prefix = "source=%r index=%r: " % (source, idx)
+
+                result = utf8_truncate(source, idx)
+
+                # result should always be valid utf-8
+                result.decode("utf-8")
+
+                # result should never be larger than source
+                self.assertLessEqual(len(result), end, msg=prefix)
+
+                # result should always be in range(idx, idx+4)
+                self.assertGreaterEqual(len(result), min(idx, end), msg=prefix)
+                self.assertLess(len(result), min(idx + 4, end + 1), msg=prefix)
+
+                # should be strict prefix of source
+                self.assertEqual(result, source[:len(result)], msg=prefix)
+
+        #
+        # malformed utf8 --
+        # strings w/ only initial chars (should cut just like single-byte chars)
+        #
+        for source in [
+            b'\xca',
+            b'\xca' * 10,
+            # also test null bytes (not valid utf8, but this func should treat them like ascii)
+            b'\x00',
+            b'\x00' * 10,
+        ]:
+            end = len(source)
+            for idx in range(end + 16):
+                prefix = "source=%r index=%r: " % (source, idx)
+                result = utf8_truncate(source, idx)
+                self.assertEqual(result, source[:idx], msg=prefix)
+
+        #
+        # malformed utf8 --
+        # strings w/ only continuation chars (should cut at index+3)
+        #
+        for source in [
+            b'\xaa',
+            b'\xaa' * 10,
+        ]:
+            end = len(source)
+            for idx in range(end + 16):
+                prefix = "source=%r index=%r: " % (source, idx)
+                result = utf8_truncate(source, idx)
+                self.assertEqual(result, source[:idx+3], msg=prefix)
+
+        #
+        # string w/ some invalid utf8 --
+        # * \xaa byte is too many continuation byte after \xff start byte
+        # * \xab byte doesn't have preceding start byte
+        # XXX: could also test continuation bytes w/o start byte, WITHIN the string.
+        #      but think this covers edges well enough...
+        #
+        source = b'MN\xff\xa0\xa1\xa2\xaaOP\xab'
+
+        self.assertEqual(utf8_truncate(source, 0), b'')  # index="M", stops there
+
+        self.assertEqual(utf8_truncate(source, 1), b'M')  # index="N", stops there
+
+        self.assertEqual(utf8_truncate(source, 2), b'MN')  # index="\xff", stops there
+
+        self.assertEqual(utf8_truncate(source, 3),
+                         b'MN\xff\xa0\xa1\xa2')  # index="\xa0", runs out after index+3="\xa2"
+
+        self.assertEqual(utf8_truncate(source, 4),
+                         b'MN\xff\xa0\xa1\xa2\xaa')  # index="\xa1", runs out after index+3="\xaa"
+
+        self.assertEqual(utf8_truncate(source, 5),
+                         b'MN\xff\xa0\xa1\xa2\xaa')  # index="\xa2", stops before "O"
+
+        self.assertEqual(utf8_truncate(source, 6),
+                         b'MN\xff\xa0\xa1\xa2\xaa')  # index="\xaa", stops before "O"
+
+        self.assertEqual(utf8_truncate(source, 7),
+                         b'MN\xff\xa0\xa1\xa2\xaa')  # index="O", stops there
+
+        self.assertEqual(utf8_truncate(source, 8),
+                         b'MN\xff\xa0\xa1\xa2\xaaO')  # index="P", stops there
+
+        self.assertEqual(utf8_truncate(source, 9),
+                         b'MN\xff\xa0\xa1\xa2\xaaOP\xab')  # index="\xab", runs out at end
+
+        self.assertEqual(utf8_truncate(source, 10),
+                         b'MN\xff\xa0\xa1\xa2\xaaOP\xab')  # index=end
+
+        self.assertEqual(utf8_truncate(source, 11),
+                         b'MN\xff\xa0\xa1\xa2\xaaOP\xab')  # index=end+1
+
 
 #=============================================================================
 # byte/unicode helpers
@@ -437,7 +585,7 @@ class CodecTest(TestCase):
 
     def test_to_bytes(self):
         """test to_bytes()"""
-        from passlib.utils import to_bytes
+        from lib.passlib.utils import to_bytes
 
         # check unicode inputs
         self.assertEqual(to_bytes(u('abc')),                  b'abc')
@@ -466,7 +614,7 @@ class CodecTest(TestCase):
 
     def test_to_unicode(self):
         """test to_unicode()"""
-        from passlib.utils import to_unicode
+        from lib.passlib.utils import to_unicode
 
         # check unicode inputs
         self.assertEqual(to_unicode(u('abc')),                u('abc'))
@@ -488,7 +636,7 @@ class CodecTest(TestCase):
 
     def test_to_native_str(self):
         """test to_native_str()"""
-        from passlib.utils import to_native_str
+        from lib.passlib.utils import to_native_str
 
         # test plain ascii
         self.assertEqual(to_native_str(u('abc'), 'ascii'), 'abc')
@@ -519,7 +667,7 @@ class CodecTest(TestCase):
 
     def test_is_ascii_safe(self):
         """test is_ascii_safe()"""
-        from passlib.utils import is_ascii_safe
+        from lib.passlib.utils import is_ascii_safe
         self.assertTrue(is_ascii_safe(b"\x00abc\x7f"))
         self.assertTrue(is_ascii_safe(u("\x00abc\x7f")))
         self.assertFalse(is_ascii_safe(b"\x00abc\x80"))
@@ -527,7 +675,7 @@ class CodecTest(TestCase):
 
     def test_is_same_codec(self):
         """test is_same_codec()"""
-        from passlib.utils import is_same_codec
+        from lib.passlib.utils import is_same_codec
 
         self.assertTrue(is_same_codec(None, None))
         self.assertFalse(is_same_codec(None, 'ascii'))
@@ -549,7 +697,7 @@ class Base64EngineTest(TestCase):
     # NOTE: most Base64Engine testing done via _Base64Test subclasses below.
 
     def test_constructor(self):
-        from passlib.utils.binary import Base64Engine, AB64_CHARS
+        from lib.passlib.utils.binary import Base64Engine, AB64_CHARS
 
         # bad charmap type
         self.assertRaises(TypeError, Base64Engine, 1)
@@ -562,7 +710,7 @@ class Base64EngineTest(TestCase):
 
     def test_ab64_decode(self):
         """ab64_decode()"""
-        from passlib.utils.binary import ab64_decode
+        from lib.passlib.utils.binary import ab64_decode
 
         # accept bytes or unicode
         self.assertEqual(ab64_decode(b"abc"), hb("69b7"))
@@ -590,7 +738,7 @@ class Base64EngineTest(TestCase):
 
     def test_ab64_encode(self):
         """ab64_encode()"""
-        from passlib.utils.binary import ab64_encode
+        from lib.passlib.utils.binary import ab64_encode
 
         # accept bytes
         self.assertEqual(ab64_encode(hb("69b7")), b"abc")
@@ -609,7 +757,7 @@ class Base64EngineTest(TestCase):
 
     def test_b64s_decode(self):
         """b64s_decode()"""
-        from passlib.utils.binary import b64s_decode
+        from lib.passlib.utils.binary import b64s_decode
 
         # accept bytes or unicode
         self.assertEqual(b64s_decode(b"abc"), hb("69b7"))
@@ -632,7 +780,7 @@ class Base64EngineTest(TestCase):
 
     def test_b64s_encode(self):
         """b64s_encode()"""
-        from passlib.utils.binary import b64s_encode
+        from lib.passlib.utils.binary import b64s_encode
 
         # accept bytes
         self.assertEqual(b64s_encode(hb("69b7")), b"abc")
@@ -750,7 +898,7 @@ class _Base64Test(TestCase):
     def test_codec(self):
         """test encode_bytes/decode_bytes against random data"""
         engine = self.engine
-        from passlib.utils import getrandbytes, getrandstr
+        from lib.passlib.utils import getrandbytes, getrandstr
         rng = self.getRandom()
         saw_zero = False
         for i in irange(500):
@@ -798,7 +946,7 @@ class _Base64Test(TestCase):
         """test repair_unused()"""
         # NOTE: this test relies on encode_bytes() always returning clear
         # padding bits - which should be ensured by test vectors.
-        from passlib.utils import getrandstr
+        from lib.passlib.utils import getrandstr
         rng = self.getRandom()
         engine = self.engine
         check_repair_unused = self.engine.check_repair_unused
@@ -901,7 +1049,7 @@ class _Base64Test(TestCase):
         self.assertRaises(TypeError, decode, None)
 
         # do random testing.
-        from passlib.utils import getrandstr
+        from lib.passlib.utils import getrandstr
         for i in irange(100):
             # generate random value, encode, and then decode
             value = rng.randint(0, upper-1)
@@ -966,7 +1114,7 @@ class _Base64Test(TestCase):
 
 # NOTE: testing H64 & H64Big should be sufficient to verify
 # that Base64Engine() works in general.
-from passlib.utils.binary import h64, h64big
+from lib.passlib.utils.binary import h64, h64big
 
 class H64_Test(_Base64Test):
     """test H64 codec functions"""

@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    TRANSACTION class to create, verify and sign Transactions
-#    © 2017 - 2020 February - 1200 Web Development <http://1200wd.com/>
+#    © 2017 - 2020 February - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,17 +15,17 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 from datetime import datetime
 import json
 import struct
 
-from bitcoinlib.encoding import *
-from bitcoinlib.config.opcodes import *
-from bitcoinlib.keys import HDKey, Key, deserialize_address, Address, sign, verify, Signature
-from bitcoinlib.networks import Network
+from lib.bitcoinlib.encoding import *
+from lib.bitcoinlib.config.opcodes import *
+from lib.bitcoinlib.keys import HDKey, Key, deserialize_address, Address, sign, verify, Signature
+from lib.bitcoinlib.networks import Network
 
 
 _logger = logging.getLogger(__name__)

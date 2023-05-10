@@ -4,12 +4,12 @@
 #
 #    EXAMPLES - Wallets and Transactions
 #
-#    © 2018 February - 1200 Web Development <http://1200wd.com/>
+#    © 2018 February - 1200 Web Development <https://1200wd.com/>
 #
 
 import os
 from pprint import pprint
-from bitcoinlib.wallets import HDWallet, BCL_DATABASE_DIR
+from lib.bitcoinlib.wallets import HDWallet, BCL_DATABASE_DIR
 
 
 #

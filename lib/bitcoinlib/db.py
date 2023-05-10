@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    DataBase - SqlAlchemy database definitions
-#    © 2016 - 2020 February - 1200 Web Development <http://1200wd.com/>
+#    © 2016 - 2020 February - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,7 +15,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 try:
@@ -32,7 +32,7 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
-from bitcoinlib.main import *
+from lib.bitcoinlib.main import *
 
 _logger = logging.getLogger(__name__)
 _logger.info("Using Database %s" % DEFAULT_DATABASE)

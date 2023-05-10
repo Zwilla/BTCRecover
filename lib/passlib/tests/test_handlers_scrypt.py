@@ -9,8 +9,8 @@ warnings.filterwarnings("ignore", ".*using builtin scrypt backend.*")
 # site
 # pkg
 from passlib import hash
-from passlib.tests.utils import HandlerCase, TEST_MODE
-from passlib.tests.test_handlers import UPASS_TABLE, PASS_TABLE_UTF8
+from lib.passlib.tests.utils import HandlerCase, TEST_MODE
+from lib.passlib.tests.test_handlers import UPASS_TABLE, PASS_TABLE_UTF8
 # module
 
 #=============================================================================
@@ -22,7 +22,7 @@ class _scrypt_test(HandlerCase):
     known_correct_hashes = [
         #
         # excepted from test vectors from scrypt whitepaper
-        # (http://www.tarsnap.com/scrypt/scrypt.pdf, appendix b),
+        # (https://www.tarsnap.com/scrypt/scrypt.pdf, appendix b),
         # and encoded using passlib's custom format
         #
 

@@ -5,7 +5,8 @@ import hashlib
 import binascii
 from Crypto.Cipher import ChaCha20_Poly1305
 
-def encryptWithPassword (password, saltHex, nonceHex, data):
+
+def encryptWithPassword(password, saltHex, nonceHex, data):
     salt = binascii.unhexlify(saltHex)
     if len(salt) != 32:
         raise ValueError("Salt length must be 32 bytes")
@@ -19,6 +20,7 @@ def encryptWithPassword (password, saltHex, nonceHex, data):
     ciphertext, tag = cipher.encrypt_and_digest(data)
 
     return saltHex + nonceHex + tag.hex().encode() + ciphertext.hex().encode()
+
 
 def decryptWithPassword(password, ciphertextHex):
     saltHex = ciphertextHex[:64]
@@ -36,7 +38,3 @@ def decryptWithPassword(password, ciphertextHex):
     plaintext = cipher.decrypt_and_verify(ciphertext, tag)
 
     return plaintext
-
-
-
-

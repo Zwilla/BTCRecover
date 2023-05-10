@@ -4,12 +4,12 @@
 #
 #    EXAMPLES - Mnemonic class examples
 #
-#    © 2017 - 2019 January - 1200 Web Development <http://1200wd.com/>
+#    © 2017 - 2019 January - 1200 Web Development <https://1200wd.com/>
 #
 
-from bitcoinlib.mnemonic import *
-from bitcoinlib.keys import HDKey
-from bitcoinlib.encoding import to_hexstring
+from lib.bitcoinlib.mnemonic import *
+from lib.bitcoinlib.keys import HDKey
+from lib.bitcoinlib.encoding import to_hexstring
 
 #
 # Mnemonic examples

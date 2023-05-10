@@ -5,7 +5,7 @@
 #    CLW - Command Line Wallet manager.
 #    Create and manage BitcoinLib legacy/segwit single and multisignatures wallets from the commandline
 #
-#    © 2019 November - 1200 Web Development <http://1200wd.com/>
+#    © 2019 November - 1200 Web Development <https://1200wd.com/>
 #
 
 import sys
@@ -14,11 +14,11 @@ import binascii
 import struct
 import ast
 from pprint import pprint
-from bitcoinlib.wallets import HDWallet, wallets_list, wallet_exists, wallet_delete, WalletError, wallet_empty
-from bitcoinlib.mnemonic import Mnemonic
-from bitcoinlib.keys import HDKey
-from bitcoinlib.encoding import to_hexstring
-from bitcoinlib.main import BITCOINLIB_VERSION
+from lib.bitcoinlib.wallets import HDWallet, wallets_list, wallet_exists, wallet_delete, WalletError, wallet_empty
+from lib.bitcoinlib.mnemonic import Mnemonic
+from lib.bitcoinlib.keys import HDKey
+from lib.bitcoinlib.encoding import to_hexstring
+from lib.bitcoinlib.main import BITCOINLIB_VERSION
 
 try:
     import pyqrcode

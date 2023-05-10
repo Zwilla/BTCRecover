@@ -16,7 +16,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 # If you find this program helpful, please consider a small
 # donation to the developer at the following Bitcoin address:
@@ -26,22 +26,24 @@
 #                      Thank You!
 
 
-import compatibility_check
-
 # Use the green test runner if available
 try:
-    import green.config, green.suite, green.output, collections
+    import green.config
+    import green.suite
+    import green.output
+    import collections
     has_green = True
-
     # Adapter which uses green, but is similar in signature to unittest.main()
-    def main(test_module, exit = None, buffer = None):
-        import green.loader, green.runner
+
+    def main(test_module, exit=None, buffer=None):
+        import green.loader
+        import green.runner
         if buffer:
             green_args.quiet_stdout = True
         try:
             suite = green.loader.GreenTestLoader().loadTestsFromModule(test_module)  # new API (v2.9+)
         except AttributeError:
-            suite = green.loader.loadFromModule(test_module)                         # legacy API
+            suite = green.loader.loadTestsFromModule(test_module)  # legacy API
         results = green.runner.run(suite, sys.stdout, green_args)
         # Return the results in an object with a "result" attribute, same as unittest.main()
         return collections.namedtuple("Tuple", "result")(results)
@@ -51,15 +53,20 @@ except ImportError:
     from unittest import main
     has_green = False
 
-
 if __name__ == "__main__":
-    import argparse, sys, atexit, time, timeit, os, multiprocessing
+    import argparse
+    import sys
+    import atexit
+    import time
+    import timeit
+    import os
+    import multiprocessing
 
     from btcrecover.test import test_passwords
 
     is_coincurve_loadable = test_passwords.can_load_coincurve()
     if is_coincurve_loadable:
-        from btcrecover.test     import test_seeds
+        from btcrecover.test import test_seeds
         from btcrecover.btcrseed import full_version
     else:
         from btcrecover.btcrpass import full_version
@@ -67,7 +74,7 @@ if __name__ == "__main__":
     # Add two new arguments to those already provided by main()
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--no-buffer", action="store_true")
-    parser.add_argument("--no-pause",  action="store_true")
+    parser.add_argument("--no-pause", action="store_true")
     args, unparsed_args = parser.parse_known_args()
     sys.argv[1:] = unparsed_args
 
@@ -79,7 +86,7 @@ if __name__ == "__main__":
     print("Testing", full_version() + "\n")
 
     # Additional setup normally done by green.cmdline.main()
-    if has_green:
+    if has_green is True:
         green_args = green.config.parseArguments()
         green_args = green.config.mergeConfig(green_args)
         if green_args.shouldExit:
@@ -89,14 +96,17 @@ if __name__ == "__main__":
             green.output.debug_level = green_args.debug
 
     total_tests = total_skipped = total_failures = total_errors = total_passing = 0
+
+
     def accumulate_results(r):
         global total_tests, total_skipped, total_failures, total_errors, total_passing
-        total_tests    += r.testsRun
-        total_skipped  += len(r.skipped)
+        total_tests += r.testsRun
+        total_skipped += len(r.skipped)
         total_failures += len(r.failures)
-        total_errors   += len(r.errors)
+        total_errors += len(r.errors)
         if has_green:
             total_passing += len(r.passing)
+
 
     timer = timeit.default_timer
     start_time = time.time() if has_green else timer()
@@ -105,12 +115,12 @@ if __name__ == "__main__":
     if not has_green:
         print("** Testing in Unicode character mode **")
     os.environ["BTCR_CHAR_MODE"] = "unicode"
-    results = main(test_passwords, exit=False, buffer= not args.no_buffer).result
+    results = main(test_passwords, exit=False, buffer=not args.no_buffer).result
     accumulate_results(results)
 
     if is_coincurve_loadable:
         print("\n** Testing seed recovery **")
-        results = main(test_seeds, exit=False, buffer= not args.no_buffer).result
+        results = main(test_seeds, exit=False, buffer=not args.no_buffer).result
         accumulate_results(results)
     else:
         print("\nwarning: skipping seed recovery tests (can't find prerequisite coincurve)")
@@ -118,12 +128,12 @@ if __name__ == "__main__":
     print("\n\n*** Full Results ***")
     if has_green:
         # Print the results in color using green
-        results.startTime  = start_time
-        results.testsRun   = total_tests
-        results.passing    = (None,) * total_passing
-        results.skipped    = (None,) * total_skipped
-        results.failures   = (None,) * total_failures
-        results.errors     = (None,) * total_errors
+        results.startTime = start_time
+        results.testsRun = total_tests
+        results.passing = (None,) * total_passing
+        results.skipped = (None,) * total_skipped
+        results.failures = (None,) * total_failures
+        results.errors = (None,) * total_errors
         results.all_errors = ()
         green_args.no_skip_report = True
         results.stopTestRun()
@@ -133,8 +143,8 @@ if __name__ == "__main__":
 
         details = [
             name + "=" + str(val)
-            for name,val in (("failures", total_failures), ("errors", total_errors), ("skipped", total_skipped))
-                if val
+            for name, val in (("failures", total_failures), ("errors", total_errors), ("skipped", total_skipped))
+            if val
         ]
         if details:
             print(" (" + ", ".join(details) + ")")

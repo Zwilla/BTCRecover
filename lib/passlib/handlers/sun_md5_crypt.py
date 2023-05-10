@@ -21,7 +21,7 @@ from lib.passlib.utils import to_unicode
 from lib.passlib.utils.binary import h64
 from lib.passlib.utils.compat import byte_elem_value, irange, u, \
                                  uascii_to_str, unicode, str_to_bascii
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "sun_md5_crypt",
@@ -31,7 +31,7 @@ __all__ = [
 # backend
 #=============================================================================
 # constant data used by alg - Hamlet act 3 scene 1 + null char
-# exact bytes as in http://www.ibiblio.org/pub/docs/books/gutenberg/etext98/2ws2610.txt
+# exact bytes as in https://www.ibiblio.org/pub/docs/books/gutenberg/etext98/2ws2610.txt
 # from Project Gutenberg.
 
 MAGIC_HAMLET = (

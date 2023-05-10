@@ -3,7 +3,7 @@
 # imports
 #=============================================================================
 from __future__ import absolute_import, division, print_function
-from passlib.utils.compat import PY3
+from lib.passlib.utils.compat import PY3
 # core
 import base64
 import calendar
@@ -33,15 +33,15 @@ except ImportError:
     _cg_ciphers = _cg_default_backend = None
 # pkg
 from passlib import exc
-from passlib.exc import TokenError, MalformedTokenError, InvalidTokenError, UsedTokenError
-from passlib.utils import (to_unicode, to_bytes, consteq,
+from lib.passlib.exc import TokenError, MalformedTokenError, InvalidTokenError, UsedTokenError
+from lib.passlib.utils import (to_unicode, to_bytes, consteq,
                            getrandbytes, rng, SequenceMixin, xor_bytes, getrandstr)
-from passlib.utils.binary import BASE64_CHARS, b32encode, b32decode
-from passlib.utils.compat import (u, unicode, native_string_types, bascii_to_str, int_types, num_types,
+from lib.passlib.utils.binary import BASE64_CHARS, b32encode, b32decode
+from lib.passlib.utils.compat import (u, unicode, native_string_types, bascii_to_str, int_types, num_types,
                                   irange, byte_elem_value, UnicodeIO, suppress_cause)
-from passlib.utils.decor import hybrid_method, memoized_property
-from passlib.crypto.digest import lookup_hash, compile_hmac, pbkdf2_hmac
-from passlib.hash import pbkdf2_sha256
+from lib.passlib.utils.decor import hybrid_method, memoized_property
+from lib.passlib.crypto.digest import lookup_hash, compile_hmac, pbkdf2_hmac
+from lib.passlib.hash import pbkdf2_sha256
 # local
 __all__ = [
     # frontend classes
@@ -687,7 +687,7 @@ class TOTP(object):
         As an example::
 
             >>> # your application can create a custom class when it initializes
-            >>> from passlib.totp import TOTP, generate_secret
+            >>> from lib.passlib.totp import TOTP, generate_secret
             >>> TotpFactory = TOTP.using(secrets={"1": generate_secret()})
 
             >>> # subsequent TOTP objects created from this factory
@@ -1152,7 +1152,7 @@ class TOTP(object):
             Serialized TOTP key.
             Can be anything accepted by :meth:`TOTP.from_source`.
 
-        :param \*\*kwds:
+        :param \\*\\*kwds:
             All additional keywords passed to :meth:`TOTP.match`.
 
         :return:
@@ -1482,7 +1482,7 @@ class TOTP(object):
     def to_uri(self, label=None, issuer=None):
         """
         Serialize key and configuration into a URI, per
-        Google Auth's `KeyUriFormat <http://code.google.com/p/google-authenticator/wiki/KeyUriFormat>`_.
+        Google Auth's `KeyUriFormat <https://code.google.com/p/google-authenticator/wiki/KeyUriFormat>`_.
 
         :param str label:
             Label to associate with this token when generating a URI.
@@ -1513,7 +1513,7 @@ class TOTP(object):
         to a TOTP client application such as Google Auth.
         Usage example::
 
-            >>> from passlib.totp import TOTP
+            >>> from lib.passlib.totp import TOTP
             >>> tp = TOTP('s3jdvb7qd2r7jpxx')
             >>> uri = tp.to_uri("user@example.org", "myservice.another-example.org")
             >>> uri

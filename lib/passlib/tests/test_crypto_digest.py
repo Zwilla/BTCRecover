@@ -10,8 +10,9 @@ import warnings
 # site
 # pkg
 # module
-from passlib.utils.compat import PY3, u, JYTHON
-from passlib.tests.utils import TestCase, TEST_MODE, skipUnless, hb
+from lib.passlib.exc import UnknownHashError
+from lib.passlib.utils.compat import PY3, u, JYTHON
+from lib.passlib.tests.utils import TestCase, TEST_MODE, skipUnless, hb
 
 #=============================================================================
 # test assorted crypto helpers
@@ -30,8 +31,10 @@ class HashInfoTest(TestCase):
         ("md5",       "md5",         "SCRAM-MD5-PLUS",   "MD-5"),
         ("sha1",      "sha-1",       "SCRAM-SHA-1",      "SHA1"),
         ("sha256",    "sha-256",     "SHA_256",          "sha2-256"),
-        ("ripemd",    "ripemd",      "SCRAM-RIPEMD",     "RIPEMD"),
-        ("ripemd160", "ripemd-160",  "SCRAM-RIPEMD-160", "RIPEmd160"),
+        ("ripemd160", "ripemd-160",  "SCRAM-RIPEMD-160", "RIPEmd160",
+            # NOTE: there was an older "RIPEMD" & "RIPEMD-128", but python treates "RIPEMD"
+            #       as alias for "RIPEMD-160"
+            "ripemd", "SCRAM-RIPEMD"),
 
         # fake hashes (to check if fallback normalization behaves sanely)
         ("sha4_256",  "sha4-256",    "SHA4-256",         "SHA-4-256"),
@@ -43,13 +46,14 @@ class HashInfoTest(TestCase):
     def test_norm_hash_name(self):
         """norm_hash_name()"""
         from itertools import chain
-        from passlib.crypto.digest import norm_hash_name, _known_hash_names
+        from lib.passlib.crypto.digest import norm_hash_name, _known_hash_names
 
         # snapshot warning state, ignore unknown hash warnings
         ctx = warnings.catch_warnings()
         ctx.__enter__()
         self.addCleanup(ctx.__exit__)
         warnings.filterwarnings("ignore", '.*unknown hash')
+        warnings.filterwarnings("ignore", '.*unsupported hash')
 
         # test string types
         self.assertEqual(norm_hash_name(u("MD4")), "md4")
@@ -68,7 +72,7 @@ class HashInfoTest(TestCase):
 
     def test_lookup_hash_ctor(self):
         """lookup_hash() -- constructor"""
-        from passlib.crypto.digest import lookup_hash
+        from lib.passlib.crypto.digest import lookup_hash
 
         # invalid/unknown names should be rejected
         self.assertRaises(ValueError, lookup_hash, "new")
@@ -103,22 +107,63 @@ class HashInfoTest(TestCase):
         record = lookup_hash("md4")
         const = record[0]
         if not has_md4:
-            from passlib.crypto._md4 import md4
+            from lib.passlib.crypto._md4 import md4
             self.assertIs(const, md4)
         self.assertEqual(record, (const, 16, 64))
         self.assertEqual(hexlify(const(b"abc").digest()),
                          b"a448017aaf21d8525fc10ae87aa6729d")
 
-        # 4. unknown names should be rejected
-        self.assertRaises(ValueError, lookup_hash, "xxx256")
-
         # should memoize records
         self.assertIs(lookup_hash("md5"), lookup_hash("md5"))
+
+    def test_lookup_hash_w_unknown_name(self):
+        """lookup_hash() -- unknown hash name"""
+        from lib.passlib.crypto.digest import lookup_hash
+
+        # unknown names should be rejected by default
+        self.assertRaises(UnknownHashError, lookup_hash, "xxx256")
+
+        # required=False should return stub record instead
+        info = lookup_hash("xxx256", required=False)
+        self.assertFalse(info.supported)
+        self.assertRaisesRegex(UnknownHashError, "unknown hash: 'xxx256'", info.const)
+        self.assertEqual(info.name, "xxx256")
+        self.assertEqual(info.digest_size, None)
+        self.assertEqual(info.block_size, None)
+
+        # should cache stub records
+        info2 = lookup_hash("xxx256", required=False)
+        self.assertIs(info2, info)
+
+    def test_mock_fips_mode(self):
+        """
+        lookup_hash() -- test set_mock_fips_mode()
+        """
+        from lib.passlib.crypto.digest import lookup_hash, _set_mock_fips_mode
+
+        # check if md5 is available so we can test mock helper
+        if not lookup_hash("md5", required=False).supported:
+            raise self.skipTest("md5 not supported")
+
+        # enable monkeypatch to mock up fips mode
+        _set_mock_fips_mode()
+        self.addCleanup(_set_mock_fips_mode, False)
+
+        pat = "'md5' hash disabled for fips"
+        self.assertRaisesRegex(UnknownHashError, pat, lookup_hash, "md5")
+
+        info = lookup_hash("md5", required=False)
+        self.assertRegex(info.error_text, pat)
+        self.assertRaisesRegex(UnknownHashError, pat, info.const)
+
+        # should use hardcoded fallback info
+        self.assertEqual(info.digest_size, 16)
+        self.assertEqual(info.block_size, 64)
 
     def test_lookup_hash_metadata(self):
         """lookup_hash() -- metadata"""
 
-        from passlib.crypto.digest import lookup_hash
+        from lib.passlib.crypto.digest import lookup_hash
 
         # quick test of metadata using known reference - sha256
         info = lookup_hash("sha256")
@@ -138,7 +183,7 @@ class HashInfoTest(TestCase):
     def test_lookup_hash_alt_types(self):
         """lookup_hash() -- alternate types"""
 
-        from passlib.crypto.digest import lookup_hash
+        from lib.passlib.crypto.digest import lookup_hash
 
         info = lookup_hash("sha256")
         self.assertIs(lookup_hash(info), info)
@@ -159,7 +204,7 @@ class Pbkdf1_Test(TestCase):
         # (password, salt, rounds, keylen, hash, result)
 
         #
-        # from http://www.di-mgt.com.au/cryptoKDFs.html
+        # from https://www.di-mgt.com.au/cryptoKDFs.html
         #
         (b'password', hb('78578E5A5D63CB06'), 1000, 16, 'sha1', hb('dc19847e05c64d2faf10ebfb4a3d2a20')),
 
@@ -180,14 +225,14 @@ class Pbkdf1_Test(TestCase):
 
     def test_known(self):
         """test reference vectors"""
-        from passlib.crypto.digest import pbkdf1
+        from lib.passlib.crypto.digest import pbkdf1
         for secret, salt, rounds, keylen, digest, correct in self.pbkdf1_tests:
             result = pbkdf1(digest, secret, salt, rounds, keylen)
             self.assertEqual(result, correct)
 
     def test_border(self):
         """test border cases"""
-        from passlib.crypto.digest import pbkdf1
+        from lib.passlib.crypto.digest import pbkdf1
         def helper(secret=b'secret', salt=b'salt', rounds=1, keylen=1, hash='md5'):
             return pbkdf1(hash, secret, salt, rounds, keylen)
         helper()
@@ -213,7 +258,7 @@ class Pbkdf1_Test(TestCase):
 #=============================================================================
 
 # import the test subject
-from passlib.crypto.digest import pbkdf2_hmac, PBKDF2_BACKENDS
+from lib.passlib.crypto.digest import pbkdf2_hmac, PBKDF2_BACKENDS
 
 # NOTE: relying on tox to verify this works under all the various backends.
 class Pbkdf2Test(TestCase):
@@ -307,7 +352,7 @@ class Pbkdf2Test(TestCase):
             ),
 
         #
-        # from example in http://grub.enbug.org/Authentication
+        # from example in https://grub.enbug.org/Authentication
         #
             (
                hb("887CFF169EA8335235D8004242AA7D6187A41E3187DF0CE14E256D85ED"
@@ -433,7 +478,7 @@ class Pbkdf2Test(TestCase):
 
     def test_backends(self):
         """verify expected backends are present"""
-        from passlib.crypto.digest import PBKDF2_BACKENDS
+        from lib.passlib.crypto.digest import PBKDF2_BACKENDS
 
         # check for fastpbkdf2
         try:
@@ -452,7 +497,7 @@ class Pbkdf2Test(TestCase):
         self.assertEqual("hashlib-ssl" in PBKDF2_BACKENDS, has_hashlib_ssl)
 
         # check for appropriate builtin
-        from passlib.utils.compat import PY3
+        from lib.passlib.utils.compat import PY3
         if PY3:
             self.assertIn("builtin-from-bytes", PBKDF2_BACKENDS)
         else:

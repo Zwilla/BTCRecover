@@ -16,10 +16,16 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 
-import sys, os.path, base64, json, zlib, struct, binascii
+import sys
+import os.path
+import base64
+import json
+import zlib
+import struct
+import binascii
 
 prog = os.path.basename(sys.argv[0])
 
@@ -33,12 +39,13 @@ try:
     with open(wallet_filename, "rb") as wallet_file:
         wallet_data_full = wallet_file.read().decode("utf-8", "ignore").replace("\\", "")
 except PermissionError:
-    print("Error: Unable to open wallet, if you are trying to open a Metamask wallet folder, you must first extract the desired vault (extract-metamask-vaults.py) and then use this script to create an extract")
+    print("Error: Unable to open wallet, if you are trying to open a Metamask wallet folder, you must first "
+          "extract the desired vault (extract-metamask-vaults.py) and then use this script to create an extract")
     exit()
 
 if "\"lib\":\"original\"" in wallet_data_full:
-     isMobileWallet = True
-     vaultStartString = "cipher"
+    isMobileWallet = True
+    vaultStartString = "cipher"
 else:
     isMobileWallet = False
     vaultStartString = "data"
@@ -64,7 +71,6 @@ except json.decoder.JSONDecodeError:
 
     wallet_json = json.loads(wallet_data)
 
-
 if "\"lib\":\"original\"" in wallet_data:
     salt = wallet_json["salt"].encode()
     encrypted_block = base64.b64decode(wallet_json["cipher"])[:16]
@@ -76,7 +82,6 @@ else:
 
 print("Metamask first 16 encrypted bytes, iv, and salt in base64:", file=sys.stderr)
 
-bytes = b"mt:" + struct.pack("< 16s 16s 32s 1?", encrypted_block, iv, salt, isMobileWallet)
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
-
-print(base64.b64encode(bytes + crc_bytes).decode())
+l32bytes = b"mt:" + struct.pack("< 16s 16s 32s 1?", encrypted_block, iv, salt, isMobileWallet)
+crc_bytes = struct.pack("<I", zlib.crc32(l32bytes) & 0xffffffff)
+print(base64.b64encode(l32bytes + crc_bytes).decode())

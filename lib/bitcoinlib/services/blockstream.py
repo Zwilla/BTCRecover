@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    BlockstreamClient client
-#    © 2019 November - 1200 Web Development <http://1200wd.com/>
+#    © 2019 November - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,15 +15,15 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import logging
 from datetime import datetime
-from bitcoinlib.main import MAX_TRANSACTIONS
-from bitcoinlib.services.baseclient import BaseClient, ClientError
-from bitcoinlib.transactions import Transaction
-from bitcoinlib.encoding import to_hexstring
+from lib.bitcoinlib.main import MAX_TRANSACTIONS
+from lib.bitcoinlib.services.baseclient import BaseClient, ClientError
+from lib.bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.encoding import to_hexstring
 
 PROVIDERNAME = 'blockstream'
 # Please note: In the Blockstream API, the first couple of Bitcoin blocks are not correctly indexed,

@@ -5,8 +5,8 @@
 # core
 # site
 # pkg
-from passlib.context import CryptContext
-from passlib.ext.django.utils import DjangoContextAdapter
+from lib.passlib.context import CryptContext
+from lib.passlib.ext.django.utils import DjangoContextAdapter
 # local
 __all__ = ["password_context"]
 

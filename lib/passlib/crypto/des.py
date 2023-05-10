@@ -4,7 +4,7 @@ History
 =======
 These routines (which have since been drastically modified for python)
 are based on a Java implementation of the des-crypt algorithm,
-found at `<http://www.dynamic.net.au/christos/crypt/UnixCrypt2.txt>`_.
+found at `<https://www.dynamic.net.au/christos/crypt/UnixCrypt2.txt>`_.
 
 The copyright & license for that source is as follows::
 
@@ -34,7 +34,7 @@ The copyright & license for that source is as follows::
     @author Greg Wilkins (gregw)
 
 The netbsd des-crypt implementation has some nice notes on how this all works -
-    http://fxr.googlebit.com/source/lib/libcrypt/crypt.c?v=NETBSD-CURRENT
+    https://fxr.googlebit.com/source/lib/libcrypt/crypt.c?v=NETBSD-CURRENT
 """
 
 # TODO: could use an accelerated C version of this module to speed up lmhash,
@@ -46,7 +46,7 @@ The netbsd des-crypt implementation has some nice notes on how this all works -
 # core
 import struct
 # pkg
-from lib.passlib import exc
+from passlib import exc
 from lib.passlib.utils.compat import join_byte_values, byte_elem_value, \
                                  irange, irange, int_types
 # local
@@ -602,7 +602,7 @@ def _unpack56(value):
 ##def expand_7bit(value):
 ##    "expand 7-bit integer => 7-bits + 1 odd-parity bit"
 ##    # parity calc adapted from 32-bit even parity alg found at
-##    # http://graphics.stanford.edu/~seander/bithacks.html#ParityParallel
+##    # https://graphics.stanford.edu/~seander/bithacks.html#ParityParallel
 ##    assert 0 <= value < 0x80, "value out of range"
 ##    return (value<<1) | (0x9669 >> ((value ^ (value >> 4)) & 0xf)) & 1
 

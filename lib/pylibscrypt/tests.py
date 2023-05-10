@@ -14,7 +14,6 @@
 
 """Tests scrypt and PBKDF2 implementations"""
 
-
 import base64
 import hashlib
 import sys
@@ -23,8 +22,8 @@ import unittest
 
 class ScryptTests(unittest.TestCase):
     """Tests an scrypt implementation from module"""
-    set_up_lambda = lambda self:None
-    tear_down_lambda = lambda self:None
+    set_up_lambda = lambda self: None
+    tear_down_lambda = lambda self: None
     replace_scrypt_mcf = None
     module = None
     fast = False
@@ -55,7 +54,7 @@ class ScryptTests(unittest.TestCase):
             self.assertFalse(self.module.scrypt_mcf_check(m, b'x' + pw))
 
     def test_vector0(self):
-        # From http://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
+        # From https://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
         self._test_vector((
             b'', b'', 16, 1, 1,
             b'77d6576238657b203b19ca42c18a0497f16b4844e3074ae8dfdffa3fede21442'
@@ -64,7 +63,7 @@ class ScryptTests(unittest.TestCase):
         ))
 
     def test_vector1(self):
-        # From http://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
+        # From https://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
         # with MCF added
         if self.fast:
             self.skipTest('slow testcase')
@@ -77,7 +76,7 @@ class ScryptTests(unittest.TestCase):
         ))
 
     def test_vector2(self):
-        # From http://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
+        # From https://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
         # with MCF added
         if self.fast:
             self.skipTest('slow testcase')
@@ -90,7 +89,7 @@ class ScryptTests(unittest.TestCase):
         ))
 
     def test_vector3(self):
-        # From http://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
+        # From https://www.tarsnap.com/scrypt/scrypt.pdf Appendix B
         self.skipTest('very slow testcase')
         self._test_vector((
             b'pleaseletmein', b'SodiumChloride', 1048576, 8, 1,
@@ -123,7 +122,7 @@ class ScryptTests(unittest.TestCase):
         if self.fast:
             self.skipTest('slow testcase')
         self._test_vector((
-            b'pleaseletmein', b'X'*32, 2**10, 8, 1,
+            b'pleaseletmein', b'X' * 32, 2 ** 10, 8, 1,
             b'cd81f46bd79125651e017a1bf5a28295f68d4b68d397815514bfdc2f3684'
             b'f034ae2a5df332a48e915f7567306df2d401387b70d8f02f83bd6f4c69ff'
             b'89d2663c',
@@ -132,7 +131,7 @@ class ScryptTests(unittest.TestCase):
 
     def test_vector7(self):
         self._test_vector((
-            b'pa\0ss', b'salt'*4, 32, 2, 2,
+            b'pa\0ss', b'salt' * 4, 32, 2, 2,
             b'76c5260f1dc6339512ae87143d799089f5b508c823c870a3d55f641efa84'
             b'63a813221050c93a44255ac8027804c49a87c1ecc9911356b9fc17e06eda'
             b'85f23ff5',
@@ -143,7 +142,7 @@ class ScryptTests(unittest.TestCase):
         if self.fast:
             self.skipTest('slow testcase')
         self._test_vector((
-            b'pleaseletmein', b'X'*32, 2**10, 8, 2,
+            b'pleaseletmein', b'X' * 32, 2 ** 10, 8, 2,
             b'1693cc02b680b18b3d0a874d459d23a5f63ff4f9de0fb5917ef899226af6'
             b'bd33d3a3dfe569d3b6f4f762f0cb64f5f406d485aca501a54645d7389fe6'
             b'e28e261e',
@@ -155,7 +154,7 @@ class ScryptTests(unittest.TestCase):
         if self.fast:
             self.skipTest('slow testcase')
         self._test_vector((
-            b'pleaseletmein', b'X'*32, 2**15, 8, 2,
+            b'pleaseletmein', b'X' * 32, 2 ** 15, 8, 2,
             b'12e88b08ea7a534fb4bc97be54ebdcb93516efe73b3cff901a7ad565b1ae'
             b'511cd881b569bd9b65ed006f8ace0fbd75534035395e5967a340f0a4586e'
             b'f79e8ab1',
@@ -186,7 +185,7 @@ class ScryptTests(unittest.TestCase):
     def test_salt_length_mcf(self):
         pw = b'pass'
         self.assertRaises(ValueError, self.module.scrypt_mcf, pw, b'')
-        self.assertRaises(ValueError, self.module.scrypt_mcf, pw, b'a'*17)
+        self.assertRaises(ValueError, self.module.scrypt_mcf, pw, b'a' * 17)
 
     def test_salt_generation(self):
         pw, N = b'pass', 2
@@ -197,37 +196,37 @@ class ScryptTests(unittest.TestCase):
         self.assertTrue(self.module.scrypt_mcf_check(m2, pw))
 
     def test_invalid_N(self):
-        pw, s = b'password', b'salt'*8
+        pw, s = b'password', b'salt' * 8
         self.assertRaises(TypeError, self.module.scrypt, pw, s, 7.5)
         self.assertRaises(ValueError, self.module.scrypt, pw, s, -1)
         self.assertRaises(ValueError, self.module.scrypt, pw, s, 1)
         self.assertRaises(ValueError, self.module.scrypt, pw, s, 42)
-        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2**66)
-        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2**66+2)
+        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2 ** 66)
+        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2 ** 66 + 2)
         self.assertRaises(ValueError, self.module.scrypt_mcf, pw, None, 1)
-        self.assertRaises(ValueError, self.module.scrypt_mcf, pw, None, 2**32)
+        self.assertRaises(ValueError, self.module.scrypt_mcf, pw, None, 2 ** 32)
 
     def test_huge_N(self):
-        pw, s = b'password', b'salt'*8
-        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2**50)
-        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2**60)
+        pw, s = b'password', b'salt' * 8
+        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2 ** 50)
+        self.assertRaises(ValueError, self.module.scrypt, pw, s, 2 ** 60)
         self.assertRaises(ValueError, self.module.scrypt_mcf, pw,
-                          N=2**31, prefix=b'$7$')
+                          N=2 ** 31, prefix=b'$7$')
 
     def test_invalid_r(self):
         pw, s, N = b'password', b'salt', 2
         self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 0)
         self.assertRaises(ValueError, self.module.scrypt, pw, s, N, -1)
         self.assertRaises(TypeError, self.module.scrypt, pw, s, N, 7.5)
-        self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 2**31)
+        self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 2 ** 31)
         self.assertRaises(ValueError, self.module.scrypt_mcf, pw, s, N, 256)
 
     def test_invalid_p(self):
         pw, s, N = b'password', b'salt', 2
         self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 1, 0)
-        self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 1, -2**31)
+        self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 1, -2 ** 31)
         self.assertRaises(TypeError, self.module.scrypt, pw, s, N, 1, 7.5)
-        self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 2**35)
+        self.assertRaises(ValueError, self.module.scrypt, pw, s, N, 2 ** 35)
         self.assertRaises(ValueError, self.module.scrypt_mcf, pw, s, N, 1, 256)
 
     def test_olen(self):
@@ -238,7 +237,7 @@ class ScryptTests(unittest.TestCase):
         self.assertRaises(ValueError, self.module.scrypt, pw, s, N, olen=-1)
 
     def test_invalid_olen(self):
-        pw, s, N = b'password', b'salt', 2**10
+        pw, s, N = b'password', b'salt', 2 ** 10
         self.assertRaises(TypeError, self.module.scrypt, pw, s, N, olen=b'7')
         self.assertRaises(ValueError, self.module.scrypt, pw, s, N, olen=-1)
 
@@ -272,15 +271,15 @@ class ScryptTests(unittest.TestCase):
 
     def test_mcf_nonstandard(self):
         pw = b'pass'
-        m1 = ( # empty salt
+        m1 = (  # empty salt
             b'$s1$010801$$WA1vBj+HFlIk7pG/OPS5bY4NKHBGeGIxEY99farnu2C9uOHxKe'
             b'LWP3sCXRvP98F7lVi2JNT/Bmte38iodf81VEYB0Nu3pBw9JqTwiCAqMwL+2kqB'
         )
-        m2 = ( # 31 byte hash
+        m2 = (  # 31 byte hash
             b'$7$16..../....l/htqjrI38qNowkQZL8RxFVxS8JV9PPJr1+A/WTQWiU'
             b'$wOcPY0vsHHshxa0u87FDhmTo42WZr0JbSHY2w2Zkyr1'
         )
-        m3 = ( # 44 byte salt, 31 byte hash
+        m3 = (  # 44 byte salt, 31 byte hash
             b'$7$12..../....aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
             b'$14hkhieutTQcbq.iU1FDZzYz1vW8NPYowy4WERDM70'
         )
@@ -296,22 +295,22 @@ class ScryptTests(unittest.TestCase):
             b'$kBGj9fHznVYFQMEn/qDCfrDevf9YDtcDdKvEqHJLV8D'
         )
         self.assertTrue(self.module.scrypt_mcf_check(m, p))
-        self.assertFalse(self.module.scrypt_mcf_check(m, b'X'+p))
+        self.assertFalse(self.module.scrypt_mcf_check(m, b'X' + p))
         self.assertRaises(ValueError, self.module.scrypt_mcf_check,
-            b'$7$$', p
-        )
+                          b'$7$$', p
+                          )
         self.assertRaises(ValueError, self.module.scrypt_mcf_check,
-            b'$7$$$', p
-        )
+                          b'$7$$$', p
+                          )
 
     def test_mcf_7_2(self):
         if self.fast:
             self.skipTest('slow testcase')
         p = b'pleaseletmein'
-        m1 = self.module.scrypt_mcf(p, None, 2**10, 8, 2, b'$7$')
+        m1 = self.module.scrypt_mcf(p, None, 2 ** 10, 8, 2, b'$7$')
         self.assertTrue(m1.startswith(b'$7$'))
         self.assertTrue(self.module.scrypt_mcf_check(m1, p))
-        m2 = self.module.scrypt_mcf(p, None, 2**10, 8, 2, b'$s1$')
+        m2 = self.module.scrypt_mcf(p, None, 2 ** 10, 8, 2, b'$s1$')
         self.assertTrue(m2.startswith(b'$s1$'))
         self.assertTrue(self.module.scrypt_mcf_check(m1, p))
 
@@ -360,11 +359,13 @@ class ScryptTests(unittest.TestCase):
             self.replace_scrypt_mcf = self.module._libscrypt_mcf
         except AttributeError:
             self.skipTest('not testing pylibscrypt')
+
         def scrypt_mcf(*a):
             r = self.replace_scrypt_mcf(*a)
             a[5][-2] = b'\0'
             self.assertTrue(len(a[5].raw.strip(b'\0')) == 123)
             return r
+
         self.module._libscrypt_mcf = scrypt_mcf
         pw, N = b'pass', 2
         m1 = self.module.scrypt_mcf(pw, N=N)
@@ -389,28 +390,35 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
     try:
         from . import hashlibscrypt
+
         suite.addTest(load_scrypt_suite('hashlibscryptTests', hashlibscrypt, True))
     except ImportError:
         suite.addTest(load_scrypt_suite('hashlibscryptTests', None, True))
 
     try:
         from . import pylibscrypt
+
         suite.addTest(load_scrypt_suite('pylibscryptTests', pylibscrypt, True))
     except ImportError:
         suite.addTest(load_scrypt_suite('pylibscryptTests', None, True))
 
     try:
         from . import pyscrypt
+
         suite.addTest(load_scrypt_suite('pyscryptTests', pyscrypt, True))
     except ImportError:
         suite.addTest(load_scrypt_suite('pyscryptTests', None, True))
 
     try:
         from . import pylibsodium
+
         suite.addTest(load_scrypt_suite('pylibsodiumTests',
                                         pylibsodium, True))
         from . import pylibscrypt
+
         loader = unittest.defaultTestLoader
+
+
         def set_up_ll(self):
             if not self.module._scrypt_ll:
                 self.skipTest('no ll')
@@ -418,14 +426,18 @@ if __name__ == "__main__":
             self.tmp_scr = self.module.scr_mod
             self.module._scrypt_ll = None
             self.module.scr_mod = pylibscrypt
+
+
         def tear_down_ll(self):
             self.module._scrypt_ll = self.tmp_ll
             self.module.scr_mod = self.tmp_scr
+
+
         tmp = type(
             'pylibsodiumFallbackTests', (ScryptTests,),
             {
                 'module': pylibsodium,
-                'fast': False, # supports only large parameters
+                'fast': False,  # supports only large parameters
                 'set_up_lambda': set_up_ll,
                 'tear_down_lambda': tear_down_ll,
             }
@@ -436,10 +448,10 @@ if __name__ == "__main__":
 
     try:
         from . import pypyscrypt_inline as pypyscrypt
+
         suite.addTest(load_scrypt_suite('pypyscryptTests', pypyscrypt, True))
     except ImportError:
         suite.addTest(load_scrypt_suite('pypyscryptTests', None, True))
 
     result = unittest.TextTestRunner().run(suite)
     sys.exit(not result.wasSuccessful())
-

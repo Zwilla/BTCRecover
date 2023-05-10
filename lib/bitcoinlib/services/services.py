@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    SERVICES - Main Service connector
-#    © 2017 - 2019 August - 1200 Web Development <http://1200wd.com/>
+#    © 2017 - 2019 August - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,7 +15,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import os
@@ -23,13 +23,13 @@ import logging
 import json
 import random
 import time
-from bitcoinlib.config.config import BLOCK_COUNT_CACHE_TIME
-from bitcoinlib.main import BCL_DATA_DIR, TYPE_TEXT, MAX_TRANSACTIONS, TIMEOUT_REQUESTS
+from lib.bitcoinlib.config.config import BLOCK_COUNT_CACHE_TIME
+from lib.bitcoinlib.main import BCL_DATA_DIR, TYPE_TEXT, MAX_TRANSACTIONS, TIMEOUT_REQUESTS
 from bitcoinlib import services
-from bitcoinlib.networks import DEFAULT_NETWORK, Network
-from bitcoinlib.encoding import to_hexstring
-from bitcoinlib.db_cache import *
-from bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.networks import DEFAULT_NETWORK, Network
+from lib.bitcoinlib.encoding import to_hexstring
+from lib.bitcoinlib.db_cache import *
+from lib.bitcoinlib.transactions import Transaction
 
 
 _logger = logging.getLogger(__name__)
@@ -116,7 +116,7 @@ class Service(object):
         self.complete = None
         self.timeout = timeout
         self._blockcount_update = 0
-        self._blockcount = None
+        self._blockcount = 0
         self.cache = None
         self.cache = Cache(self.network, db_uri=cache_uri)
         self.results_cache_n = 0

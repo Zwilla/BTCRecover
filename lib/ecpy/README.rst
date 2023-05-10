@@ -12,9 +12,9 @@ Full html documentation is available `here <https://cslashm.github.com/ECPy>`_.
 
 ::
 
-    from ecpy.curves     import Curve,Point
-    from ecpy.keys       import ECPublicKey, ECPrivateKey
-    from ecpy.ecdsa      import ECDSA
+    from lib.ecpy.curves     import Curve,Point
+    from lib.ecpy.keys       import ECPublicKey, ECPrivateKey
+    from lib.ecpy.ecdsa      import ECDSA
 
     cv   = Curve.get_curve('secp256k1')
     pu_key = ECPublicKey(Point(0x65d5b8bf9ab1801c9f168d4815994ad35f1dcb6ae6c7a1a303966b677b813b00,
@@ -32,7 +32,7 @@ Full html documentation is available `here <https://cslashm.github.com/ECPy>`_.
 
 ::
 
-    from ecpy.curves     import Curve,Point
+    from lib.ecpy.curves     import Curve,Point
 
     cv = Curve.get_curve('secp256k1')
     P  = Point(0x65d5b8bf9ab1801c9f168d4815994ad35f1dcb6ae6c7a1a303966b677b813b00,

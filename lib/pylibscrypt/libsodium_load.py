@@ -17,7 +17,7 @@ import sys
 
 
 def get_libsodium():
-    '''Locate the libsodium C library'''
+    """Locate the libsodium C library"""
 
     __SONAMES = (13, 10, 5, 4)
     # Import libsodium from system
@@ -69,4 +69,3 @@ def get_libsodium():
                 )
             except OSError:
                 pass
-

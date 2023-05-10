@@ -16,9 +16,14 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, base64, json, zlib, struct
+import sys
+import os.path
+import base64
+import json
+import zlib
+import struct
 
 prog = os.path.basename(sys.argv[0])
 
@@ -27,12 +32,16 @@ if len(sys.argv) != 2 or sys.argv[1].startswith("-"):
     sys.exit(2)
 
 wallet_filename = sys.argv[1]
-data = open(wallet_filename, "rb").read(64 * 2**20)  # up to 64M, typical size is a few k
+data = open(wallet_filename, "rb").read(64 * 2 ** 20)  # up to 64M, typical size is a few k
 
 # The number of pbkdf2 iterations, or 0 for v0.0 wallet files which don't specify this
 iter_count = 0
 
-class MayBeBlockchainV0(BaseException): pass;  # an exception which jumps to the end of the try block below
+
+class MayBeBlockchainV0(BaseException):
+    pass  # an exception which jumps to the end of the try block below
+
+
 try:
 
     # Most blockchain files (except v0.0 wallets) are JSON encoded; try to parse it as such
@@ -68,7 +77,7 @@ except MayBeBlockchainV0:
 try:
     data = base64.b64decode(data)
 except TypeError as e:
-    raise ValueError("Can't base64-decode Blockchain wallet: "+str(e))
+    raise ValueError("Can't base64-decode Blockchain wallet: " + str(e))
 if len(data) < 32:
     raise ValueError("Encrypted Blockchain data is too short")
 if len(data) % 16 != 0:
@@ -76,7 +85,7 @@ if len(data) % 16 != 0:
 
 print("Blockchain first 16 encrypted bytes, iv, and iter_count in base64:", file=sys.stderr)
 
-bytes = b"bk:" + struct.pack("< 16s 16s I", data[16:32], data[0:16], iter_count)
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
+last32bytes = b"bk:" + struct.pack("< 16s 16s I", data[16:32], data[0:16], iter_count)
+crc_bytes = struct.pack("<I", zlib.crc32(last32bytes) & 0xffffffff)
 
-print(base64.b64encode(bytes + crc_bytes).decode())
+print(base64.b64encode(last32bytes + crc_bytes).decode())

@@ -16,22 +16,27 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 from btcrecover import addressset
 from btcrecover import btcrseed
-import sys,argparse, atexit
+import sys
+import argparse
+import atexit
 from os import path
 
-__version__ =  "1.11.0-CryptoGuide"
+__version__ = "1.11.0-CryptoGuide"
 
 if __name__ == "__main__":
     print("Starting CheckAddressDB", __version__)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dbfilename",   nargs="?", default="addresses.db", help="the name of the database file (default: addresses.db)")
-    parser.add_argument("--checkaddresses", nargs="*", help="Check whether a single address is present in the addressDB")
-    parser.add_argument("--checkaddresslist", metavar="PATH", help="Check whether all of the addresses in a list file are present in the addressDB")
+    parser.add_argument("--dbfilename", nargs="?", default="addresses.db",
+                        help="the name of the database file (default: addresses.db)")
+    parser.add_argument("--checkaddresses", nargs="*",
+                        help="Check whether a single address is present in the addressDB")
+    parser.add_argument("--checkaddresslist", metavar="PATH",
+                        help="Check whether all of the addresses in a list file are present in the addressDB")
     parser.add_argument("--suppress-found", action="store_true",
                         help="Suppress console messages for found addresses")
     parser.add_argument("--suppress-notfound", action="store_true",
@@ -40,6 +45,7 @@ if __name__ == "__main__":
     # Optional bash tab completion support
     try:
         import argcomplete
+
         argcomplete.autocomplete(parser)
     except ImportError:
         pass
@@ -65,7 +71,8 @@ if __name__ == "__main__":
         with open(args.checkaddresslist) as addressistfile:
             print("Loading: ", args.checkaddresslist)
             for line in addressistfile:
-                if len(line) < 2: continue
+                if len(line) < 2:
+                    continue
                 if "#" in line:
                     address, comment = line.split("#")
                 else:
@@ -83,7 +90,7 @@ if __name__ == "__main__":
 
     for address, comment in checklist:
         checked += 1
-        if (checked % 100000 == 0):
+        if checked % 100000 == 0:
             print("Checked:", checked, "addresses in current file,", len(addresses),
                   "lines in current addresslist")
 
@@ -91,8 +98,8 @@ if __name__ == "__main__":
         try:
             hash160 = btcrseed.WalletBase._addresses_to_hash160s([address]).pop()
         except:
-            #print("Invalid Address in Checklist:", address, comment)
-            #continue
+            # print("Invalid Address in Checklist:", address, comment)
+            # continue
             hash160 = btcrseed.WalletEthereum._addresses_to_hash160s([address]).pop()
 
         if hash160 in addressdb:
@@ -107,4 +114,3 @@ if __name__ == "__main__":
     print("Checked", len(addresses), "addresses")
     print(found, "Found")
     print(not_found, "Not Found")
-

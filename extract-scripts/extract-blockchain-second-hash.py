@@ -16,9 +16,20 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, base64, json, getpass, re, itertools, uuid, zlib, struct
+import sys
+import os.path
+import base64
+import json
+import getpass
+import re
+import itertools
+import uuid
+import zlib
+import struct
+import Crypto.Cipher.AES
+import Crypto.Protocol.KDF
 
 
 ################################### Cryptography Libraries ###################################
@@ -29,15 +40,25 @@ import sys, os.path, base64, json, getpass, re, itertools, uuid, zlib, struct
 # ciphertext must be a multiple of 16 bytes, and any padding present is not stripped. pbkdf2() takes
 # four arguments: password, salt, iter_count, len (len is the desired key length)
 def load_crypto_libraries():
-    global aes256_cbc_decrypt, aes256_ofb_decrypt, pbkdf2
+    global aes256_cbc_decrypt
+    global aes256_ofb_decrypt
+    global pbkdf2
     try:
-        import Crypto.Cipher.AES, Crypto.Protocol.KDF
-        aes256_cbc_decrypt = lambda key, iv, ciphertext: \
-            Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_CBC, iv).decrypt(ciphertext)
-        aes256_ofb_decrypt = lambda key, iv, ciphertext: \
-            Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_OFB, iv).decrypt(ciphertext)
-        pbkdf2 = lambda password, salt, iter_count, len: \
-            Crypto.Protocol.KDF.PBKDF2(password, salt, len, iter_count)
+        import Crypto.Cipher.AES
+        import Crypto.Protocol.KDF
+
+        def aes256_cbc_decrypt(key, iv, ciphertext):
+            return lambda keyL, ivL, ciphertextL: Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_CBC,
+                                                                        iv).decrypt(ciphertext)
+
+        def aes256_ofb_decrypt(key, iv, ciphertext):
+            return lambda keyL, ivL, ciphertextL: Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_OFB,
+                                                                        iv).decrypt(ciphertext)
+
+        def pbkdf2(passwordLr, salt, iter_countLr, lenLr):
+            return lambda passwordL, saltL, iter_countL, lenL: \
+                Crypto.Protocol.KDF.PBKDF2(passwordLr, salt, lenLr, iter_countLr)
+
         return
     except ImportError:
         pass
@@ -86,7 +107,7 @@ iter_count = 0
 
 try:
     class MayBeBlockchainV0(BaseException):
-        pass;  # an exception which jumps to the end of the try block below
+        pass  # an exception which jumps to the end of the try block below
 
 
     try:
@@ -144,26 +165,28 @@ try:
     if stdin_encoding and stdin_encoding.upper() not in "UTF-8,UTF8":
         password = password.decode(stdin_encoding).encode("utf_8")
 
-
     # Encryption scheme used in newer wallets
-    def decrypt_current(iter_count):
-        key = pbkdf2(password, salt_and_iv, iter_count, 32)
+
+    def decrypt_current(iter_countDC):
+        key = pbkdf2(password, salt_and_iv, iter_countDC, 32)
         decrypted = aes256_cbc_decrypt(key, salt_and_iv, data)  # CBC mode
         padding = ord(decrypted[-1:])  # ISO 10126 padding length
         # A bit fragile because it assumes the guid is in the first encrypted block,
         # although this has always been the case as of 6/2014 (since 12/2011)
         # As of May 2020, guid no longer appears in the first block, but tx_notes appears there instead
-        return decrypted[:-padding] if 1 <= padding <= 16 and re.search(b"\"guid\"|\"tx_notes\"|\"address_book|\"double", decrypted) else None
-
+        return decrypted[:-padding] if 1 <= padding <= 16 and re.search(
+            b"\"guid\"|\"tx_notes\"|\"address_book|\"double", decrypted) else None
 
     # Encryption scheme only used in version 0.0 wallets (N.B. this is untested)
+
     def decrypt_old():
         key = pbkdf2(password, salt_and_iv, 1, 32)  # only 1 iteration
         decrypted = aes256_ofb_decrypt(key, salt_and_iv, data)  # OFB mode
         # The 16-byte last block, reversed, with all but the first byte of ISO 7816-4 padding removed:
         last_block = tuple(itertools.dropwhile(lambda x: x == "\0", decrypted[:15:-1]))
         padding = 17 - len(last_block)  # ISO 7816-4 padding length
-        return decrypted[:-padding] if 1 <= padding <= 16 and decrypted[-padding] == "\x80" and re.match('{\s*"guid"',decrypted) else None
+        return decrypted[:-padding] if 1 <= padding <= 16 and decrypted[-padding] == "\x80" and \
+                                       re.match('{\s*"guid"', decrypted) else None
 
 
     if iter_count:  # v2.0 wallets have a single possible encryption scheme
@@ -208,7 +231,7 @@ except KeyError:
     iter_count = 0  # Some old wallets didn't specify an iteration count
 
 print("Blockchain second password hash, salt, and iter_count in base64:", file=sys.stderr)
-bytes = b"bs:" + struct.pack("< 32s 16s I", password_hash, salt_uuid.bytes, iter_count)
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
+last32bytes = b"bs:" + struct.pack("< 32s 16s I", password_hash, salt_uuid.bytes, iter_count)
+crc_bytes = struct.pack("<I", zlib.crc32(last32bytes) & 0xffffffff)
 
-print(base64.b64encode(bytes + crc_bytes).decode())
+print(base64.b64encode(last32bytes + crc_bytes).decode())

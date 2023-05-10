@@ -4,12 +4,12 @@
 #
 #    EXAMPLES - Creating and using Multisignature Wallets
 #
-#    © 2017 September - 1200 Web Development <http://1200wd.com/>
+#    © 2017 September - 1200 Web Development <https://1200wd.com/>
 #
 
 import os
 from pprint import pprint
-from bitcoinlib.wallets import *
+from lib.bitcoinlib.wallets import *
 
 test_databasefile = BCL_DATABASE_DIR + 'bitcoinlib.test.sqlite'
 test_database = 'sqlite:///' + test_databasefile

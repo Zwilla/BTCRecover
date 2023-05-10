@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Litecore.io Client
-#    © 2018-2019 July - 1200 Web Development <http://1200wd.com/>
+#    © 2018-2019 July - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,14 +15,14 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 from datetime import datetime
 import struct
-from bitcoinlib.main import MAX_TRANSACTIONS
-from bitcoinlib.services.baseclient import BaseClient
-from bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.main import MAX_TRANSACTIONS
+from lib.bitcoinlib.services.baseclient import BaseClient
+from lib.bitcoinlib.transactions import Transaction
 
 PROVIDERNAME = 'groestlsight'
 REQUEST_LIMIT = 50

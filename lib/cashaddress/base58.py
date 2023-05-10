@@ -1,4 +1,4 @@
-'''
+"""
 
 Copyright (c) 2015 David Keijser
 
@@ -26,7 +26,7 @@ Base58 encoding
 
 Implementations of Base58 and Base58Check endcodings that are compatible
 with the bitcoin network.
-'''
+"""
 
 # This module is based upon base58 snippets found scattered over many bitcoin
 # tools written in python. From what I gather the original source is from a
@@ -36,6 +36,7 @@ with the bitcoin network.
 __version__ = '0.2.5'
 
 from hashlib import sha256
+
 try:
     import groestlcoin_hash
 except:
@@ -43,7 +44,6 @@ except:
 
 # 58 character alphabet used
 alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-
 
 if bytes == str:  # python2
     iseq = lambda s: map(ord, s)
@@ -56,7 +56,7 @@ else:  # python3
 
 
 def b58encode_int(i, default_one=True):
-    '''Encode an integer using Base58'''
+    """Encode an integer using Base58"""
     if not i and default_one:
         return alphabet[0]
     string = ""
@@ -67,7 +67,7 @@ def b58encode_int(i, default_one=True):
 
 
 def b58encode(v):
-    '''Encode a string using Base58'''
+    """Encode a string using Base58"""
     if not isinstance(v, bytes):
         raise TypeError("a bytes-like object is required, not '%s'" %
                         type(v).__name__)
@@ -87,7 +87,7 @@ def b58encode(v):
 
 
 def b58decode_int(v):
-    '''Decode a Base58 encoded string as an integer'''
+    """Decode a Base58 encoded string as an integer"""
 
     if not isinstance(v, str):
         v = v.decode('ascii')
@@ -99,7 +99,7 @@ def b58decode_int(v):
 
 
 def b58decode(v):
-    '''Decode a Base58 encoded string'''
+    """Decode a Base58 encoded string"""
 
     if not isinstance(v, str):
         v = v.decode('ascii')
@@ -119,14 +119,14 @@ def b58decode(v):
 
 
 def b58encode_check(v):
-    '''Encode a string using Base58 with a 4 character checksum'''
+    """Encode a string using Base58 with a 4 character checksum"""
 
     digest = sha256(sha256(v).digest()).digest()
     return b58encode(v + digest[:4])
 
 
 def b58decode_check(v):
-    '''Decode and verify the checksum of a Base58 encoded string'''
+    """Decode and verify the checksum of a Base58 encoded string"""
 
     result = b58decode(v)
     result, check = result[:-4], result[-4:]
@@ -137,15 +137,16 @@ def b58decode_check(v):
 
     return result
 
+
 def b58grsencode_check(v):
-    '''Encode a string using Base58 GRS with a 4 character checksum'''
+    """Encode a string using Base58 GRS with a 4 character checksum"""
 
     digest = groestlcoin_hash.getHash(v, len(v))
     return b58encode(v + digest[:4])
 
 
 def b58grsdecode_check(v):
-    '''Decode and verify the checksum of a Base58 GRS encoded string'''
+    """Decode and verify the checksum of a Base58 GRS encoded string"""
 
     result = b58decode(v)
     result, check = result[:-4], result[-4:]

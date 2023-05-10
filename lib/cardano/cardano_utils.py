@@ -14,26 +14,30 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-from lib.ecpy.curves import Curve,Point
-import lib.cardano.orakolo.HDEd25519 as HDEd25519
-import hashlib, hmac
 import bisect
+import hashlib
+import hmac
+from typing import List, Optional, Sequence, TypeVar, Union
 
-from typing import AnyStr, List, Optional, Sequence, TypeVar, Union
+import lib.cardano.orakolo.HDEd25519 as HDEd25519
+from lib.ecpy.curves import Curve
 
 _T = TypeVar("_T")
 
-def generateMasterKey_Icarus(mnemonic, passphrase, wordlist, langcode, trezor = False):
+
+def generateMasterKey_Icarus(mnemonic, passphrase, wordlist, langcode, trezor=False):
     return generateRootKey_Icarus(generateHashKey_Icarus(mnemonic, passphrase, wordlist, langcode, trezor))
 
-def generateHashKey_Icarus(mnemonic, passphrase, wordlist, langcode, trezor = False):
+
+def generateHashKey_Icarus(mnemonic, passphrase, wordlist, langcode, trezor=False):
     seed = mnemonic_to_entropy(words=mnemonic, wordlist=wordlist, langcode=langcode, trezorDerivation=trezor)
 
     data = hashlib.pbkdf2_hmac("SHA512", password=passphrase, salt=seed, iterations=4096, dklen=96)
 
     return data
+
 
 def generateRootKey_Icarus(keyData):
     kL, kR, cP = keyData[:32], keyData[32:64], keyData[64:]
@@ -44,8 +48,10 @@ def generateRootKey_Icarus(keyData):
 
     return (kL, kR), AP, cP
 
+
 def generateMasterKey_Ledger(mnemonic, passphrase):
     return generateRootKey_Ledger(generateHashKey_Ledger(mnemonic, passphrase))
+
 
 def generateHashKey_Ledger(mnemonic, passphrase):
     derivation_salt = b"mnemonic" + passphrase
@@ -54,6 +60,7 @@ def generateHashKey_Ledger(mnemonic, passphrase):
     data = hashlib.pbkdf2_hmac("SHA512", password=derivation_password, salt=derivation_salt, iterations=2048, dklen=64)
 
     return data
+
 
 def generateRootKey_Ledger(keyData):
     cP = hmac.new(key=b"ed25519 seed", msg=b'\x01' + keyData, digestmod=hashlib.sha256).digest()
@@ -77,56 +84,59 @@ def hashRepeatedly_ledger(message):
 
     return (kL, kR)
 
+
 def tweakBits_shelly(data):
     # on the ed25519 scalar leftmost 32 bytes:
     # clear the lowest 3 bits
     # clear the highest bit
     # clear the 3rd highest bit
     # set the highest 2nd bit
-    data[0]  = data[0]  & 0b11111000
+    data[0] = data[0] & 0b11111000
     data[31] = data[31] & 0b00011111
     data[31] = data[31] | 0b01000000
 
     return bytes(data)
 
+
 # Pulled from orakolo HDEd25519 root_key_slip10 (Using it here for more genralised address derivation)
 def root_public_key(kL):
     # root public key
-    #A = _crypto_scalarmult_curve25519_base(bytes(kL))
+    # A = _crypto_scalarmult_curve25519_base(bytes(kL))
     cv25519 = Curve.get_curve("Ed25519")
     k_scalar = int.from_bytes(bytes(kL), 'little')
-    P = k_scalar*cv25519.generator
-    A =  cv25519.encode_point(P)
+    P = k_scalar * cv25519.generator
+    A = cv25519.encode_point(P)
     return A
+
 
 # Pulled from orakolo HDEd25519 derive_seed (Using it here for more flexibility in terms of derivation)
 def derive_child_keys(parent_node, path, private):
-
     if private:
         node = parent_node
-    else :
+    else:
         (kLP, kRP), AP, cP = parent_node
-        node = (AP,cP)
+        node = (AP, cP)
 
     BIP32Ed25519_class = HDEd25519.BIP32Ed25519()
     for i in path.split('/'):
         if i.endswith("'"):
-            i = int(i[:-1]) + 2**31
+            i = int(i[:-1]) + 2 ** 31
         else:
             i = int(i)
 
         if private:
-          node = BIP32Ed25519_class.private_child_key(node, i)
-          ((kLP, kRP), AP, cP) = node
+            node = BIP32Ed25519_class.private_child_key(node, i)
+            ((kLP, kRP), AP, cP) = node
         else:
-          node = BIP32Ed25519_class.public_child_key(node, i)
-          (AP, cP) = node
+            node = BIP32Ed25519_class.public_child_key(node, i)
+            (AP, cP) = node
 
     return node
 
+
 # Pulled from https://github.com/trezor/python-mnemonic and modified to fix bug in Trezor derivation
 # See https://github.com/trezor/trezor-firmware/pull/1388
-def mnemonic_to_entropy(words: Union[List[str], str], wordlist, langcode, trezorDerivation = False ) -> bytearray:
+def mnemonic_to_entropy(words: Union[List[str], str], wordlist, langcode, trezorDerivation=False) -> bytearray:
     if not isinstance(words, tuple) and not isinstance(words, list):
         words = words.split(" ")
     if len(words) not in [12, 15, 18, 21, 24]:
@@ -159,7 +169,7 @@ def mnemonic_to_entropy(words: Union[List[str], str], wordlist, langcode, trezor
     checksumLengthBits = concatLenBits // 33
 
     if trezorDerivation and len(words) == 24:
-        entropyLengthBits = concatLenBits# - checksumLengthBits
+        entropyLengthBits = concatLenBits  # - checksumLengthBits
     else:
         entropyLengthBits = concatLenBits - checksumLengthBits
     # Extract original entropy as bytes.
@@ -169,6 +179,7 @@ def mnemonic_to_entropy(words: Union[List[str], str], wordlist, langcode, trezor
             if concatBits[(ii * 8) + jj]:
                 entropy[ii] |= 1 << (7 - jj)
     return entropy
+
 
 # Pulled from https://github.com/trezor/python-mnemonic and modified to fix bug in Trezor derivation
 # From <https://stackoverflow.com/questions/212358/binary-search-bisection-in-python/2233940#2233940>
@@ -182,11 +193,13 @@ def binary_search(
     pos = bisect.bisect_left(a, x, lo, hi)  # find insertion position
     return pos if pos != hi and a[pos] == x else -1  # don't walk off the end
 
+
 # Note: This doesn't appear to work when compared to the CIP-003 Test Vectors, haven't validated them any further
 def generateMasterKey_Byron(mnemonic):
     mnemo = Mnemonic("english")
     seed = mnemo.to_entropy(mnemonic)
     return hashRepeatedly_byron(seed, 1)
+
 
 # Note: This doesn't appear to work when compared to the CIP-003 Test Vectors, haven't validated them any further
 def hashRepeatedly_byron(key, i):
@@ -203,12 +216,13 @@ def hashRepeatedly_byron(key, i):
 
     return (prv + iR)
 
+
 # Note: This doesn't appear to work when compared to the CIP-003 Test Vectors, haven't validated them any further
 def cardano_tweakBits_byron(data):
     # clear the lowest 3 bits
     # clear the highest bit
     # set the highest 2nd bit
-    data[0]  = data[0]  & 0b11111000
+    data[0] = data[0] & 0b11111000
     data[31] = data[31] & 0b01111111
     data[31] = data[31] | 0b01000000;
 

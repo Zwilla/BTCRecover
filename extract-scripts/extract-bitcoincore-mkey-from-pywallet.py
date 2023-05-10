@@ -16,9 +16,14 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, json, struct, base64, zlib
+import sys
+import os.path
+import json
+import struct
+import base64
+import zlib
 
 prog = os.path.basename(sys.argv[0])
 
@@ -29,7 +34,6 @@ if len(sys.argv) != 2 or sys.argv[1].startswith("-"):
 wallet_filename = sys.argv[1]
 
 with open(wallet_filename, "rb") as wallet_file:
-
     # pywallet dump files are largish json files often preceded by a bunch of error messages;
     # search through the file in 16k blocks looking for a particular string which occurs twice
     # inside the mkey object we need (because it appears twice, we're guaranteed one copy
@@ -37,14 +41,15 @@ with open(wallet_filename, "rb") as wallet_file:
     #
     # For the first block, give up if this doesn't look like a text file
     last_block = ""
-    cur_block  = wallet_file.read(16384)
-    if sum(1 for c in cur_block if c>126 or c==0) > 512: # about 3%
+    cur_block = wallet_file.read(16384)
+    if sum(1 for c in cur_block if c > 126 or c == 0) > 512:  # about 3%
         raise ValueError("Unrecognized pywallet format (does not look like ASCII text)")
     while cur_block:
         found_at = cur_block.find(b'"nDerivation')
-        if found_at >= 0: break
+        if found_at >= 0:
+            break
         last_block = cur_block
-        cur_block  = wallet_file.read(16384)
+        cur_block = wallet_file.read(16384)
     else:
         raise ValueError("Unrecognized pywallet format (can't find mkey)")
 
@@ -52,7 +57,7 @@ with open(wallet_filename, "rb") as wallet_file:
     cur_block = last_block + cur_block + wallet_file.read(4096)
 
 # Search backwards for the beginning of the mkey object we need, and decode it
-found_at  = cur_block.rfind(b"{", 0, found_at + len(last_block))
+found_at = cur_block.rfind(b"{", 0, found_at + len(last_block))
 if found_at < 0:
     raise ValueError("Unrecognized pywallet format (can't find mkey opening brace)")
 wallet = json.JSONDecoder().raw_decode(cur_block[found_at:].decode())[0]
@@ -75,17 +80,20 @@ else:
     raise ValueError("Unrecognized pywallet format (can't find [en]crypted_key attribute)")
 
 encrypted_master_key = base64.b16decode(encrypted_master_key, True)  # True means allow lowercase
-salt                 = base64.b16decode(wallet["salt"], True)
-iter_count           = int(wallet["nDerivationIterations"])
+salt = base64.b16decode(wallet["salt"], True)
+iter_count = int(wallet["nDerivationIterations"])
 
-if len(encrypted_master_key) != 48: raise NotImplementedError("Unsupported encrypted master key length")
-if len(salt)                 != 8:  raise NotImplementedError("Unsupported salt length")
-if iter_count                <= 0:  raise NotImplementedError("Unsupported iteration count")
+if len(encrypted_master_key) != 48:
+    raise NotImplementedError("Unsupported encrypted master key length")
+if len(salt) != 8:
+    raise NotImplementedError("Unsupported salt length")
+if iter_count <= 0:
+    raise NotImplementedError("Unsupported iteration count")
 
 print("Partial Bitcoin Core encrypted master key, salt, iter_count, and crc in base64:", file=sys.stderr)
 
 # Only include the last two AES blocks (last 32 bytes) of the 48-byte encrypted master key
-bytes = b"bc:" + encrypted_master_key[-32:] + salt + struct.pack("<I", iter_count)
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
+last32bytes = b"bc:" + encrypted_master_key[-32:] + salt + struct.pack("<I", iter_count)
+crc_bytes = struct.pack("<I", zlib.crc32(last32bytes) & 0xffffffff)
 
-print(base64.b64encode(bytes + crc_bytes).decode())
+print(base64.b64encode(last32bytes + crc_bytes).decode())

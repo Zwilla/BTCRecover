@@ -4,15 +4,15 @@
 #
 #    Import and sign multisig transaction with private key wif or passphrase
 #
-#    © 2019 December - 1200 Web Development <http://1200wd.com/>
+#    © 2019 December - 1200 Web Development <https://1200wd.com/>
 #
 
 from pprint import pprint
-from bitcoinlib.transactions import Transaction
-from bitcoinlib.mnemonic import Mnemonic
-from bitcoinlib.keys import HDKey
-from bitcoinlib.services.services import Service
-from bitcoinlib.wallets import wallet_create_or_open, wallet_delete_if_exists
+from lib.bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.mnemonic import Mnemonic
+from lib.bitcoinlib.keys import HDKey
+from lib.bitcoinlib.services.services import Service
+from lib.bitcoinlib.wallets import wallet_create_or_open, wallet_delete_if_exists
 
 network = 'testnet'
 # # Example wallet

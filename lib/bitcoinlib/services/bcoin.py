@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Client for Bcoin Node
-#    © 2019 June - 1200 Web Development <http://1200wd.com/>
+#    © 2019 June - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,16 +15,16 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 from datetime import datetime
 from time import sleep
 from requests import ReadTimeout
-from bitcoinlib.main import *
-from bitcoinlib.services.baseclient import BaseClient, ClientError
-from bitcoinlib.transactions import Transaction
-from bitcoinlib.encoding import to_hexstring
+from lib.bitcoinlib.main import *
+from lib.bitcoinlib.services.baseclient import BaseClient, ClientError
+from lib.bitcoinlib.transactions import Transaction
+from lib.bitcoinlib.encoding import to_hexstring
 
 
 PROVIDERNAME = 'bcoin'

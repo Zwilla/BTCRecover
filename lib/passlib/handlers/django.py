@@ -15,7 +15,7 @@ from lib.passlib.utils import to_unicode, rng, getrandstr
 from lib.passlib.utils.binary import BASE64_CHARS
 from lib.passlib.utils.compat import str_to_uascii, uascii_to_str, unicode, u
 from lib.passlib.crypto.digest import pbkdf2_hmac
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "django_salted_sha1",

@@ -16,9 +16,14 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, sqlite3, base64, zlib, struct
+import sys
+import os.path
+import sqlite3
+import base64
+import zlib
+import struct
 
 prog = os.path.basename(sys.argv[0])
 
@@ -33,9 +38,9 @@ wallet_conn = sqlite3.connect(wallet_filename)
 
 # Try to find an encrypted loose key
 wallet_cur = wallet_conn.execute("SELECT encrypt_private_key FROM addresses LIMIT 1")
-key_data   = wallet_cur.fetchone()
+key_data = wallet_cur.fetchone()
 if not key_data:
-    sys.exit("This Bither wallet is incompatible with "+prog+" (no loose private keys found).\n" +
+    sys.exit("This Bither wallet is incompatible with " + prog + " (no loose private keys found).\n" +
              "Please run btcrecover with the wallet file directly instead.")
 key_data = key_data[0]
 wallet_conn.close()
@@ -50,11 +55,11 @@ if len(key_data) != 3:
     sys.exit("unrecognized Bither encrypted key format (expected 3-4 slash-delimited elements, found {})"
              .format(len(key_data)))
 privkey_ciphertext = base64.b16decode(key_data[0], casefold=True)
-salt               = base64.b16decode(key_data[2], casefold=True)
+salt = base64.b16decode(key_data[2], casefold=True)
 
 if len(privkey_ciphertext) != 48:
     sys.exit("unexpected encrypted key length in Bither wallet (expected 48, found {})"
-               .format(len(privkey_ciphertext)))
+             .format(len(privkey_ciphertext)))
 
 # The first salt byte is optionally a flags byte that's not needed
 if len(salt) == 9:
@@ -66,6 +71,6 @@ print("Bither partial encrypted private key, salt, and crc in base64:", file=sys
 
 # We only need the last half of the encrypted private key and the encrypted
 # padding (the last 32 bytes of the 48 bytes of ciphertext), plus the salt
-bytes = b"bt:" + privkey_ciphertext[16:48] + salt
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
-print(base64.b64encode(bytes + crc_bytes).decode())
+last32bytes = b"bt:" + privkey_ciphertext[16:48] + salt
+crc_bytes = struct.pack("<I", zlib.crc32(last32bytes) & 0xffffffff)
+print(base64.b64encode(last32bytes + crc_bytes).decode())

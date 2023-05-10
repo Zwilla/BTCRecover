@@ -17,9 +17,14 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
-import sys, os.path, base64, json, zlib, struct
+import sys
+import os.path
+import base64
+import json
+import zlib
+import struct
 
 prog = os.path.basename(sys.argv[0])
 
@@ -39,7 +44,6 @@ salt = base64.b64decode(data["salt"])
 
 print("Dogechain first 16 encrypted bytes, iv, and iter_count in base64:", file=sys.stderr)
 
-bytes = b"dc:" + struct.pack("< 32s 16s I", payload[0:32], salt, iter_count)
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
-
-print(base64.b64encode(bytes + crc_bytes).decode())
+l32bytes = b"dc:" + struct.pack("< 32s 16s I", payload[0:32], salt, iter_count)
+crc_bytes = struct.pack("<I", zlib.crc32(l32bytes) & 0xffffffff)
+print(base64.b64encode(l32bytes + crc_bytes).decode())

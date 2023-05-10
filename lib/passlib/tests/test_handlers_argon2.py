@@ -10,9 +10,9 @@ import warnings
 # site
 # pkg
 from passlib import hash
-from passlib.utils.compat import unicode
-from passlib.tests.utils import HandlerCase, TEST_MODE
-from passlib.tests.test_handlers import UPASS_TABLE, PASS_TABLE_UTF8
+from lib.passlib.utils.compat import unicode
+from lib.passlib.tests.utils import HandlerCase, TEST_MODE
+from lib.passlib.tests.test_handlers import UPASS_TABLE, PASS_TABLE_UTF8
 # module
 
 #=============================================================================

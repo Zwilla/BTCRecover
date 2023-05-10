@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Unit Tests for Bitcoinlib Tools
-#    © 2018 May - 1200 Web Development <http://1200wd.com/>
+#    © 2018 May - 1200 Web Development <https://1200wd.com/>
 #
 
 import os
@@ -19,9 +19,9 @@ try:
 except ImportError:
     pass  # Only necessary when mysql or postgres is used
 
-from bitcoinlib.main import UNITTESTS_FULL_DATABASE_TEST
-from bitcoinlib.db import BCL_DATABASE_DIR
-from bitcoinlib.encoding import normalize_string
+from lib.bitcoinlib.main import UNITTESTS_FULL_DATABASE_TEST
+from lib.bitcoinlib.db import BCL_DATABASE_DIR
+from lib.bitcoinlib.encoding import normalize_string
 
 SQLITE_DATABASE_FILE = os.path.join(str(BCL_DATABASE_DIR), 'bitcoinlib.unittest.sqlite')
 DATABASE_NAME = 'bitcoinlib_unittest'

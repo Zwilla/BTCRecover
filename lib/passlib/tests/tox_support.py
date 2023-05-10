@@ -14,7 +14,7 @@ import re
 import logging; log = logging.getLogger(__name__)
 # site
 # pkg
-from passlib.utils.compat import print_
+from lib.passlib.utils.compat import print_
 # local
 __all__ = [
 ]
@@ -37,7 +37,7 @@ def do_hash_tests(*args):
             del args[:2]
         else:
             break
-    from passlib.tests import test_handlers
+    from lib.passlib.tests import test_handlers
     names = [TH_PATH + ":" + name + suffix for name in dir(test_handlers)
              if not name.startswith("_") and any(re.match(arg,name) for arg in args)]
     print_("\n".join(names))
@@ -54,7 +54,7 @@ def do_preset_tests(name):
 
 def do_setup_gae(path, runtime):
     """write fake GAE ``app.yaml`` to current directory so nosegae will work"""
-    from passlib.tests.utils import set_file
+    from lib.passlib.tests.utils import set_file
     set_file(os.path.join(path, "app.yaml"), """\
 application: fake-app
 version: 2

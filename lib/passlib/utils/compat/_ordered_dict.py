@@ -1,8 +1,8 @@
 """passlib.utils.compat._ordered_dict -- backport of collections.OrderedDict for py26
 
-taken from stdlib-suggested recipe at http://code.activestate.com/recipes/576693/
+taken from stdlib-suggested recipe at https://code.activestate.com/recipes/576693/
 
-this should be imported from passlib.utils.compat.OrderedDict, not here.
+this should be imported from lib.passlib.utils.compat.OrderedDict, not here.
 """
 
 try:

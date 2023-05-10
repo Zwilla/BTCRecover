@@ -285,7 +285,7 @@ class Deserializer:
             return unsigned >> 1
 
     def _read_double(self) -> float:
-        return struct.unpack(f"{self._endian}d", self._read_raw(8))[0]
+        return struct.unpack("{}d".format(self._endian), self._read_raw(8))[0]
 
     # def _read_uint32(self) -> int:
     #     return self._read_le_varint()
@@ -385,7 +385,7 @@ class Deserializer:
             result[key] = value
         # while True:
         #     if self._peek_tag() == end_tag:
-        #         log(f"Object end at offset {self._f.tell()}")
+        #         log("Object end at offset {}".format(self._f.tell())")
         #         break
         #     key = self._read_object()
         #     value = self._read_object()
@@ -393,14 +393,14 @@ class Deserializer:
         #
         # assert self._read_tag() == end_tag
         property_count = self._read_le_varint()[0]
-        log(f"Actual property count: {len(result)}; stated property count: {property_count}")
+        log("Actual property count: {}; stated property count: {}".format(len(result), property_count))
         if len(result) != property_count:
             raise ValueError("Property count mismatch")
 
         return result
 
     def _read_js_sparse_array(self) -> list:
-        log(f"Reading js sparse array properties at {self._f.tell()}")
+        log("Reading js sparse array properties at {}".format(self._f.tell()))
         # TODO: implement a sparse list so that this isn't so horribly inefficient
         length = self._read_le_varint()[0]
         result = [None for _ in range(length)]
@@ -522,7 +522,8 @@ class Deserializer:
 
         element_count = byte_length // element_length
 
-        return struct.unpack(f"{self._endian}{element_count}{fmt}", raw[byte_offset: byte_offset + byte_length])
+        return struct.unpack("{}{}{}".format(self._endian, element_count, fmt),
+                             raw[byte_offset: byte_offset + byte_length])
 
     def _read_host_object(self) -> typing.Any:
         result = self._host_object_delegate(self._f)
@@ -562,7 +563,8 @@ class Deserializer:
             Constants.token_kBeginJSMap: self._read_js_map,
             Constants.token_kBeginJSSet: self._read_js_set,
             Constants.token_kArrayBuffer: self._read_js_arraybuffer,
-            Constants.token_kSharedArrayBuffer: self._not_implemented,  # and probably never, as it can't be pulled from the data I think?
+            Constants.token_kSharedArrayBuffer: self._not_implemented,
+            # and probably never, as it can't be pulled from the data I think?
             Constants.token_kArrayBufferTransfer: self._not_implemented,
             Constants.token_kError: self._not_implemented,
             Constants.token_kWasmModuleTransfer: self._not_implemented,
@@ -571,7 +573,7 @@ class Deserializer:
         }.get(tag)
 
         if func is None:
-            raise ValueError(f"Unknown tag {tag}")
+            raise ValueError("Unknown tag {}".format(tag))
 
         value = func()
 

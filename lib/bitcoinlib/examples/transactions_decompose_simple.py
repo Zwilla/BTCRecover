@@ -4,11 +4,11 @@
 #
 #    EXAMPLES - Decompose a simple transaction
 #
-#    © 2017 September - 1200 Web Development <http://1200wd.com/>
+#    © 2017 September - 1200 Web Development <https://1200wd.com/>
 #
 
 from pprint import pprint
-from bitcoinlib.transactions import *
+from lib.bitcoinlib.transactions import *
 
 
 print("\n===  Example of a basic raw transaction with 1 input and 2 outputs (destination and change address). ===")

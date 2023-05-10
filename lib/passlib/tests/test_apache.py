@@ -10,13 +10,13 @@ import subprocess
 # site
 # pkg
 from passlib import apache, registry
-from passlib.exc import MissingBackendError
-from passlib.utils.compat import irange
-from passlib.tests.backports import unittest
-from passlib.tests.utils import TestCase, get_file, set_file, ensure_mtime_changed
-from passlib.utils.compat import u
-from passlib.utils import to_bytes
-from passlib.utils.handlers import to_unicode_for_identify
+from lib.passlib.exc import MissingBackendError
+from lib.passlib.utils.compat import irange
+from lib.passlib.tests.backports import unittest
+from lib.passlib.tests.utils import TestCase, get_file, set_file, ensure_mtime_changed
+from lib.passlib.utils.compat import u
+from lib.passlib.utils import to_bytes
+from lib.passlib.utils.handlers import to_unicode_for_identify
 # module
 log = getLogger(__name__)
 

@@ -17,11 +17,13 @@
 of = open('pylibscrypt/pypyscrypt_inline.py', 'w')
 assert of
 
+
 def indent(line):
     i = 0
     while i < len(line) and line[i] == ' ':
         i += 1
     return i
+
 
 with open('pylibscrypt/pypyscrypt.py', 'r') as f:
     in_loop = False
@@ -58,16 +60,16 @@ with open('pylibscrypt/pypyscrypt.py', 'r') as f:
                     pvals = [int(v.strip(' )\n')) for v in pvals]
                     qvals = q.split(',')[1:]
                     qvals = [int(v.strip(' )\n')) for v in qvals]
-                    of.write(' '*i)
+                    of.write(' ' * i)
                     of.write('a = (x[%d]+x[%d]) & 0xffffffff\n' %
                              (pvals[1], pvals[2]))
-                    of.write(' '*i)
+                    of.write(' ' * i)
                     of.write('b = (x[%d]+x[%d]) & 0xffffffff\n' %
                              (qvals[1], qvals[2]))
-                    of.write(' '*i)
+                    of.write(' ' * i)
                     of.write('x[%d] ^= (a << %d) | (a >> %d)\n' %
                              (pvals[0], pvals[3], 32 - pvals[3]))
-                    of.write(' '*i)
+                    of.write(' ' * i)
                     of.write('x[%d] ^= (b << %d) | (b >> %d)\n' %
                              (qvals[0], qvals[3], 32 - qvals[3]))
 
@@ -77,11 +79,10 @@ with open('pylibscrypt/pypyscrypt.py', 'r') as f:
             vals[-1] = vals[-1].split(')')[0]
             vals = [v.strip() for v in vals]
             assert len(vals) == 5
-            of.write(' '*i)
+            of.write(' ' * i)
             of.write(vals[2] + '[' + vals[3] + ':(' + vals[3] + ')+(' +
                      vals[4] + ')] = ' + vals[0] + '[' + vals[1] + ':(' +
                      vals[1] + ')+(' + vals[4] + ')]\n')
 
         else:
             of.write(line)
-

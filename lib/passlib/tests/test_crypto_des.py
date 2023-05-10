@@ -8,8 +8,8 @@ from functools import partial
 # site
 # pkg
 # module
-from passlib.utils import getrandbytes
-from passlib.tests.utils import TestCase
+from lib.passlib.utils import getrandbytes
+from lib.passlib.tests.utils import TestCase
 
 #=============================================================================
 # test DES routines
@@ -17,7 +17,7 @@ from passlib.tests.utils import TestCase
 class DesTest(TestCase):
     descriptionPrefix = "passlib.crypto.des"
 
-    # test vectors taken from http://www.skepticfiles.org/faq/testdes.htm
+    # test vectors taken from https://www.skepticfiles.org/faq/testdes.htm
     des_test_vectors = [
         # key, plaintext, ciphertext
         (0x0000000000000000, 0x0000000000000000, 0x8CA64DE9C1B123A7),
@@ -58,7 +58,7 @@ class DesTest(TestCase):
 
     def test_01_expand(self):
         """expand_des_key()"""
-        from passlib.crypto.des import expand_des_key, shrink_des_key, \
+        from lib.passlib.crypto.des import expand_des_key, shrink_des_key, \
                                              _KDATA_MASK, INT_56_MASK
 
         # make sure test vectors are preserved (sans parity bits)
@@ -82,7 +82,7 @@ class DesTest(TestCase):
 
     def test_02_shrink(self):
         """shrink_des_key()"""
-        from passlib.crypto.des import expand_des_key, shrink_des_key, INT_64_MASK
+        from lib.passlib.crypto.des import expand_des_key, shrink_des_key, INT_64_MASK
         rng = self.getRandom()
 
         # make sure reverse works for some random keys
@@ -106,13 +106,13 @@ class DesTest(TestCase):
 
     def _random_parity(self, key):
         """randomize parity bits"""
-        from passlib.crypto.des import _KDATA_MASK, _KPARITY_MASK, INT_64_MASK
+        from lib.passlib.crypto.des import _KDATA_MASK, _KPARITY_MASK, INT_64_MASK
         rng = self.getRandom()
         return (key & _KDATA_MASK) | (rng.randint(0,INT_64_MASK) & _KPARITY_MASK)
 
     def test_03_encrypt_bytes(self):
         """des_encrypt_block()"""
-        from passlib.crypto.des import (des_encrypt_block, shrink_des_key,
+        from lib.passlib.crypto.des import (des_encrypt_block, shrink_des_key,
                                               _pack64, _unpack64)
 
         # run through test vectors
@@ -158,7 +158,7 @@ class DesTest(TestCase):
 
     def test_04_encrypt_ints(self):
         """des_encrypt_int_block()"""
-        from passlib.crypto.des import des_encrypt_int_block
+        from lib.passlib.crypto.des import des_encrypt_int_block
 
         # run through test vectors
         for key, plaintext, correct in self.des_test_vectors:

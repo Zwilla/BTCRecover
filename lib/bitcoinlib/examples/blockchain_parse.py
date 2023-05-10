@@ -5,11 +5,11 @@
 #    EXAMPLES - Deserialize and Verify all transactions from the latest block
 #    Just use for testing and experimenting, this library is not optimized for blockchain parsing!
 #
-#    © 2018 October - 1200 Web Development <http://1200wd.com/>
+#    © 2018 October - 1200 Web Development <https://1200wd.com/>
 #
 
-from bitcoinlib.services.services import *
-from bitcoinlib.services.bitcoind import *
+from lib.bitcoinlib.services.services import *
+from lib.bitcoinlib.services.bitcoind import *
 from pprint import pprint
 
 

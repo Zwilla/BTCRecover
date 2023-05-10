@@ -12,7 +12,7 @@ from lib.passlib.utils import h64, to_bytes
 from lib.passlib.utils.binary import h64, b64s_decode, b64s_encode
 from lib.passlib.utils.compat import u, bascii_to_str, suppress_cause
 from lib.passlib.utils.decor import classproperty
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "scrypt",

@@ -17,7 +17,7 @@ import logging
 log = logging.getLogger(__name__)
 # site
 # pkg
-from lib.passlib import exc
+from passlib import exc
 from lib.passlib.utils.compat import (
     PY3, bascii_to_str,
     irange, imap, iter_byte_chars, join_byte_values, join_byte_elems,

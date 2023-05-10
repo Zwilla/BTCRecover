@@ -2,11 +2,11 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    Unit Tests for Bitcoinlib Network Class
-#    © 2018 August - 1200 Web Development <http://1200wd.com/>
+#    © 2018 August - 1200 Web Development <https://1200wd.com/>
 #
 
 import unittest
-from bitcoinlib.networks import *
+from lib.bitcoinlib.networks import *
 
 
 class TestNetworks(unittest.TestCase):

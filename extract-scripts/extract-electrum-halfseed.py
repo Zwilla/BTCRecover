@@ -16,13 +16,18 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 # Special thanks to Bitcointalk.org user Wotan777 who discovered a better way
 # to work with Electrum wallets, and who made this extract script possible.
 
 
-import sys, os.path, ast, base64, zlib, struct
+import sys
+import os.path
+import ast
+import base64
+import zlib
+import struct
 
 prog = os.path.basename(sys.argv[0])
 
@@ -32,20 +37,23 @@ if len(sys.argv) != 2 or sys.argv[1].startswith("-"):
 
 wallet_filename = sys.argv[1]
 
-wallet = ast.literal_eval(open(wallet_filename).read(64 * 2**20))  # up to 64M, typical size is a few k
+wallet = ast.literal_eval(open(wallet_filename).read(64 * 2 ** 20))  # up to 64M, typical size is a few k
 
 seed_version = wallet.get("seed_version")
-if seed_version is None: raise ValueError("Unrecognized wallet format (Electrum seed_version not found)")
-if seed_version != 4:    raise NotImplementedError("Unsupported Electrum seed version " + seed_version)
+if seed_version is None:
+    raise ValueError("Unrecognized wallet format (Electrum seed_version not found)")
+if seed_version != 4:
+    raise NotImplementedError("Unsupported Electrum seed version " + seed_version)
 
-if not wallet.get("use_encryption"): raise ValueError("Electrum wallet is not encrypted")
+if not wallet.get("use_encryption"):
+    raise ValueError("Electrum wallet is not encrypted")
 
 iv_and_encr_seed = base64.b64decode(wallet["seed"])
-if len(iv_and_encr_seed) != 64:      raise ValueError("Electrum encrypted seed plus iv is not 64 bytes long")
+if len(iv_and_encr_seed) != 64:
+    raise ValueError("Electrum encrypted seed plus iv is not 64 bytes long")
 
 print("First half of encrypted Electrum seed, iv, and crc in base64:", file=sys.stderr)
 
-bytes = b"el:" + iv_and_encr_seed[:32]  # only need the 16-byte IV plus the first 16-byte encrypted block of the seed
-crc_bytes = struct.pack("<I", zlib.crc32(bytes) & 0xffffffff)
-
-print(base64.b64encode(bytes + crc_bytes).decode())
+l32bytes = b"el:" + iv_and_encr_seed[:32]  # only need the 16-byte IV plus the first 16-byte encrypted block of the seed
+crc_bytes = struct.pack("<I", zlib.crc32(l32bytes) & 0xffffffff)
+print(base64.b64encode(l32bytes + crc_bytes).decode())

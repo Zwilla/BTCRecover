@@ -1,1 +1,1 @@
-../test_results.py
+from lib.eth_hash.tests.backends import test_results

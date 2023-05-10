@@ -9,9 +9,9 @@ import hashlib
 # site
 # pkg
 # module
-from passlib.utils.compat import bascii_to_str, PY3, u
-from passlib.crypto.digest import lookup_hash
-from passlib.tests.utils import TestCase, skipUnless
+from lib.passlib.utils.compat import bascii_to_str, PY3, u
+from lib.passlib.crypto.digest import lookup_hash
+from lib.passlib.tests.utils import TestCase, skipUnless
 # local
 __all__ = [
     "_Common_MD4_Test",
@@ -26,7 +26,7 @@ class _Common_MD4_Test(TestCase):
 
     vectors = [
         # input -> hex digest
-        # test vectors from http://www.faqs.org/rfcs/rfc1320.html - A.5
+        # test vectors from https://www.faqs.org/rfcs/rfc1320.html - A.5
         (b"", "31d6cfe0d16ae931b73c59d7e0c089c0"),
         (b"a", "bde52cb31de33e46245e05fbdbd6fb24"),
         (b"abc", "a448017aaf21d8525fc10ae87aa6729d"),

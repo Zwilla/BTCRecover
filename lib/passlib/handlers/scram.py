@@ -10,7 +10,7 @@ from lib.passlib.utils import consteq, saslprep, to_native_str, splitcomma
 from lib.passlib.utils.binary import ab64_decode, ab64_encode
 from lib.passlib.utils.compat import bascii_to_str, iteritems, u, native_string_types
 from lib.passlib.crypto.digest import pbkdf2_hmac, norm_hash_name
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "scram",
@@ -52,7 +52,7 @@ class scram(uh.HasRounds, uh.HasRawSalt, uh.HasRawChecksum, uh.GenericHandler):
         SHA-256, and SHA-512. This can be overridden by specify either be a
         list such as ``["sha-1", "sha-256"]``, or a comma-separated string
         such as ``"sha-1, sha-256"``. Names are case insensitive, and may
-        use :mod:`!hashlib` or `IANA <http://www.iana.org/assignments/hash-function-text-names>`_
+        use :mod:`!hashlib` or `IANA <https://www.iana.org/assignments/hash-function-text-names>`_
         hash names.
 
     :type relaxed: bool
@@ -429,7 +429,7 @@ class scram(uh.HasRounds, uh.HasRawSalt, uh.HasRawChecksum, uh.GenericHandler):
 ##def _test_reference_scram():
 ##    "quick hack testing scram reference vectors"
 ##    # NOTE: "n,," is GS2 header - see https://tools.ietf.org/html/rfc5801
-##    from passlib.utils.compat import print_
+##    from lib.passlib.utils.compat import print_
 ##
 ##    engine = _scram_engine(
 ##        alg="sha-1",

@@ -4,11 +4,11 @@
 #
 #    EXAMPLES - Transaction Class examples
 #
-#    © 2017 - 2018 November - 1200 Web Development <http://1200wd.com/>
+#    © 2017 - 2018 November - 1200 Web Development <https://1200wd.com/>
 #
 
 from pprint import pprint
-from bitcoinlib.transactions import *
+from lib.bitcoinlib.transactions import *
 
 
 #
@@ -16,7 +16,7 @@ from bitcoinlib.transactions import *
 #
 
 print("\n=== Create and sign transaction with add_input, add_output methods ===")
-print("(Based on http://bitcoin.stackexchange.com/questions/3374/how-to-redeem-a-basic-tx/24580)")
+print("(Based on https://bitcoin.stackexchange.com/questions/3374/how-to-redeem-a-basic-tx/24580)")
 t = Transaction()
 prev_tx = 'f2b3eb2deb76566e7324307cd47c35eeb88413f971d88519859b1834307ecfec'
 ki = Key(0x18E14A7B6A307F426A94F8114701E7C8E774E7F9A47E2C2035DB29A206321725, compressed=False)
@@ -29,7 +29,7 @@ print("Verified %s " % t.verify())
 print(t.raw_hex())
 
 print("\n=== Create and sign transaction with transactions Input and Output objects ===")
-print("(Based on http://www.righto.com/2014/02/bitcoins-hard-way-using-raw-bitcoin.html)")
+print("(Based on https://www.righto.com/2014/02/bitcoins-hard-way-using-raw-bitcoin.html)")
 ki = Key('5HusYj2b2x4nroApgfvaSfKYZhRbKFH41bVyPooymbC6KfgSXdD', compressed=False)
 txid = "81b4c832d70cb56ff957589752eb4125a4cab78a25a8fc52d6a09e5bd4404d48"
 transaction_input = Input(prev_hash=txid, output_n=0, keys=ki.public_byte, compressed=ki.compressed)

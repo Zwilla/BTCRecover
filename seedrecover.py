@@ -14,7 +14,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see http://www.gnu.org/licenses/
+# along with this program.  If not, see https://www.gnu.org/licenses/
 
 # If you find this program helpful, please consider a small
 # donation to the developer at the following Bitcoin address:
@@ -28,7 +28,8 @@
 import compatibility_check
 
 from btcrecover import btcrseed
-import sys, multiprocessing
+import sys
+import multiprocessing
 
 if __name__ == "__main__":
     print()
@@ -41,14 +42,17 @@ if __name__ == "__main__":
         if not btcrseed.tk_root:  # if the GUI is not being used
             print()
             print(
-                "If this tool helped you to recover funds, please consider donating 1% of what you recovered, in your crypto of choice to:")
+                "If this tool helped you to recover funds, please consider donating 1% "
+                "of what you recovered, in your crypto of choice to:")
             print("BTC: 37N7B7sdHahCXTcMJgEnHz7YmiR4bEqCrS ")
             print("BCH: qpvjee5vwwsv78xc28kwgd3m9mnn5adargxd94kmrt ")
             print("LTC: M966MQte7agAzdCZe5ssHo7g9VriwXgyqM ")
             print("ETH: 0x72343f2806428dbbc2C11a83A1844912184b4243 ")
 
-            # Selective Donation Addressess depending on path being recovered... (To avoid spamming the dialogue with shitcoins...)
-            # TODO: Implement this better with a dictionary mapping in seperate PY file with BTCRecover specific donation addys... (Seperate from YY Channel)
+            # Selective Donation Addressess depending on path being recovered...
+            # (To avoid spamming the dialogue with shitcoins...)
+            # TODO: Implement this better with a dictionary mapping in seperate PY file with
+            #  BTCRecover specific donation addys... (Seperate from YY Channel)
             if path_coin == 28:
                 print("VTC: vtc1qxauv20r2ux2vttrjmm9eylshl508q04uju936n ")
 
@@ -68,7 +72,8 @@ if __name__ == "__main__":
             print("Find me on Reddit @ https://www.reddit.com/user/Crypto-Guide")
             print()
             print(
-                "You may also consider donating to Gurnec, who created and maintained this tool until late 2017 @ 3Au8ZodNHPei7MQiSVAWb7NB2yqsb48GW4")
+                "You may also consider donating to Gurnec, who created and maintained this tool "
+                "until late 2017 @ 3Au8ZodNHPei7MQiSVAWb7NB2yqsb48GW4")
             print()
             print("Seed found:", mnemonic_sentence)  # never dies from printing Unicode
 

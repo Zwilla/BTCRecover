@@ -2,7 +2,7 @@
 #
 #    BitcoinLib - Python Cryptocurrency Library
 #    ENCODING - Methods for encoding and conversion
-#    © 2016 - 2020 February - 1200 Web Development <http://1200wd.com/>
+#    © 2016 - 2020 February - 1200 Web Development <https://1200wd.com/>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -15,7 +15,7 @@
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import os
@@ -28,12 +28,12 @@ import binascii
 import unicodedata
 import struct
 from lib.bitcoinlib.main import *
+
 try:
     import groestlcoin_hash
 except:
     pass
 _logger = logging.getLogger(__name__)
-
 
 hashlib_ripemd160_available = False
 # Enable functions that may not work for some standard libraries in some environments
@@ -42,6 +42,8 @@ try:
     # but will raise and exception if ripemd is not supported (python3.10, openssl 3)
     hashlib.new('ripemd160')
     hashlib_ripemd160_available = True
+
+
     def ripemd160(msg):
         return hashlib.new('ripemd160', msg).digest()
 except:
@@ -49,39 +51,41 @@ except:
     from lib.embit.py_ripemd160 import ripemd160
 
 
-# SCRYPT_ERROR = None
-# USING_MODULE_SCRYPT = os.getenv("USING_MODULE_SCRYPT") not in ["false", "False", "0", "FALSE"]
+SCRYPT_ERROR = None
+USING_MODULE_SCRYPT = os.getenv("USING_MODULE_SCRYPT") not in ["false", "False", "0", "FALSE"]
 
-# try:
-    # if USING_MODULE_SCRYPT != False:
-        # import scrypt
-        # USING_MODULE_SCRYPT = True
-# except ImportError as SCRYPT_ERROR:
-    # pass
-# if 'scrypt' not in sys.modules:
-    # import pyscrypt as scrypt
-    # USING_MODULE_SCRYPT = False
+try:
+    if USING_MODULE_SCRYPT != False:
+        import scrypt
+        USING_MODULE_SCRYPT = True
+except ImportError as SCRYPT_ERROR:
+    pass
 
-# if not USING_MODULE_SCRYPT:
-    # if 'scrypt_error' not in locals():
-        # SCRYPT_ERROR = 'unknown'
-    # _logger.warning("Error when trying to import scrypt module", SCRYPT_ERROR)
-#
-# USE_FASTECDSA = os.getenv("USE_FASTECDSA") not in ["false", "False", "0", "FALSE"]
-# try:
-#     if USE_FASTECDSA != False:
-#         from fastecdsa.encoding.der import DEREncoder
-#         USE_FASTECDSA = True
-# except ImportError:
-#     pass
-# if 'fastecdsa' not in sys.modules:
-#     _logger.warning("Could not include fastecdsa library, using slower ecdsa instead. ")
-#     USE_FASTECDSA = False
-#     import ecdsa
+if 'scrypt' not in sys.modules:
+    import pyscrypt as scrypt
+    USING_MODULE_SCRYPT = False
+
+if not USING_MODULE_SCRYPT:
+    if 'scrypt_error' not in locals():
+        SCRYPT_ERROR = 'unknown'
+    _logger.warning("Error when trying to import scrypt module", SCRYPT_ERROR)
+
+USE_FASTECDSA = os.getenv("USE_FASTECDSA") not in ["false", "False", "0", "FALSE"]
+try:
+    if USE_FASTECDSA:
+        from fastecdsa.encoding.der import DEREncoder
+        USE_FASTECDSA = True
+except ImportError:
+    pass
+if 'fastecdsa' not in sys.modules:
+    _logger.warning("Could not include fastecdsa library, using slower ecdsa instead. ")
+    USE_FASTECDSA = False
+    import ecdsa
 
 
 class EncodingError(Exception):
     """ Log and raise encoding errors """
+
     def __init__(self, msg=''):
         self.msg = msg
 
@@ -360,7 +364,7 @@ def varbyteint_to_int(byteint):
         size = 4
     else:  # integer of 8 bytes
         size = 8
-    return change_base(byteint[1:1+size][::-1], 256, 10), size + 1
+    return change_base(byteint[1:1 + size][::-1], 256, 10), size + 1
 
 
 def int_to_varbyteint(inp):
@@ -387,6 +391,7 @@ def int_to_varbyteint(inp):
         return struct.pack('<cL', b'\xfe', inp)
     else:
         return struct.pack('<cQ', b'\xff', inp)
+
 
 #
 # def convert_der_sig(signature, as_hex=True):
@@ -492,6 +497,7 @@ def addr_base58_to_pubkeyhash(address, as_hex=False):
     else:
         return pkh[1:]
 
+
 def grs_addr_base58_to_pubkeyhash(address, as_hex=False):
     """
     Convert Base58 encoded address to public key hash (Groestlcoin)
@@ -513,13 +519,14 @@ def grs_addr_base58_to_pubkeyhash(address, as_hex=False):
         raise EncodingError("Invalid address %s: %s" % (address, err))
     check = address[-4:]
     pkh = address[:-4]
-    #x = to_bytes(pkh, 'utf8')
+    # x = to_bytes(pkh, 'utf8')
     checksum = groestlcoin_hash.getHash(pkh, len(pkh))[0:4]
     assert (check == checksum), "Invalid GRS address, checksum incorrect"
     if as_hex:
         return change_base(pkh, 256, 16)[2:]
     else:
         return pkh[1:]
+
 
 def addr_bech32_to_pubkeyhash(bech, prefix=None, include_witver=False, as_hex=False):
     """

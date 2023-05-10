@@ -11,7 +11,7 @@ import logging; log = logging.getLogger(__name__)
 # site
 # pkg
 from lib.passlib.utils import to_unicode
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 from lib.passlib.utils.compat import bascii_to_str, iteritems, u,\
                                  unicode
 from lib.passlib.crypto.digest import pbkdf1

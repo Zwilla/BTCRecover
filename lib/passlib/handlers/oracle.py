@@ -13,7 +13,7 @@ from lib.passlib.utils import to_unicode, xor_bytes
 from lib.passlib.utils.compat import irange, u, \
                                  uascii_to_str, unicode, str_to_uascii
 from lib.passlib.crypto.des import des_encrypt_block
-import lib.passlib.utils.handlers as uh
+import passlib.utils.handlers as uh
 # local
 __all__ = [
     "oracle10g",

@@ -18,7 +18,9 @@ import time
 
 from .pylibscrypt import scrypt
 from .pypyscrypt_inline import scrypt as pyscrypt
-
+import sys
+if sys.version_info > (3,):
+    xrange = range
 
 # Benchmark time in seconds
 tmin = 5

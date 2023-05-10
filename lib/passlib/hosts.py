@@ -44,7 +44,7 @@ linux_context = linux2_context = LazyCryptContext(
 #
 #   netbsd1
 
-# referencing source via -http://fxr.googlebit.com
+# referencing source via -https://fxr.googlebit.com
 # freebsd 6,7,8 - des, md5, bcrypt, bsd_nthash
 # netbsd - des, ext, md5, bcrypt, sha1
 # openbsd - des, ext, md5, bcrypt

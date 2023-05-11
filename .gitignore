@@ -14,3 +14,4 @@ seeds.txt
 btcrecover-tokens-auto.txt
 site/
 possible_passwords.log
+lib/bitcoin-balance-checker/addresses-with-balance-yay.txt

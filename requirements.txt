@@ -42,5 +42,6 @@ pysha3==1.0.2
 hypothesis==6.75.2
 scrypt==0.8.20 # winget install "OpenSSL 3.1.0 (64-bit)"
 bit~=0.8.0
-bitcoin~=1.1.42
+# bitcoin~=1.1.42 # removed
 base58==2.1.1
+cryptos==2.0.7

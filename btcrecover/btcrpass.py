@@ -2283,8 +2283,8 @@ class WalletBlockchain(object):
             entropy_bits = est_entropy_bits(data)
             if entropy_bits < 7.2:
                 raise ValueError(
-                    "Doesn't look random enough to be an encrypted Blockchain wallet (only {:.1f} bits of entropy per byte)".format(
-                        entropy_bits))
+                    "Doesn't look random enough to be an encrypted Blockchain wallet "
+                    "(only {:.1f} bits of entropy per byte)".format(entropy_bits))
 
         return data, iter_count  # iter_count == 0 for v0 wallets
 
@@ -2985,7 +2985,8 @@ class WalletDogechain(object):
                 "Possible Password ==>Testing123!<== in Decrypted Block ==>{\"double_encrypt<==\n"
                 "\n"
                 "Note: The markers ==> and <== are not part of either your password or the decrypted block...\n\n"
-                "If the password works and was not correctly found, or your wallet detects a false positive, please report the decrypted block data at "
+                "If the password works and was not correctly found, or your wallet detects a false positive, "
+                "please report the decrypted block data at "
                 "https://github.com/3rdIteration/btcrecover/issues/\n\n")
         print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *")
         print("*                     Note for dogechain.info Wallets...                *")
@@ -3032,7 +3033,8 @@ class WalletDogechain(object):
                     except UnicodeDecodeError:  # Likely a false positive if we can't...
                         with open('possible_passwords.log', 'a') as logfile:
                             logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
-                                          " Found Likely False Positive Password (with non-Ascii characters in decrypted block) ==>" +
+                                          " Found Likely False Positive Password"
+                                          " (with non-Ascii characters in decrypted block) ==>" +
                                           password.decode("utf_8") +
                                           "<== in Decrypted Block ==>" +
                                           unencrypted_block.decode("utf-8", "ignore") +
@@ -3252,7 +3254,8 @@ class WalletMetamask(object):
                 "Possible Password ==>btcr-test-password<== in Decrypted Block ==>\"{\\\"mnemonic\\\":\<==\n"
                 "Possible Password ==>BTCR-test-passw0rd<== in Decrypted Block ==>{\"version\":\"v2\",<==\n"
                 "Note: The markers ==> and <== are not part of either your password or the decrypted block...\n\n"
-                "If the password works and was not correctly found, or your wallet detects a false positive, please report the decrypted block data at "
+                "If the password works and was not correctly found, or your wallet detects a false positive, "
+                "please report the decrypted block data at "
                 "https://github.com/3rdIteration/btcrecover/issues/\n\n")
         print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *")
         print("*               Note for Metamask (And related) Wallets...              *")
@@ -3266,8 +3269,9 @@ class WalletMetamask(object):
     # A bit fragile because it assumes that some specific text is in the first encrypted block,
     def check_decrypted_block(self, unencrypted_block, password):
         if unencrypted_block[0] == ord("{") or unencrypted_block[0] == ord("[") or unencrypted_block[0] == ord('"'):
-            if b'"' in unencrypted_block[
-                       :4]:  # If it really is a json wallet fragment, there will be a double quote in there within the first few characters...
+            if b'"' in unencrypted_block[:4]:
+                # If it really is a json wallet fragment,
+                # there will be a double quote in there within the first few characters...
                 try:
                     # Try to decode the decrypted block to ascii, this will pretty much always fail on anything other
                     # than the correct password
@@ -3333,7 +3337,8 @@ class WalletMetamask(object):
             except TypeError:
                 pass  # The conversion will fail if mnemonic is stored as a normal string
             except KeyError:
-                pass  # The conversion will fail if there are extra items in the wallet and it's a normal string (like with Binance Chain wallet)
+                pass  # The conversion will fail if there are extra items in the wallet and
+                # it's a normal string (like with Binance Chain wallet)
 
             # Dump to file
             with open(self._dump_privkeys_file, 'a') as logfile:
@@ -3790,7 +3795,8 @@ class WalletBIP38(object):
             import ecdsa
         except ModuleNotFoundError:
             exit(
-                "\nERROR: Cannot load ecdsa module... Be sure to install all requirements with the command 'pip3 install -r requirements.txt', see https://btcrecover.readthedocs.io/en/latest/INSTALL/")
+                "\nERROR: Cannot load ecdsa module... Be sure to install all requirements with the command "
+                "'pip3 install -r requirements.txt', see https://btcrecover.readthedocs.io/en/latest/INSTALL/")
 
         self.__dict__ = state
 
@@ -3873,13 +3879,15 @@ class WalletBIP39(object):
         wallet_type_names = []
         for cls, desc in btcrseed.selectable_wallet_classes:
             wallet_type_name = cls.__name__.replace("Wallet", "", 1).lower()
-            if wallet_type_name == "electrum1":  # Don't include Electrum 1 seeds in the list of options for passphrase recovery
+            if wallet_type_name == "electrum1":
+                # Don't include Electrum 1 seeds in the list of options for passphrase recovery
                 continue
             else:
                 wallet_type_names.append(cls.__name__.replace("Wallet", "", 1).lower())
             if wallet_type_names[-1] == wallet_type:
                 btcrseed_cls = cls
-                if wallet_type_name == "electrum2":  # Need to spell out that "extra words" are required and let the btcrseed class know... (This removes ambiguity around the seed length)
+                if wallet_type_name == "electrum2":
+                    # Need to spell out that "extra words" are required and let the btcrseed class know... (This removes ambiguity around the seed length)
                     btcrseed_cls._passphrase_recovery = True
                 break
         else:
@@ -4002,8 +4010,8 @@ class WalletSLIP39(object):
 
         if not shamir_mnemonic_available:
             print()
-            print(
-                "ERROR: Cannot import shamir-mnemonic which is required for SLIP39 wallets, install it via 'pip3 install shamir-mnemonic'")
+            print("ERROR: Cannot import shamir-mnemonic which is required for SLIP39 wallets, "
+                  "install it via 'pip3 install shamir-mnemonic'")
             exit()
 
         from . import btcrseed
@@ -4014,8 +4022,8 @@ class WalletSLIP39(object):
         for cls, desc in btcrseed.selectable_wallet_classes:
             wallet_type_name = cls.__name__.replace("Wallet", "", 1).lower()
             if wallet_type_name not in ["ethereum", "bip39", "litecoin", "dogecoin", "bch", "dash", "ripple",
-                                        "digibyte",
-                                        "vertcoin"]:  # SLIP39 implementation only supports common coins for now (Covers most of Trezor T)
+                                        "digibyte", "vertcoin"]:
+                # SLIP39 implementation only supports common coins for now (Covers most of Trezor T)
                 continue
             else:
                 wallet_type_names.append(cls.__name__.replace("Wallet", "", 1).lower())
@@ -4048,13 +4056,14 @@ class WalletSLIP39(object):
         self.btcrseed_wallet._derivation_salts = [""]
 
         if is_performance and not slip39_shares:
-            slip39_shares = [
-                "duckling enlarge academic academic agency result length solution fridge kidney coal piece deal husband erode duke ajar critical decision keyboard"]
+            slip39_shares = ["duckling enlarge academic academic agency result length solution fridge "
+                             "kidney coal piece deal husband erode duke ajar critical decision keyboard"]
 
         print("\nLoading SLIP39 Shares")
 
         # Gather the SLIP39 Shares
-        # Implementation is a lightly modified version of the recover function from cli.py in the shamir-mnemonic repository
+        # Implementation is a lightly modified version of the recover function
+        # from cli.py in the shamir-mnemonic repository
         # https://github.com/trezor/python-shamir-mnemonic/blob/master/shamir_mnemonic/cli.py
         # Licence in the Licences folder...
 
@@ -4833,16 +4842,16 @@ class WalletRawPrivateKey(object):
                  force_check_p2sh=False, crypto='bitcoin', is_performance=False):
         global hmac, coincurve, base58
         if not hashlib_ripemd160_available:
-            print(
-                "Warning: Native RIPEMD160 not available via Hashlib, using Pure-Python (This will significantly reduce performance)")
+            print("Warning: Native RIPEMD160 not available via Hashlib, using Pure-Python "
+                  "(This will significantly reduce performance)")
 
         from lib.cashaddress import base58
         import hmac
         try:
             import coincurve
         except ModuleNotFoundError:
-            exit(
-                "\nERROR: Cannot load coincurve module... Be sure to install all requirements with the command 'pip3 install -r requirements.txt', see https://btcrecover.readthedocs.io/en/latest/INSTALL/")
+            exit("\nERROR: Cannot load coincurve module... Be sure to install all requirements with the command "
+                 "'pip3 install -r requirements.txt', see https://btcrecover.readthedocs.io/en/latest/INSTALL/")
 
         load_pbkdf2_library()
 
@@ -5042,8 +5051,8 @@ class WalletEthKeystore(object):
     @classmethod
     def load_from_filename(cls, wallet_filename):
         if not module_eth_keyfile_available:
-            print(
-                "eth-keyfile module is required for Eth Keystores (it can normally be installed with the command: pip3 install eth-keyfile)")
+            print("eth-keyfile module is required for Eth Keystores "
+                  "(it can normally be installed with the command: pip3 install eth-keyfile)")
             exit()
         wallet_json = eth_keyfile.load_keyfile(wallet_filename)
         self = cls(loading=True)
@@ -5369,6 +5378,7 @@ def load_savestate(autosave_file):
 #   peekable_file = MakePeekable(file)
 #   next_char = peekable_file.peek()
 #   assert next_char == peekable_file.read(1)
+#
 # Do not take references of the member functions, e.g. don't do this:
 #   tell_ref = peekable_file.tell
 #   print peekable_file.peek()
@@ -5481,12 +5491,12 @@ def open_or_use(filename, mode="r",
                 if new_or_empty: return None
         if tstr == str:
             if "b" in mode:
-                assert not isinstance(funccall_file,
-                                      io.TextIOBase), "already opened file not an io.TextIOBase; produces bytes"
+                assert not isinstance(funccall_file, io.TextIOBase), \
+                    "already opened file not an io.TextIOBase; produces bytes"
             else:
-                assert isinstance(funccall_file,
-                                  io.TextIOBase), "already opened file isa io.TextIOBase producing unicode"
-        return MakePeekable(funccall_file) if make_peekable else funccall_file;
+                assert isinstance(funccall_file, io.TextIOBase), \
+                    "already opened file isa io.TextIOBase producing unicode"
+        return MakePeekable(funccall_file) if make_peekable else funccall_file
     #
     if permit_stdin and filename == "-":
         if tstr == str and "b" not in mode:
@@ -5500,8 +5510,8 @@ def open_or_use(filename, mode="r",
     if not filename and default_filename:
         if permit_stdin and default_filename == "-":
             if tstr == str and "b" not in mode:
-                sys.stdin = io.open(sys.stdin.fileno(), mode,
-                                    encoding=sys.stdin.encoding or "utf_8_sig", errors=decoding_errors)
+                sys.stdin = io.open(sys.stdin.fileno(), mode, encoding=sys.stdin.encoding
+                                                                       or "utf_8_sig", errors=decoding_errors)
             if make_peekable:
                 sys.stdin = MakePeekable(sys.stdin)
             return sys.stdin
@@ -6563,8 +6573,8 @@ def parse_arguments(effective_argv, wallet=None, base_iterator=None, perf_iterat
             if loaded_wallet._dump_wallet_file:
                 pass
         except AttributeError:
-            exit(
-                "This wallet type does not currently support dumping the decrypted wallet file... (But it might support decrypting private keys (--dump-privkeys), so give that a try)")
+            exit("This wallet type does not currently support dumping the decrypted wallet file... "
+                 "(But it might support decrypting private keys (--dump-privkeys), so give that a try)")
 
         loaded_wallet._dump_wallet_file = args.dump_wallet
 
@@ -6616,7 +6626,7 @@ def parse_arguments(effective_argv, wallet=None, base_iterator=None, perf_iterat
     # Parse and syntax check all of the GPU related options
     if args.enable_opencl:
         try:
-            if (len(loaded_wallet.btcrseed_wallet._path_indexes) > 1):
+            if len(loaded_wallet.btcrseed_wallet._path_indexes) > 1:
                 print("=======================================================================")
                 print()
                 print("Performance Warning:\n"
@@ -6629,7 +6639,7 @@ def parse_arguments(effective_argv, wallet=None, base_iterator=None, perf_iterat
                 print()
                 print("=======================================================================")
 
-            if (loaded_wallet.btcrseed_wallet._addrs_to_generate > 1):
+            if loaded_wallet.btcrseed_wallet._addrs_to_generate > 1:
                 print("=======================================================================")
                 print()
                 print("Performance Warning:\n"
@@ -7007,16 +7017,21 @@ def parse_arguments(effective_argv, wallet=None, base_iterator=None, perf_iterat
 
     if not disable_security_warnings:
         # Print a security warning before giving users the chance to enter ir seed....
-        # Also a good idea to keep this warning as late as possible in terms of not needing it to be display for --version --help, or if there are errors in other parameters.
+        # Also a good idea to keep this warning as late as possible in terms of
+        # not needing it to be display for --version --help, or if there are errors in other parameters.
         print("* * * * * * * * * * * * * * * * * * * *")
         print("*          Security: Warning          *")
         print("* * * * * * * * * * * * * * * * * * * *")
         print()
-        print(
-            "Most crypto wallet software and hardware wallets go to great lengths to protect your wallet password, seed phrase and private keys. BTCRecover isn't designed to offer this level of security, so it is possible that malware on your PC could gain access to this sensitive information while it is stored in memory in the use of this tool...")
+        print("Most crypto wallet software and hardware wallets go to great lengths to protect your wallet password, "
+              "seed phrase and private keys. BTCRecover isn't designed to offer this level of security, so it is "
+              "possible that malware on your PC could gain access to this sensitive information while it is stored in "
+              "memory in the use of this tool...")
         print()
-        print(
-            "As a precaution, you should run this tool in a secure, offline environment and not simply use your normal, internet connected desktop environment... At the very least, you should disconnect your PC from the network and only reconnect it after moving your funds to a new seed... (Or if you run the tool on your internet conencted PC, move it to a new seed as soon as practical)")
+        print("As a precaution, you should run this tool in a secure, offline environment and not simply use your "
+              "normal, internet connected desktop environment... At the very least, you should disconnect your PC "
+              "from the network and only reconnect it after moving your funds to a new seed... "
+              "(Or if you run the tool on your internet conencted PC, move it to a new seed as soon as practical)")
         print()
         print("You can disable this message by running this tool with the --dsw argument")
         print()
@@ -8398,8 +8413,8 @@ def swap_typos_generator(password_base, min_typos=0):
                 # Perform and the actual swaps
                 password = password_base
                 for i in swap_indexes:
-                    if password[i] == password[
-                        i + 1] and l_args_nodupchecks < 4:  # "swapping" these would result in generating a duplicate guess
+                    if password[i] == password[i + 1] and l_args_nodupchecks < 4:
+                        # "swapping" these would result in generating a duplicate guess
                         break
                     password = password[:i] + password[i + 1:i + 2] + password[i:i + 1] + password[i + 2:]
                 else:  # if we left the loop normally (didn't break)
@@ -8654,9 +8669,12 @@ def init_worker(wallet, char_mode, worker_out_queue=None):
         else:
             assert False
         try:
-            loaded_wallet._load_wordlist()  # Load the wordlist for each worker (Allows word ID lookups in the solver thread, required for Electrum1)
+            loaded_wallet._load_wordlist()
+            # Load the wordlist for each worker (Allows word ID lookups in the solver thread, required for Electrum1)
         except:
-            pass  # don't really care if it doesn't load in terms of performance, this is only called at worker thread creation
+            pass
+            # don't really care if it doesn't load in terms of performance,
+            # this is only called at worker thread creation
 
     if worker_out_queue:
         loaded_wallet.worker_out_queue = worker_out_queue
@@ -8969,8 +8987,8 @@ def main():
         # Python on Windows is a bit touchy with signal handlers; it's safest to just do
         # all the cleanup code here (even though it'd be cleaner to throw an exception)
         if savestate:
-            do_autosave(args.skip + passwords_tried,
-                        inside_interrupt_handler=True)  # do this first, it's most important
+            do_autosave(args.skip + passwords_tried, inside_interrupt_handler=True)
+            # do this first, it's most important
             autosave_file.close()
         print("\nInterrupted after finishing password #", args.skip + passwords_tried, file=sys.stderr)
         if sys.stdout.isatty() ^ sys.stderr.isatty():  # if they're different, print to both to be safe

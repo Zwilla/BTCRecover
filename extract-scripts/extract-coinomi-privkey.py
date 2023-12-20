@@ -63,7 +63,7 @@ with open(privkey_filename, "rb") as privkey_file:
     scrypt_p = pb_wallet.encryption_parameters.p
 
 print("Coinomi partial first encrypted private key, salt, n, r, p and crc in base64:", file=sys.stderr)
-l32bytes = b"cn:" + struct.pack("< 32s 8s I H H", encrypted_masterkey_part, scrypt_salt, scrypt_n, scrypt_r, scrypt_p)
+l32bytes = b"cn_jp:" + struct.pack("< 32s 8s I H H", encrypted_masterkey_part, scrypt_salt, scrypt_n, scrypt_r, scrypt_p)
 crc_bytes = struct.pack("<I", zlib.crc32(l32bytes) & 0xffffffff)
 
 print(base64.b64encode(l32bytes + crc_bytes).decode())

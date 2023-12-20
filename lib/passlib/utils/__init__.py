@@ -892,7 +892,7 @@ else:
         #   but accepts ANY unicode (which it always encodes to UTF8).
         crypt_accepts_bytes = True
         try:
-            _crypt(b"\xEE", "xx")
+            _crypt(b"\xEE".decode('UTF-8'), "xx")
         except TypeError:
             # CPython will throw TypeError
             crypt_accepts_bytes = False
@@ -923,8 +923,7 @@ else:
                         return None
                     # sanity check it encodes back to original byte string,
                     # otherwise when crypt() does it's encoding, it'll hash the wrong bytes!
-                    assert secret.encode("utf-8") == orig, \
-                                "utf-8 spec says this can't happen!"
+                    assert secret.encode("utf-8") == orig, "utf-8 spec says this can't happen!"
                 if _NULL in secret:
                     raise ValueError("null character in secret")
                 if isinstance(hash, bytes):
